@@ -1,10 +1,18 @@
 const STORE='oporadar-tema1-fallos-v1';
 const audios=[
- ['Fechas y estructura','Microaudio · aprox. 4 min'],['Título Preliminar','Microaudio · aprox. 4 min'],['Derechos fundamentales','Microaudio · aprox. 4 min'],['Resto del Título I','Microaudio · aprox. 4 min'],['Corona','Microaudio · aprox. 4 min'],['Cortes Generales','Microaudio · aprox. 4 min'],['Gobierno y relaciones con las Cortes','Microaudio · aprox. 4 min'],['Poder Judicial y Economía','Microaudio · aprox. 4 min'],['Organización territorial','Microaudio · aprox. 4 min'],['Tribunal Constitucional, reforma y disposiciones','Microaudio · aprox. 4 min'],['Repaso completo del Tema 1','Audio largo final · aprox. 25–35 min']
+ ['Parte 1 · Base y derechos','Audio guiado · Preámbulo, Título Preliminar y Título I · aprox. 10–12 min'],
+ ['Parte 2 · Instituciones','Audio guiado · Corona, Cortes, Gobierno y Poder Judicial · aprox. 10–12 min'],
+ ['Parte 3 · Territorio y cierre','Audio guiado · Economía, territorio, Tribunal Constitucional, reforma y disposiciones · aprox. 10–12 min'],
+ ['Repaso completo del Tema 1','Audio largo final · aprox. 25–35 min']
 ];
-const videos=[['La Constitución de un vistazo','Vídeo breve · 3–6 min'],['Fechas, estructura y Título Preliminar','Vídeo breve · 3–6 min'],['Derechos y deberes fundamentales','Vídeo breve · 3–6 min'],['Instituciones y organización territorial','Vídeo breve · 3–6 min'],['Repaso completo del Tema 1','Vídeo largo final']];
+const videos=[
+ ['Parte 1 · Base y derechos','Vídeo vertical · Preámbulo, Título Preliminar y Título I · aprox. 4–6 min'],
+ ['Parte 2 · Instituciones','Vídeo vertical · Corona, Cortes, Gobierno y Poder Judicial · aprox. 4–6 min'],
+ ['Parte 3 · Territorio y cierre','Vídeo vertical · Economía, territorio, Tribunal Constitucional, reforma y disposiciones · aprox. 4–6 min'],
+ ['Repaso completo del Tema 1','Vídeo largo final · recorrido completo del tema']
+];
 const cards=[['Estructura','Preámbulo, Título Preliminar, Títulos, capítulos y disposiciones.'],['Datos','Fechas, artículos, mayorías, números y plazos.'],['Conceptos','Órganos, funciones, derechos y relaciones entre instituciones.'],['Traduce el jurídico','Expresiones constitucionales explicadas con palabras claras y una sola idea cada vez.']];
-const games=['Caza la trampa','¿Dónde está?','Completa la norma','No confundas'];
+const games=['Tarjetas Radar','Traduce el jurídico','Caza la trampa','Completa la norma','Mapa constitucional','Test Tema 1 · selección mixta'];
 const practice=[{id:'art1-soberania',block:'Título Preliminar',text:'Según el artículo 1.2, la soberanía nacional reside en:',options:['El pueblo español','Las Cortes Generales','El Rey','El Gobierno'],answer:0,why:'La respuesta literal es: «La soberanía nacional reside en el pueblo español».',kind:'PRACTICA · OpoRadar'}];
 const mock=[...practice,{id:'art140',block:'Organización territorial',text:'La Constitución garantiza la autonomía de:',options:['Las Comunidades Autónomas únicamente','Los municipios','Las provincias únicamente','Las diputaciones'],answer:1,why:'El artículo 140 garantiza la autonomía de los municipios.',kind:'TIPO EXAMEN · OpoRadar'},{id:'tc12',block:'Tribunal Constitucional',text:'¿Cuántos miembros componen el Tribunal Constitucional?',options:['10','11','12','15'],answer:2,why:'El Tribunal Constitucional se compone de 12 miembros.',kind:'TIPO EXAMEN · OpoRadar'}];
 function escapeHtml(value){return String(value).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
