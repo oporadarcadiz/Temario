@@ -1,0 +1,3 @@
+[build]
+  command = "rm -rf .netlify-dist && mkdir -p .netlify-dist && cp -R web/. .netlify-dist/ && sed -i 's#https://tema-1-parte-1.netlify.app/#/tema-1/#g' .netlify-dist/index.html && cp -R tema-1 .netlify-dist/tema-1"
+  publish = ".netlify-dist"
