@@ -1,15 +1,29 @@
 const STORE='oporadar-tema1-fallos-v1';
 const audios=[
- ['Parte 1 · Base y derechos','Audio guiado · Preámbulo, Título Preliminar y Título I · aprox. 10–12 min'],
- ['Parte 2 · Instituciones','Audio guiado · Corona, Cortes, Gobierno y Poder Judicial · aprox. 10–12 min'],
- ['Parte 3 · Territorio y cierre','Audio guiado · Economía, territorio, Tribunal Constitucional, reforma y disposiciones · aprox. 10–12 min'],
+ ['Fechas y mapa de la Constitución','Microaudio · aprox. 3:30–5:00 min'],
+ ['Título Preliminar','Microaudio · aprox. 3:30–5:00 min'],
+ ['Derechos fundamentales','Microaudio · aprox. 3:30–5:00 min'],
+ ['Resto del Título I','Microaudio · aprox. 3:30–5:00 min'],
+ ['Corona','Microaudio · aprox. 3:30–5:00 min'],
+ ['Cortes Generales','Microaudio · aprox. 3:30–5:00 min'],
+ ['Gobierno y relaciones con las Cortes','Microaudio · aprox. 3:30–5:00 min'],
+ ['Poder Judicial y Economía/Hacienda','Microaudio · aprox. 3:30–5:00 min'],
+ ['Organización Territorial','Microaudio · aprox. 3:30–5:00 min'],
+ ['Tribunal Constitucional, reforma y disposiciones','Microaudio · aprox. 3:30–5:00 min'],
  ['Repaso completo del Tema 1','Audio largo final · aprox. 25–35 min']
 ];
 const videos=[
- ['Parte 1 · Base y derechos','Vídeo vertical · Preámbulo, Título Preliminar y Título I · aprox. 4–6 min'],
- ['Parte 2 · Instituciones','Vídeo vertical · Corona, Cortes, Gobierno y Poder Judicial · aprox. 4–6 min'],
- ['Parte 3 · Territorio y cierre','Vídeo vertical · Economía, territorio, Tribunal Constitucional, reforma y disposiciones · aprox. 4–6 min'],
- ['Repaso completo del Tema 1','Vídeo largo final · recorrido completo del tema']
+ ['Fechas y mapa de la Constitución','Vídeo temático · aprox. 3–6 min'],
+ ['Título Preliminar','Vídeo temático · aprox. 3–6 min'],
+ ['Derechos fundamentales','Vídeo temático · aprox. 3–6 min'],
+ ['Resto del Título I','Vídeo temático · aprox. 3–6 min'],
+ ['Corona','Vídeo temático · aprox. 3–6 min'],
+ ['Cortes Generales','Vídeo temático · aprox. 3–6 min'],
+ ['Gobierno y relaciones con las Cortes','Vídeo temático · aprox. 3–6 min'],
+ ['Poder Judicial y Economía/Hacienda','Vídeo temático · aprox. 3–6 min'],
+ ['Organización Territorial','Vídeo temático · aprox. 3–6 min'],
+ ['Tribunal Constitucional, reforma y disposiciones','Vídeo temático · aprox. 3–6 min'],
+ ['Repaso completo del Tema 1','Vídeo completo final · recorrido de todo el tema']
 ];
 const cards=[['Estructura','Preámbulo, Título Preliminar, Títulos, capítulos y disposiciones.'],['Datos','Fechas, artículos, mayorías, números y plazos.'],['Conceptos','Órganos, funciones, derechos y relaciones entre instituciones.'],['Traduce el jurídico','Expresiones constitucionales explicadas con palabras claras y una sola idea cada vez.']];
 const games=['Tarjetas Radar','Traduce el jurídico','Caza la trampa','Completa la norma','Mapa constitucional','Test Tema 1 · selección mixta'];
