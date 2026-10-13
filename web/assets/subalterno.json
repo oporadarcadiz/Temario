@@ -1,0 +1,95 @@
+{
+  "updated": "2026-10-03",
+  "questions": [
+    {
+      "id": "fnv1a_3a39bb51",
+      "number": "1",
+      "text": "¿De cuantos Capítulos consta El Título I de la Constitución Española de 1978?",
+      "options": [
+        "Cinco Capítulos.",
+        "Seis Capítulos.",
+        "Siete Capítulos.",
+        "Cuatro Capítulos."
+      ],
+      "answer": 0,
+      "organism": "Ayuntamiento de Sanlúcar de Barrameda",
+      "exam": "Conserje contrato de relevo y lista de reservas",
+      "year": "2022",
+      "examUrl": "https://www.sanlucardebarrameda.es/sites/default/files/EXAMEN%20CONSERJE%20CORREGIDO.pdf",
+      "keyUrl": "https://www.sanlucardebarrameda.es/sites/default/files/EXAMEN%20CONSERJE%20CORREGIDO.pdf",
+      "status": "VERIFICADA"
+    },
+    {
+      "id": "fnv1a_0af5149e",
+      "number": "2",
+      "text": "Según el art. ____ de la Constitución Española de 1978, todos los españoles tienen el deber de trabajar y el derecho al trabajo, a la libre elección de profesión u oficio, a la promoción a través del trabajo y a una remuneración suficiente para satisfacer sus necesidades y las de su familia, sin que en ningún caso pueda hacerse discriminación por razón de sexo.",
+      "options": [
+        "Artículo 30",
+        "Artículo 34",
+        "Artículo 35",
+        "Artículo 36"
+      ],
+      "answer": 2,
+      "organism": "Ayuntamiento de Sanlúcar de Barrameda",
+      "exam": "Conserje contrato de relevo y lista de reservas",
+      "year": "2022",
+      "examUrl": "https://www.sanlucardebarrameda.es/sites/default/files/EXAMEN%20CONSERJE%20CORREGIDO.pdf",
+      "keyUrl": "https://www.sanlucardebarrameda.es/sites/default/files/EXAMEN%20CONSERJE%20CORREGIDO.pdf",
+      "status": "VERIFICADA"
+    },
+    {
+      "id": "fnv1a_ac5f1381",
+      "number": "3",
+      "text": "El artículo 18 en su punto 2 de la Constitución Española de 1978 establece…..",
+      "options": [
+        "El domicilio es inviolable. Ninguna entrada o registro podrá hacerse en él sin consentimiento del titular o resolución judicial.",
+        "El domicilio es inviolable. Ninguna entrada o registro podrá hacerse en él sin consentimiento del titular o resolución judicial, salvo en caso de flagrante delito.",
+        "El domicilio no es inviolable. Cuando la autoridad en lo considere puede entrar en él.",
+        "Todas son verdaderas."
+      ],
+      "answer": 1,
+      "organism": "Ayuntamiento de Sanlúcar de Barrameda",
+      "exam": "Conserje contrato de relevo y lista de reservas",
+      "year": "2022",
+      "examUrl": "https://www.sanlucardebarrameda.es/sites/default/files/EXAMEN%20CONSERJE%20CORREGIDO.pdf",
+      "keyUrl": "https://www.sanlucardebarrameda.es/sites/default/files/EXAMEN%20CONSERJE%20CORREGIDO.pdf",
+      "status": "VERIFICADA"
+    },
+    {
+      "id": "fnv1a_0f401803",
+      "number": "4",
+      "text": "El punto 2 del Artículo 10 de la Constitución Española de 1978 establece…",
+      "options": [
+        "Las normas relativas a los derechos fundamentales y a las libertades que la Constitución reconoce se interpretarán de conformidad a los tratados y acuerdos internacionales sobre las mismas materias ratificados por España.",
+        "Las normas relativas a los derechos fundamentales y a las libertades que la Constitución reconoce se interpretarán de conformidad con la Declaración Universal de Derechos Humanos y los tratados y acuerdos internacionales sobre las mismas materias ratificados por España, y consultado a cada CCAA.",
+        "Las normas relativas a los derechos fundamentales y a las libertades que la Constitución reconoce se interpretarán de conformidad con la Declaración Universal de Derechos Humanos.",
+        "Las normas relativas a los derechos fundamentales y a las libertades que la Constitución reconoce se interpretarán de conformidad con la Declaración Universal de Derechos Humanos y los tratados y acuerdos internacionales sobre las mismas materias ratificados por España."
+      ],
+      "answer": 3,
+      "organism": "Ayuntamiento de Sanlúcar de Barrameda",
+      "exam": "Conserje contrato de relevo y lista de reservas",
+      "year": "2022",
+      "examUrl": "https://www.sanlucardebarrameda.es/sites/default/files/EXAMEN%20CONSERJE%20CORREGIDO.pdf",
+      "keyUrl": "https://www.sanlucardebarrameda.es/sites/default/files/EXAMEN%20CONSERJE%20CORREGIDO.pdf",
+      "status": "VERIFICADA"
+    },
+    {
+      "id": "fnv1a_f4b64fcb",
+      "number": "5",
+      "text": "Según la Ley Orgánica 3/2007, de 22 de marzo, para la igualdad efectiva de mujeres y hombres, ¿Qué artículo se refiere a La Integración del principio de igualdad en la interpretación y aplicación de las normas?",
+      "options": [
+        "Artículo 4.",
+        "Artículo 5.",
+        "Artículo 3.",
+        "Artículo 6."
+      ],
+      "answer": 0,
+      "organism": "Ayuntamiento de Sanlúcar de Barrameda",
+      "exam": "Conserje contrato de relevo y lista de reservas",
+      "year": "2022",
+      "examUrl": "https://www.sanlucardebarrameda.es/sites/default/files/EXAMEN%20CONSERJE%20CORREGIDO.pdf",
+      "keyUrl": "https://www.sanlucardebarrameda.es/sites/default/files/EXAMEN%20CONSERJE%20CORREGIDO.pdf",
+      "status": "VERIFICADA"
+    }
+  ]
+}

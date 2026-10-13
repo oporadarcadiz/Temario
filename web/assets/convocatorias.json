@@ -1,0 +1,296 @@
+{
+  "reviewedOn": "2026-10-07",
+  "source": "Base Maestra OpoRadarCádiz · OPORTUNIDADES",
+  "automaticUpdates": false,
+  "opportunities": [
+    {
+      "id": "OPO-0001",
+      "organism": "Ayuntamiento de Cádiz",
+      "title": "Auxiliar Administrativo/a",
+      "places": 3,
+      "turn": "Turno libre",
+      "offer": "OEP 2024 y 2026",
+      "state": "open",
+      "publishedOn": "2026-08-27",
+      "boePublishedOn": "2026-09-14",
+      "period": "20 días hábiles a partir del día siguiente a la publicación en el BOE.",
+      "reviewBefore": "2026-10-12",
+      "reviewedOn": "2026-10-02",
+      "url": "https://institucional.cadiz.es/node/40103",
+      "boeUrl": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-19161",
+      "processType": "opposition",
+      "location": "Cádiz",
+      "qualificationFilter": "unknown",
+      "applicationNote": "Accede a cadiz.es y pulsa «Convocatorias Procesos Selectivos». La nota oficial exige presentar por ese acceso; los enlaces distintos no son válidos salvo la excepción justificada que describe la convocatoria.",
+      "feesSourceUrl": "https://institucional.cadiz.es/node/40103",
+      "applicationUrl": "https://www.cadiz.es/",
+      "applicationSourceUrl": "https://institucional.cadiz.es/sites/default/files/tablon/archivos/NOTA%20INFORMATIVA%2035%20PLAZAS%20VARIAS%20CATEGOR%C3%8DAS%20OEP%202024,%202025%20Y%202026_6.PDF"
+    },
+    {
+      "id": "OPO-0002",
+      "organism": "Ayuntamiento de Cádiz",
+      "title": "Subalterno/a",
+      "places": 13,
+      "turn": "Turno libre",
+      "offer": "OEP 2025 y 2026",
+      "state": "open",
+      "publishedOn": "2026-08-27",
+      "boePublishedOn": "2026-09-14",
+      "period": "20 días hábiles a partir del día siguiente a la publicación en el BOE.",
+      "reviewBefore": "2026-10-12",
+      "reviewedOn": "2026-10-02",
+      "url": "https://institucional.cadiz.es/13-plazas-subalternoa-turno-libre-oep-2025-y-2026-oposici%C3%B3n",
+      "boeUrl": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-19161",
+      "processType": "opposition",
+      "location": "Cádiz",
+      "qualificationFilter": "unknown",
+      "applicationNote": "Accede a cadiz.es y pulsa «Convocatorias Procesos Selectivos». La nota oficial exige presentar por ese acceso; los enlaces distintos no son válidos salvo la excepción justificada que describe la convocatoria.",
+      "feesSourceUrl": "https://institucional.cadiz.es/13-plazas-subalternoa-turno-libre-oep-2025-y-2026-oposici%C3%B3n",
+      "applicationUrl": "https://www.cadiz.es/",
+      "applicationSourceUrl": "https://institucional.cadiz.es/sites/default/files/tablon/archivos/NOTA%20INFORMATIVA%2035%20PLAZAS%20VARIAS%20CATEGOR%C3%8DAS%20OEP%202024,%202025%20Y%202026_6.PDF"
+    },
+    {
+      "id": "OPO-0003",
+      "organism": "Diputación Provincial de Cádiz",
+      "title": "Auxiliar Administrativo/a",
+      "places": 44,
+      "turn": "37 turno libre · 7 reserva discapacidad",
+      "offer": "OEP 2023, 2024 y 2025",
+      "state": "open",
+      "publishedOn": "2026-02-12",
+      "boePublishedOn": "2026-09-29",
+      "period": "Solicitudes del 30/09 al 29/10/2026, ambos inclusive.",
+      "reviewBefore": "2026-10-30",
+      "reviewedOn": "2026-10-02",
+      "url": "https://www.dipucadiz.es/funcion_publica_y_recursos_humanos/oferta-empleo-publico/Procesos-selectivos-en-tramite-00001",
+      "boeUrl": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-20179",
+      "processType": "opposition",
+      "location": "Provincia de Cádiz",
+      "qualificationFilter": "unknown",
+      "applicationsEndOn": "2026-10-29",
+      "deadlineSourceUrl": "https://www.dipucadiz.es/funcion_publica_y_recursos_humanos/oferta-empleo-publico/Procesos-selectivos-en-tramite-00001",
+      "applicationUrl": "https://sede.dipucadiz.es/",
+      "applicationNote": "Consulta en la sede el trámite de selección correspondiente a tu plaza; revisa las bases y conserva el justificante.",
+      "feesSourceUrl": "https://www.dipucadiz.es/funcion_publica_y_recursos_humanos/oferta-empleo-publico/Procesos-selectivos-en-tramite-00001",
+      "fees": "4,80 € según el expediente de la Diputación; comprueba posibles exenciones en las bases."
+    },
+    {
+      "id": "OPO-0004",
+      "organism": "Diputación Provincial de Cádiz",
+      "title": "Ayudante/a Servicios Especiales",
+      "places": 5,
+      "turn": "Turno libre · sin titulación exigida",
+      "offer": "OEP 2023, 2024 y 2025 · AP",
+      "state": "open",
+      "publishedOn": "2026-02-12",
+      "boePublishedOn": "2026-09-29",
+      "period": "Solicitudes del 30/09 al 29/10/2026, ambos inclusive.",
+      "reviewBefore": "2026-10-30",
+      "reviewedOn": "2026-10-02",
+      "url": "https://www.dipucadiz.es/export/sites/default/funcion_publica_y_recursos_humanos/.galeria_de_ficheros/documentos/ope/procesosentramite/ayte_serv_esp/01.-Convocatoria-de-plazas-y-bases-especificas.pdf",
+      "boeUrl": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-20179",
+      "processType": "opposition",
+      "location": "Provincia de Cádiz",
+      "qualificationFilter": "none",
+      "applicationsEndOn": "2026-10-29",
+      "deadlineSourceUrl": "https://www.dipucadiz.es/funcion_publica_y_recursos_humanos/oferta-empleo-publico/Procesos-selectivos-en-tramite-00001",
+      "applicationUrl": "https://sede.dipucadiz.es/",
+      "applicationNote": "Consulta en la sede el trámite de selección correspondiente a tu plaza; revisa las bases y conserva el justificante.",
+      "fees": "4,80 € según el expediente de la Diputación; comprueba posibles exenciones en las bases.",
+      "feesSourceUrl": "https://www.dipucadiz.es/funcion_publica_y_recursos_humanos/oferta-empleo-publico/Procesos-selectivos-en-tramite-00001"
+    },
+    {
+      "id": "OPO-0005",
+      "organism": "Diputación Provincial de Cádiz",
+      "title": "Auxiliar de Producción",
+      "places": 1,
+      "turn": "Concurso-oposición libre",
+      "offer": "OEP 2023 · C2",
+      "state": "open",
+      "publishedOn": "2026-02-12",
+      "boePublishedOn": "2026-09-29",
+      "period": "Solicitudes del 30/09 al 29/10/2026, ambos inclusive.",
+      "reviewBefore": "2026-10-30",
+      "reviewedOn": "2026-10-02",
+      "url": "https://www.dipucadiz.es/export/sites/default/funcion_publica_y_recursos_humanos/.galeria_de_ficheros/documentos/ope/procesosentramite/aux_producc/01.-Convocatoria-de-plazas-y-bases-especificas.pdf",
+      "boeUrl": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-20179",
+      "processType": "combined",
+      "location": "Provincia de Cádiz",
+      "qualificationFilter": "unknown",
+      "applicationsEndOn": "2026-10-29",
+      "deadlineSourceUrl": "https://www.dipucadiz.es/funcion_publica_y_recursos_humanos/oferta-empleo-publico/Procesos-selectivos-en-tramite-00001",
+      "applicationUrl": "https://sede.dipucadiz.es/",
+      "applicationNote": "Consulta en la sede el trámite de selección correspondiente a tu plaza; revisa las bases y conserva el justificante.",
+      "feesSourceUrl": "https://www.dipucadiz.es/funcion_publica_y_recursos_humanos/oferta-empleo-publico/Procesos-selectivos-en-tramite-00001",
+      "fees": "4,80 € según el expediente de la Diputación; comprueba posibles exenciones en las bases."
+    },
+    {
+      "id": "OPO-0006",
+      "organism": "Universidad de Cádiz",
+      "title": "Escala Auxiliar Administrativa",
+      "places": 12,
+      "turn": "Acceso libre · 2 plazas reservadas",
+      "offer": "OEP 2023, 2024 y 2025 · C2",
+      "state": "lists",
+      "publishedOn": "2026-05-02",
+      "boePublishedOn": "2026-05-02",
+      "period": "Inscripción cerrada el 10/06/2026 tras ampliación. Lista provisional el 02/09; subsanación hasta el 16/09/2026.",
+      "reviewedOn": "2026-10-02",
+      "url": "https://personal.uca.es/uca-rec98ger-2026-escala-auxiliar-administrativa-de-la-universidad-de-cadiz/",
+      "boeUrl": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-9563",
+      "announcements": [
+        {
+          "date": "2026-05-20",
+          "title": "Ampliación a 12 plazas y nuevo plazo",
+          "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-10851"
+        }
+      ],
+      "milestones": {
+        "lists": {
+          "publishedOn": "2026-09-02",
+          "text": "Lista provisional publicada el 02/09/2026. Finalizó la subsanación el 16/09; pendiente de lista definitiva.",
+          "url": "https://personal.uca.es/wp-content/uploads/2026/09/Listado_prov_admitidos-y-excluidos.report.pdf"
+        }
+      },
+      "processType": "combined",
+      "location": "Provincia de Cádiz",
+      "qualificationFilter": "unknown",
+      "applicationsEndOn": "2026-06-10",
+      "deadlineSourceUrl": "https://personal.uca.es/uca-rec98ger-2026-escala-auxiliar-administrativa-de-la-universidad-de-cadiz/",
+      "applicationNote": "Abre el expediente oficial y sigue el apartado de presentación de solicitudes de las bases. Comprueba identificación, documentación, tasas y justificante.",
+      "feesSourceUrl": "https://personal.uca.es/uca-rec98ger-2026-escala-auxiliar-administrativa-de-la-universidad-de-cadiz/"
+    },
+    {
+      "id": "OPO-0007",
+      "organism": "Diputación Provincial de Cádiz",
+      "title": "Auxiliar de Enfermería Geriatría",
+      "places": 31,
+      "turn": "Turno libre",
+      "offer": "OEP 2023, 2024 y 2025 · C2 · dos pruebas tipo test",
+      "requirements": "Titulación obligatoria: Técnico/a Auxiliar en Auxiliar de Enfermería (FP primer grado) o equivalente.",
+      "state": "open",
+      "publishedOn": "2026-02-12",
+      "boePublishedOn": "2026-09-29",
+      "period": "Solicitudes del 30/09 al 29/10/2026, ambos inclusive.",
+      "reviewBefore": "2026-10-30",
+      "reviewedOn": "2026-10-03",
+      "url": "https://www.dipucadiz.es/export/sites/default/funcion_publica_y_recursos_humanos/.galeria_de_ficheros/documentos/ope/procesosentramite/Aux_Enf_Geriatria/01.-Convocatoria-de-plazas-y-bases-especificas.pdf",
+      "boeUrl": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-20179",
+      "processType": "opposition",
+      "location": "Provincia de Cádiz",
+      "qualificationFilter": "specific",
+      "applicationsEndOn": "2026-10-29",
+      "deadlineSourceUrl": "https://www.dipucadiz.es/funcion_publica_y_recursos_humanos/oferta-empleo-publico/Procesos-selectivos-en-tramite-00001",
+      "applicationUrl": "https://sede.dipucadiz.es/",
+      "applicationNote": "Consulta en la sede el trámite de selección correspondiente a tu plaza; revisa las bases y conserva el justificante.",
+      "fees": "4,80 € según el expediente de la Diputación; comprueba posibles exenciones en las bases.",
+      "feesSourceUrl": "https://www.dipucadiz.es/funcion_publica_y_recursos_humanos/oferta-empleo-publico/Procesos-selectivos-en-tramite-00001"
+    },
+    {
+      "id": "OPO-0008",
+      "organism": "Junta de Andalucía · ámbito autonómico",
+      "title": "Personal laboral fijo · Grupo III · 19 categorías",
+      "places": 985,
+      "turn": "Acceso libre · concurso de méritos · sin examen",
+      "offer": "OEP 2024 y 2025",
+      "requirements": "Requisitos distintos según categoría: consulta el Anexo IV. Solicitud y autobaremación telemáticas por cada categoría. Los destinos se ofertarán posteriormente; no se garantizan plazas en Cádiz.",
+      "state": "open",
+      "publishedOn": "2026-10-01",
+      "boePublishedOn": "2026-10-01",
+      "officialBulletin": "BOJA",
+      "selectionSystem": "merit",
+      "period": "Solicitudes del 02/10 al 16/10/2026, ambos inclusive (10 días hábiles).",
+      "reviewBefore": "2026-10-17",
+      "reviewedOn": "2026-10-07",
+      "url": "https://www.juntadeandalucia.es/eboja/2026/191/BOJA26-191-00030-12770-01_00344000.pdf",
+      "boeUrl": "https://www.juntadeandalucia.es/boja/2026/191/37",
+      "categories": [
+        {
+          "title": "Analista de Laboratorio",
+          "places": 17
+        },
+        {
+          "title": "Conductor/a Mecánico/a de Primera",
+          "places": 1
+        },
+        {
+          "title": "Dirección de Cocina",
+          "places": 7
+        },
+        {
+          "title": "Encargado/a de Almacén",
+          "places": 11
+        },
+        {
+          "title": "Encargado/a de Artes Gráficas",
+          "places": 1
+        },
+        {
+          "title": "Jefe/a de Servicios Técnicos y/o Mantenimiento",
+          "places": 13
+        },
+        {
+          "title": "Monitor/a Escolar",
+          "places": 322
+        },
+        {
+          "title": "Oficial Primera Impresión y Manipulado de Artes Gráficas",
+          "places": 1
+        },
+        {
+          "title": "Oficial Primera Preimpresión Artes Gráficas",
+          "places": 2
+        },
+        {
+          "title": "Oficial Tractorista de Primera",
+          "places": 7
+        },
+        {
+          "title": "Personal Administrativo",
+          "places": 1
+        },
+        {
+          "title": "Personal de Interpretación e Información",
+          "places": 3
+        },
+        {
+          "title": "Personal Operador de Protección Civil y Telecomunicaciones",
+          "places": 3
+        },
+        {
+          "title": "Personal Técnico de Servicios en Centros",
+          "places": 7
+        },
+        {
+          "title": "Personal Técnico en Integración Social",
+          "places": 313
+        },
+        {
+          "title": "Personal Técnico en Integración Sociocultural",
+          "places": 32
+        },
+        {
+          "title": "Personal Técnico en Interpretación de Lengua de Signos",
+          "places": 1
+        },
+        {
+          "title": "Técnico/a Superior en Anatomía Patológica",
+          "places": 7
+        },
+        {
+          "title": "Técnico/a Superior de Educación Infantil",
+          "places": 236
+        }
+      ],
+      "details": "985 plazas del Anexo III.1. El Anexo III.2 prevé plazas adicionales con las condiciones de la base undécima; no se suman al total principal. Baremo máximo: experiencia 54, antigüedad 15, formación 19 y titulación 1 punto. Para solicitar la Bolsa Única hay que indicarlo expresamente en la solicitud.",
+      "applicationUrl": "https://portalempleopublico.juntadeandalucia.es/sede",
+      "processType": "merit",
+      "location": "Andalucía",
+      "qualificationFilter": "unknown",
+      "applicationsEndOn": "2026-10-16",
+      "deadlineSourceUrl": "https://www.juntadeandalucia.es/boja/2026/191/37",
+      "applicationNote": "Abre el expediente oficial y sigue el apartado de presentación de solicitudes de las bases. Comprueba identificación, documentación, tasas y justificante.",
+      "feesSourceUrl": "https://www.juntadeandalucia.es/boja/2026/191/37"
+    }
+  ]
+}

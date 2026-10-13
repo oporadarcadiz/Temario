@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "questions": {
+    "aux": {
+      "url": "",
+      "format": "json",
+      "schema": "oporadar-question-bank-v1"
+    },
+    "sub": {
+      "url": "",
+      "format": "json",
+      "schema": "oporadar-question-bank-v1"
+    }
+  }
+}
