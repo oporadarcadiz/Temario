@@ -1,0 +1,4 @@
+'use strict';
+const $=id=>document.getElementById(id),processId=new URLSearchParams(location.search).get('proceso'),labels={open:'Convocatoria abierta',lists:'Proceso en listas',exam:'Pendiente de examen',published:'Convocatoria publicada'};
+async function load(){try{const response=await fetch('/assets/convocatorias.json');if(!response.ok)throw Error();const data=await response.json(),item=(data.opportunities||[]).find(value=>value.id===processId);if(!item)throw Error();document.title=`${item.title} · OpoRadarCádiz`;$('route-organism').textContent=item.organism;$('route-title').textContent=item.title;$('route-state').textContent=`${labels[item.state]||'En seguimiento'} · ${item.period||'Consulta las bases oficiales.'}`;$('route-bases').href=item.url;$('route-loading').hidden=true;$('route-detail').hidden=false;}catch{$('route-loading').hidden=true;$('route-error').hidden=false;}}
+load();
