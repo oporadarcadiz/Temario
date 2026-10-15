@@ -1,0 +1,28 @@
+<!doctype html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b1f33"><title>Reproductor privado · Tema 1 | OpoRadarCádiz</title><style>:root{--night:#0b1f33;--gold:#e5b84b;--ink:#16334c}*{box-sizing:border-box}body{margin:0;min-height:100dvh;background:var(--night);font:16px/1.6 system-ui,-apple-system,Segoe UI,Arial,sans-serif;color:var(--ink);padding:22px 14px}main{max-width:690px;margin:auto;padding:clamp(22px,5vw,38px);background:#faf8f2;border-radius:20px}h1{font-size:clamp(28px,5vw,37px);line-height:1.2;margin:8px 0 12px}.brand{font-weight:900;color:#ad811d;font-size:13px;letter-spacing:.11em}a{color:#11618f}a.button{display:inline-block;background:var(--night);color:white;padding:12px 16px;border-radius:10px;text-decoration:none;font-weight:800;margin-top:8px}.status{background:#e8f0f5;border-radius:10px;padding:16px;margin:18px 0}.player{width:100%;margin-top:16px;max-height:75dvh}video.player{background:#000}.name{font-weight:900}</style></head><body><main>
+<div class="brand">OPORADARCÁDIZ · RADAR DIGITAL</div><h1>Tu recurso de estudio</h1><p id="label">Conectando con tu biblioteca privada…</p>
+<div class="status" id="status" role="status" aria-live="polite">Comprobando permisos…</div><div id="media"></div>
+<p><a class="button" href="../">Volver al Radar Digital</a></p>
+</main><script type="module">
+import {createClient} from "https://esm.sh/@supabase/supabase-js@2";
+const sb=createClient("https://jtyjdrrxmuppulbekfai.supabase.co","sb_publishable_-9m9ilEwGsM4tEBTVXS3FA_aRlVhNNc",{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+const known={"audios/repaso-completo.mp3":"Repaso completo del Tema 1","audios/01-fechas-y-mapa.mp3":"Audio 1 · Fechas y mapa","videos/01-fechas-y-mapa.mp4":"Vídeo 1 · Fechas y mapa"};
+const $=id=>document.getElementById(id);
+const resource=new URLSearchParams(location.search).get("recurso")||"";
+const valid=/^(audios|videos)\/[a-z0-9][a-z0-9._-]{0,90}\.(mp3|mp4|m4a|webm)$/i.test(resource);
+async function run(){
+ if(!valid){$("status").textContent="Recurso no encontrado. Vuelve al Radar Digital.";return}
+ $("label").textContent=known[resource]||resource.split("/").pop().replace(/[-_]/g," ");
+ const {data:{user},error:authError}=await sb.auth.getUser();
+ if(authError||!user){$("status").innerHTML='Debes <a href="../../acceso/">identificarte y activar tu compra</a> para escuchar o ver este material.';return}
+ const {data:grant,error}=await sb.from("tema1_access").select("active,expires_at").eq("user_id",user.id).maybeSingle();
+ if(error){$("status").textContent="No se han podido comprobar los permisos. Inténtalo más tarde.";return}
+ if(!grant?.active||(grant.expires_at&&Date.parse(grant.expires_at)<=Date.now())){$("status").innerHTML='Este recurso requiere una compra aprobada. <a href="../../acceso/">Consultar mi solicitud</a>.';return}
+ // Use short-lived signed URLs only after Supabase Storage validates the user's
+ // per-user RLS entitlement. Never expose permanent public URLs or service keys.
+ const {data:signed,error:linkError}=await sb.storage.from("tema1-premium").createSignedUrl(resource,600);
+ if(linkError||!signed?.signedUrl){$("status").textContent="En construcción. Vuelve pronto. Estamos preparando este recurso sin cambiar el QR del libro.";return}
+ const media=document.createElement(resource.startsWith("audios/")?"audio":"video");
+ media.controls=true;media.preload="metadata";media.className="player";media.src=signed.signedUrl;
+ $("media").replaceChildren(media);$("status").textContent="Recurso disponible para tu cuenta."; 
+}run().catch(()=>{$("status").textContent="No se pudo acceder a este recurso. Inténtalo más tarde."});
+</script></body></html>
