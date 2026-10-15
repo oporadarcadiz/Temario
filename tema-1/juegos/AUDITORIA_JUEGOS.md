@@ -64,3 +64,25 @@ Sesiones cortas; comprensión antes que memorización; corrección explicada; re
 - En modo Tarjetas del Centro Radar, pulsar **Acerté** ya no salta de inmediato a la siguiente pregunta: ahora el alumno debe pulsar **Siguiente**, igual que con **Dudé** y **Fallé**. Evita avances accidentales y mantiene una interacción coherente.
 - Mensajes de repaso y resultados corregidos para mencionar también las preguntas **sin responder**.
 - Verificado a nivel de código fuente y commit en GitHub; pendiente prueba integral en navegador y móvil.
+
+## Cotejo documental y control premium — 16/10/2026
+
+### Cuadernillo recuperado
+
+Fuente pública directa: https://www.sanlucardebarrameda.es/sites/default/files/EXAMEN%20CONSERJE%20CORREGIDO.pdf
+
+- `s22-08` corresponde a la **pregunta 23** del cuadernillo (169 artículos, opciones 167/166/169/168).
+- `s22-09` corresponde a la **pregunta 24** (nombre del Título I, con cuatro opciones).
+- `s22-13` corresponde a la **pregunta 48** (nombre del Título X, con cuatro opciones).
+- Enunciados y opciones cotejados contra el texto del PDF; **la solución marcada en la plantilla de respuestas todavía no se ha verificado de forma independiente**. No equiparar «texto cotejado» y «respuesta oficialmente validada».
+- Se retiraron provisionalmente de `literalIds` las preguntas `c25-01` y `g26-01` al no disponer de cotejo directo documental. Las demás preguntas se mantienen con estado de comprobación pendiente.
+- El Centro Radar muestra un estado documental específico, no un falso sello «EXAMEN REAL VERIFICADO».
+- Este cotejo no garantiza ausencia de erratas o pequeñas diferencias de normalización tipográfica; revalidar antes de uso editorial definitivo.
+
+### Protección de contenidos
+
+- Función desplegada en Supabase: `tema1-games-access` (`verify_jwt=true`) en el proyecto `jtyjdrrxmuppulbekfai`.
+- Valida JWT con Supabase Auth y consulta el permiso activo en `tema1_access` desde el servidor; deniega a personas sin autorización vigente.
+- **No entrega contenido de pago**: responde `content_ready:false`. Es únicamente una base de autorización preparada para integrar un banco privado.
+- **BLOQUEANTE DE VENTA COMO PREMIUM:** Los HTML y bancos de preguntas siguen públicos en GitHub/GitHub Pages/Netlify. Cualquier persona con el enlace puede acceder. No prometer exclusividad ni protección hasta trasladar preguntas y juegos fuera del repositorio público y probar autorización de extremo a extremo.
+- Las demostraciones actuales pueden seguir siendo públicas y accesibles para pruebas. Separar inequívocamente DEMO pública de paquete COMPLETO protegido cuando se complete la migración.
