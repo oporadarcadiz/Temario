@@ -1,0 +1,145 @@
+{
+  "name": "OpoRadarCádiz - BANDEJA TELEGRAM (sin IA)",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": ["message"],
+        "additionalFields": {
+          "download": true,
+          "chatIds": "466646695",
+          "userIds": "466646695"
+        }
+      },
+      "id": "telegram-trigger",
+      "name": "Recibir enlace o PDF",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [-520, 0],
+      "webhookId": "oporadar-bandeja-telegram-v1",
+      "credentials": {
+        "telegramApi": {
+          "id": "XoGo3qVdJTI64tbu",
+          "name": "Telegram OpoRadarCádiz"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "function hash(value){let h=2166136261;for(let i=0;i<value.length;i++){h^=value.charCodeAt(i);h=Math.imul(h,16777619);}return(h>>>0).toString(16).padStart(8,'0');}\nfunction firstUrl(value=''){const match=String(value).match(/https?:\\/\\/[^\\s<>\\\"']+/i);if(!match)return'';return match[0].replace(/[),.;!?]+$/,'');}\nconst input=$input.first();const update=input.json||{};const message=update.message||update.edited_message||{};const chatId=String(message.chat?.id||'');const userId=String(message.from?.id||'');const allowed='466646695';if(chatId!==allowed||userId!==allowed)return[];const text=String(message.text||message.caption||'').trim();const url=firstUrl(text);const fileKey=Object.keys(input.binary||{})[0]||'';const isPdf=Boolean(fileKey)&&/pdf/i.test(String(input.binary[fileKey]?.mimeType||input.binary[fileKey]?.fileExtension||''));if(!url&&!isPdf)return[{json:{guardar:false,chat_id:chatId,respuesta:'Envíame el enlace oficial de la oferta o un PDF. También puedes añadir una nota en el mismo mensaje.'}}];const now=new Date();const source=url||`telegram-pdf:${message.document?.file_unique_id||message.document?.file_id||fileKey}`;const id=`TG-${now.toISOString().slice(0,10).replace(/-/g,'')}-${hash(source)}`;return[{json:{guardar:true,chat_id:chatId,id_cola:`COLA-${id}`,id_candidato:id,organismo:'Pendiente de identificar',titulo:text.replace(url,'').trim()||(isPdf?'PDF enviado por Telegram':'Oferta enviada por Telegram'),url_fuente:url,motivo_bloqueo:'Entrada manual recibida por Telegram. Falta validar la fuente oficial y completar los datos antes de publicar.',campos_pendientes:'Organismo; puesto; vigencia; plazo; requisitos; retribución',correccion_manual:text,estado_revision:'Bloqueada — corrección necesaria',aprobacion:'Pendiente',notas_auditoria:`Recibida por Telegram. chat_id=${chatId}; user_id=${userId}; message_id=${message.message_id||''}; tipo=${isPdf?'PDF':'URL'}`,ultima_actualizacion:now.toISOString(),url_bases:url,fecha_revision:now.toISOString().slice(0,10),binary_key:fileKey,tipo_entrada:isPdf?'PDF':'URL',respuesta:`✅ Recibida para revisar\\n\\nID: ${id}\\n${url||'PDF adjunto'}\\n\\nNo se publicará hasta completar la ficha y aprobarla.`},binary:input.binary}];"
+      },
+      "id": "normalize-inbox",
+      "name": "Normalizar y proteger entrada",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-300, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2},
+          "conditions": [{"id": "guardar", "leftValue": "={{ $json.guardar }}", "rightValue": true, "operator": {"type": "boolean", "operation": "true", "singleValue": true}}],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "is-valid",
+      "name": "¿Es una oferta utilizable?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [-80, 0]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {"__rl": true, "value": "1ZQgy1FKOi8ksmkGWyqH3bsXRjXtK1Bq5KFzOQ4SPAEM", "mode": "id"},
+        "sheetName": {"__rl": true, "value": "COLA_REVISION", "mode": "name"},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID cola": "={{ $json.id_cola }}",
+            "ID candidato": "={{ $json.id_candidato }}",
+            "Organismo": "={{ $json.organismo }}",
+            "Título": "={{ $json.titulo }}",
+            "URL fuente": "={{ $json.url_fuente }}",
+            "Motivo de bloqueo": "={{ $json.motivo_bloqueo }}",
+            "Campos pendientes": "={{ $json.campos_pendientes }}",
+            "Corrección manual": "={{ $json.correccion_manual }}",
+            "Estado de revisión": "={{ $json.estado_revision }}",
+            "Aprobación de publicación": "={{ $json.aprobacion }}",
+            "Notas de auditoría": "={{ $json.notas_auditoria }}",
+            "Última actualización": "={{ $json.ultima_actualizacion }}",
+            "URL bases": "={{ $json.url_bases }}",
+            "Fecha revisión": "={{ $json.fecha_revision }}"
+          },
+          "matchingColumns": ["ID candidato"]
+        },
+        "options": {}
+      },
+      "id": "queue-sheet",
+      "name": "Guardar en COLA_REVISION",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [160, -80],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "IybxfpDm4MFkwdBf",
+          "name": "OpoRadarCadiz"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Normalizar y proteger entrada').item.json.chat_id }}",
+        "text": "={{ $('Normalizar y proteger entrada').item.json.respuesta }}",
+        "additionalFields": {"appendAttribution": false, "disable_web_page_preview": true}
+      },
+      "id": "telegram-receipt",
+      "name": "Confirmar recepción",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [420, -80],
+      "credentials": {
+        "telegramApi": {
+          "id": "XoGo3qVdJTI64tbu",
+          "name": "Telegram OpoRadarCádiz"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "={{ $json.respuesta }}",
+        "additionalFields": {"appendAttribution": false, "disable_web_page_preview": true}
+      },
+      "id": "telegram-help",
+      "name": "Explicar formato admitido",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [160, 100],
+      "credentials": {
+        "telegramApi": {
+          "id": "XoGo3qVdJTI64tbu",
+          "name": "Telegram OpoRadarCádiz"
+        }
+      }
+    },
+    {
+      "parameters": {"content": "## Bandeja manual de OpoRadarCádiz\n- Solo acepta mensajes del chat y usuario autorizados.\n- Acepta un enlace oficial o un PDF.\n- Deduplica enlaces por ID estable.\n- Guarda todo bloqueado y pendiente: nunca publica directamente.\n- No usa ningún modelo ni consume créditos de IA.", "height": 260, "width": 520},
+      "id": "note",
+      "name": "SEGURIDAD Y COSTE",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-520, -330]
+    }
+  ],
+  "connections": {
+    "Recibir enlace o PDF": {"main": [[{"node": "Normalizar y proteger entrada", "type": "main", "index": 0}]]},
+    "Normalizar y proteger entrada": {"main": [[{"node": "¿Es una oferta utilizable?", "type": "main", "index": 0}]]},
+    "¿Es una oferta utilizable?": {"main": [[{"node": "Guardar en COLA_REVISION", "type": "main", "index": 0}], [{"node": "Explicar formato admitido", "type": "main", "index": 0}]]},
+    "Guardar en COLA_REVISION": {"main": [[{"node": "Confirmar recepción", "type": "main", "index": 0}]]}
+  },
+  "pinData": {},
+  "active": false,
+  "settings": {"executionOrder": "v1", "timezone": "Europe/Madrid"},
+  "tags": []
+}
