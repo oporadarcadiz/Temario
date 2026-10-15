@@ -2,6 +2,24 @@
   "name": "OpoRadarCádiz - BANDEJA TELEGRAM (sin IA)",
   "nodes": [
     {
+      "parameters": {},
+      "id": "manual-test-trigger",
+      "name": "Prueba manual controlada",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [-760, 220]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{json:{message:{message_id:999999,from:{id:466646695},chat:{id:466646695},text:'PRUEBA CONTROLADA — https://www.bopcadiz.es/.boletines_pdf/2026/10_octubre/BOP197_13-10-26.pdf'}}}];"
+      },
+      "id": "manual-test-data",
+      "name": "Datos de prueba oficial",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-530, 220]
+    },
+    {
       "parameters": {
         "updates": ["message"],
         "additionalFields": {
@@ -133,6 +151,12 @@
     }
   ],
   "connections": {
+    "Prueba manual controlada": {
+      "main": [[{"node": "Datos de prueba oficial", "type": "main", "index": 0}]]
+    },
+    "Datos de prueba oficial": {
+      "main": [[{"node": "Normalizar y proteger entrada", "type": "main", "index": 0}]]
+    },
     "Recibir enlace o PDF": {"main": [[{"node": "Normalizar y proteger entrada", "type": "main", "index": 0}]]},
     "Normalizar y proteger entrada": {"main": [[{"node": "¿Es una oferta utilizable?", "type": "main", "index": 0}]]},
     "¿Es una oferta utilizable?": {"main": [[{"node": "Guardar en COLA_REVISION", "type": "main", "index": 0}], [{"node": "Explicar formato admitido", "type": "main", "index": 0}]]},
