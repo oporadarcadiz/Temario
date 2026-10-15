@@ -1,6 +1,12 @@
 <!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Radar Digital · Constitución · OpoRadarCádiz</title><meta name="theme-color" content="#0b1f33"><style>
 :root{--n:#0b1f33;--g:#e5b84b;--w:#f7f6f3;--ink:#163047}*{box-sizing:border-box}body{margin:0;background:var(--n);color:var(--ink);font:16px/1.5 system-ui,sans-serif}main{max-width:900px;margin:24px auto;padding:24px;background:var(--w);border-radius:20px}header{border-bottom:2px solid #e1dfda;padding-bottom:17px}h1{font-size:clamp(29px,5vw,43px);letter-spacing:-.035em;line-height:1.1;margin:10px 0}h2{font-size:21px;margin:14px 0}p{margin:7px 0 15px}.note{color:#5b6b75}.eyebrow{color:#a87915;font-weight:800;font-size:12px;letter-spacing:.13em}nav{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}nav a,.btn{display:inline-block;border-radius:10px;background:var(--n);color:white;padding:10px 14px;text-decoration:none;font-weight:700}nav a:focus-visible,a:focus-visible{outline:3px solid var(--g);outline-offset:3px}section{border-top:1px solid #dedbd4;padding-top:18px;margin-top:25px}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}.item{background:#fff;border:1px solid #ddd;border-radius:13px;padding:16px}.item strong{display:block;color:var(--n);font-size:17px}.page{font-size:12px;font-weight:800;color:#667685;letter-spacing:.02em}.chip{font-size:12px;background:#f4eddb;color:#795917;border-radius:20px;padding:4px 9px;font-weight:700;display:inline-block;margin:5px 0}.item a{color:#115b9a;font-weight:700}.f{background:#eef2f4;border-radius:13px;padding:15px;margin-top:20px}.f strong{color:var(--n)}footer{margin-top:30px;font-size:13px;color:#667685}@media(max-width:600px){main{margin:0;border-radius:0;padding:20px}nav a{flex:1;text-align:center}}
-</style></head><body><main><header><div class="eyebrow">OPORADARCÁDIZ · TEMA 1</div><h1>Tu Radar Digital</h1><p>La Constitución Española, a tu ritmo. Escucha cuando no tengas el libro, mira explicaciones y practica al avanzar.</p></header>
+[hidden]{display:none!important}.gate{background:#fff;border:1px solid #d9e1e5;box-shadow:0 12px 30px #091c2e10;border-radius:16px;padding:24px;margin:16px 0}.gate h2{color:#0b1f33;font-size:24px}.gate .actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:14px}.gate .secondary{background:#dfe9ee;color:#0b1f33}.gate small{display:block;color:#697782;margin-top:12px}
+</style></head><body><section class="gate" id="gate" role="status" aria-live="polite">
+<h2 id="gateTitle">Comprobando tu acceso…</h2>
+<p id="gateDescription">Conectando con OpoRadarCádiz de forma segura.</p>
+<div class="actions"><a href="../acceso/" class="btn" id="gateLogin" hidden>Identificarme o solicitar acceso →</a><button id="gateLogout" class="btn secondary" type="button" hidden>Cerrar sesión</button></div>
+<small>El QR del libro siempre conduce a esta dirección. Los recursos se activan al verificar la compra.</small>
+</section><main id="radarContent" hidden><header><div class="eyebrow">OPORADARCÁDIZ · TEMA 1</div><h1>Tu Radar Digital</h1><p>La Constitución Española, a tu ritmo. Escucha cuando no tengas el libro, mira explicaciones y practica al avanzar.</p></header>
 <nav><a href="#escuchar">🎧 Escuchar</a><a href="#ver">🎬 Ver</a><a href="#jugar">🎮 Jugar</a><a href="#entrenar">📝 Entrenar</a></nav>
 <div class="f"><strong>¿Has comprado el Tema 1?</strong><p>Solicita tu acceso personal con el correo y el número de pedido. La activación se realiza después de verificar la compra.</p><a class="btn" href="../acceso/">Solicitar acceso personal →</a><p class="note">Durante la puesta a punto del sistema, algunos recursos pueden seguir siendo accesibles sin iniciar sesión. El control de compra todavía no está completo.</p></div><section id="escuchar"><h2>🎧 Audios · Escucha sin abrir el libro</h2><p class="note">El acceso estará siempre aquí. Los archivos que aún no estén publicados mostrarán «En construcción. Vuelve pronto».</p><div class="cards">
 <div class="item"><span class="page">PÁGS. 2–6</span><strong>Fechas, mapa y Título Preliminar</strong><span class="chip">Audios 1 y 2</span><p><a href="../audios/">Escuchar / Ver estado →</a></p></div>
@@ -23,4 +29,30 @@
 <section id="entrenar"><h2>📝 Entrenamiento final</h2><div class="cards"><div class="item"><span class="page">AL TERMINAR PÁG. 24</span><strong>Entrenamiento Radar</strong><p>Elige 20, 30 o 40 preguntas. Guarda fallos y dudas. Cada pregunta se etiqueta según su procedencia.</p><a href="../juegos/nivel3-test.html">Entrenar →</a></div><div class="item"><span class="page">MATERIAL DE CONSULTA</span><strong>Constitución en el BOE</strong><p>Consulta el texto consolidado.</p><a href="https://www.boe.es/buscar/act.php?id=BOE-A-1978-31229">Abrir BOE →</a></div></div></section>
 <div class="f"><strong>¿Estudias en el coche o caminando?</strong><p>Guarda esta página en Favoritos del móvil. Cuando estén publicados los audios, podrás acceder a todos sin buscar ni escanear el libro. No manipules el teléfono mientras conduces.</p></div>
 <footer>OpoRadarCádiz · Esta dirección es permanente. Los materiales pendientes se activarán progresivamente.</footer>
-</main></body></html>
+</main><script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+const client=createClient("https://jtyjdrrxmuppulbekfai.supabase.co","sb_publishable_-9m9ilEwGsM4tEBTVXS3FA_aRlVhNNc",{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+const el=id=>document.getElementById(id);
+function locked(title,description,loggedIn){
+  el("radarContent").hidden=true;el("gate").hidden=false;
+  el("gateTitle").textContent=title;el("gateDescription").textContent=description;
+  el("gateLogin").hidden=false;el("gateLogout").hidden=!loggedIn;
+}
+let running=false;
+async function verify(){
+  if(running)return;running=true;
+  try{
+    const {data:{user},error}=await client.auth.getUser();
+    if(error||!user){locked("Acceso personal al Radar Digital","Identifícate por correo. Si compraste el libro, podrás solicitar la activación con tu referencia de pedido.",false);return;}
+    const {data:grant,error:accessError}=await client.from("tema1_access").select("active,expires_at").eq("user_id",user.id).maybeSingle();
+    if(accessError){locked("No se pudo verificar tu permiso","No podemos consultar tu cuenta ahora. Prueba de nuevo más tarde.",true);return;}
+    const allowed=grant?.active===true&&(!grant.expires_at||Date.parse(grant.expires_at)>Date.now());
+    if(!allowed){locked("Tu acceso está pendiente","Tu cuenta está identificada, pero todavía no tiene una compra aprobada para el Tema 1.",true);return;}
+    el("gate").hidden=true;el("radarContent").hidden=false;
+  }catch(_){locked("Acceso temporalmente no disponible","No hemos podido comprobar tu autorización. Inténtalo más tarde.",false)}
+  finally{running=false}
+}
+el("gateLogout").addEventListener("click",async()=>{await client.auth.signOut();verify()});
+client.auth.onAuthStateChange(()=>{queueMicrotask(()=>verify())});
+verify();
+</script></body></html>
