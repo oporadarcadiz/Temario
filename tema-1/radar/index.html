@@ -53,6 +53,6 @@ async function verify(){
   finally{running=false}
 }
 el("gateLogout").addEventListener("click",async()=>{await client.auth.signOut();verify()});
-client.auth.onAuthStateChange(()=>{queueMicrotask(()=>verify())});
+client.auth.onAuthStateChange(()=>{setTimeout(verify,0)});
 verify();
 </script></body></html>
