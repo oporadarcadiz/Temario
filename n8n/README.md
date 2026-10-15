@@ -13,3 +13,5 @@ Controles incluidos:
 - confirma en Telegram que el material se ha recibido.
 
 El flujo se importa desactivado. Antes de publicarlo hay que probar un enlace, un PDF, un mensaje sin enlace y un mensaje de un usuario no autorizado. La aprobación y la escritura en la web deben añadirse después de verificar las credenciales de Telegram, Google Sheets y Supabase en la instancia real.
+
+Incluye una rama `Prueba manual controlada` con un enlace oficial del BOP de Cádiz. Sirve para validar el recorrido completo hasta Google Sheets y el acuse de Telegram sin activar el trigger. La fila de prueba debe retirarse de `COLA_REVISION` después de documentar la ejecución.
