@@ -58,3 +58,9 @@ Sesiones cortas; comprensión antes que memorización; corrección explicada; re
 - Las fichas tipo tarjeta del Centro Radar, al marcarlas como fallo o duda, emplean una explicación constitucional disponible (`q.explanation`) en vez de presentar la nota documental de procedencia como explicación.
 - Cambios verificados mediante lectura del código actualizado en GitHub; **no equivalen a prueba funcional en Safari/Chrome ni a cotejo jurídico exhaustivo**.
 - Preguntas a cotejar prioritariamente antes de certificarlas literales: `g26-01`, `c25-01`, `s22-08`, `s22-09` y `s22-13`. Deben compararse con PDF fuente, opciones, plantilla correctora y organismo.
+
+## Ajustes de uso (16/10/2026)
+
+- En modo Tarjetas del Centro Radar, pulsar **Acerté** ya no salta de inmediato a la siguiente pregunta: ahora el alumno debe pulsar **Siguiente**, igual que con **Dudé** y **Fallé**. Evita avances accidentales y mantiene una interacción coherente.
+- Mensajes de repaso y resultados corregidos para mencionar también las preguntas **sin responder**.
+- Verificado a nivel de código fuente y commit en GitHub; pendiente prueba integral en navegador y móvil.
