@@ -1,0 +1,84 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Pedidos Tema 1 · Administración OpoRadarCádiz</title><style>
+:root{--navy:#0b1f33;--gold:#e5b84b;--ink:#123450}*{box-sizing:border-box}
+body{background:var(--navy);color:var(--ink);font:16px/1.5 system-ui,sans-serif;padding:20px;margin:0}
+main{margin:0 auto;max-width:1120px;background:#faf8f2;border-radius:20px;padding:clamp(18px,4vw,38px)}
+h1{line-height:1.15;margin:8px 0 16px}p{color:#536576}
+.brand{font-size:12px;font-weight:900;letter-spacing:.12em;color:#a67c25}
+.notice{background:#fff3d7;border-left:5px solid var(--gold);padding:13px;border-radius:10px}
+.status{padding:12px 16px;background:#ecf0f3;border-radius:11px;margin:16px 0}label{display:block;margin:8px 0 5px;font-weight:700}
+textarea{width:100%;font:inherit;min-height:76px;border:1px solid #aab7c1;padding:9px;border-radius:9px;resize:vertical}
+button{cursor:pointer;border:0;border-radius:9px;background:var(--navy);color:white;font:inherit;font-weight:700;padding:10px 15px}
+button:disabled{cursor:wait;opacity:.6}a{color:#1266a0}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+button.bad{background:#922834}table{width:100%;border-collapse:collapse;font-size:14px}th,td{border-bottom:1px solid #dbe1e4;text-align:left;padding:11px;vertical-align:top;max-width:260px;overflow-wrap:anywhere}
+th{background:#eef2f4}.scroll{overflow:auto}.review{min-width:245px}
+small{color:#657583}strong{font-weight:900}
+[hidden]{display:none!important}button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+</style></head><body><main>
+<div class="brand">OPORADARCÁDIZ · ADMINISTRACIÓN PRIVADA</div>
+<h1>Solicitudes de acceso · Tema 1</h1>
+<p>Revisa el justificante del pago en el canal correspondiente antes de aprobarlo. El número de pedido no constituye una prueba automática.</p>
+<div class="notice"><strong>Seguridad:</strong> ninguna compra se activa sola. La aprobación es individual y se registra con una nota de comprobación. Si no puedes demostrar que se pagó, no apruebes la solicitud.</div>
+<div id="state" class="status" role="status" aria-live="polite">Comprobando sesión…</div>
+<div class="actions"><button id="refresh" hidden>Actualizar solicitudes</button><a id="login" href="../../acceso/" hidden>Iniciar sesión por correo →</a></div>
+<div class="scroll"><table id="table" hidden><thead><tr><th>Fecha</th><th>Comprador</th><th>Canal</th><th>N.º de pedido</th><th>Estado</th><th>Revisión</th></tr></thead><tbody id="body"></tbody></table></div>
+<p><small>Los recursos permanecerán bloqueados hasta que figure una autorización activa en Supabase. Panel visible solo para administración autorizada.</small></p>
+</main><script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+const sb=createClient("https://jtyjdrrxmuppulbekfai.supabase.co","sb_publishable_-9m9ilEwGsM4tEBTVXS3FA_aRlVhNNc",{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+const el=id=>document.getElementById(id);
+const state=message=>el("state").textContent=message;
+let claims=[];
+function td(row,value){let cell=document.createElement("td");cell.textContent=value==null?"—":String(value);row.append(cell);return cell}
+async function load(){
+  state("Recuperando solicitudes…");
+  el("refresh").disabled=true;
+  try{
+    const {data,error}=await sb.functions.invoke("tema1-orders-admin",{method:"GET"});
+    if(error||!data?.claims){state("No se pudo consultar las solicitudes. Comprueba tu sesión y tus permisos.");return}
+    claims=data.claims;
+    el("table").hidden=false;el("body").replaceChildren();
+    if(!claims.length){state("No hay solicitudes todavía.");return}
+    state("Solicitudes recibidas: "+claims.length+". Pendientes: "+claims.filter(x=>x.status==="pending").length+".");
+    for(const claim of claims){
+      const row=document.createElement("tr");
+      td(row,new Date(claim.submitted_at).toLocaleString("es-ES"));
+      td(row,claim.buyer_email||claim.user_id);
+      td(row,claim.channel==="amazon"?"Amazon":"Web");
+      td(row,claim.order_reference);
+      td(row,claim.status);
+      const actionCell=td(row,"");actionCell.className="review";
+      if(claim.status==="pending"){
+        const label=document.createElement("label");label.textContent="Nota de verificación";
+        const note=document.createElement("textarea");note.placeholder="Qué prueba de compra has revisado (mínimo 8 caracteres)";
+        const actions=document.createElement("div");actions.className="actions";
+        for(const [key,caption,bad] of [["approve","Aprobar",false],["reject","Rechazar",true]]){
+          const btn=document.createElement("button");btn.textContent=caption;if(bad)btn.className="bad";
+          btn.onclick=()=>review(claim.id,key,note.value,btn);actions.append(btn)
+        }
+        actionCell.replaceChildren(label,note,actions);
+      }else{
+        actionCell.textContent=claim.reviewer_note||"Revisada";
+      }
+      el("body").append(row);
+    }
+  }catch(e){state("Error temporal de conexión. Vuelve a intentarlo.")}
+  finally{el("refresh").disabled=false}
+}
+async function review(id,action,note,btn){
+  if(note.trim().length<8){state("Describe la comprobación del pedido antes de aprobar o rechazar.");return}
+  const verb=action==="approve"?"aprobar":"rechazar";
+  if(!confirm("¿Confirmas "+verb+" esta solicitud?"))return;
+  btn.disabled=true;state("Guardando revisión…");
+  try{
+    const {data,error}=await sb.functions.invoke("tema1-orders-admin",{method:"POST",body:{id,action,note:note.trim()}});
+    if(error||!data?.ok){state(data?.error||"No se pudo guardar la revisión.");return}
+    await load();
+  }catch(e){state("No se pudo completar la operación.")}
+  finally{btn.disabled=false}
+}
+el("refresh").onclick=load;
+const {data:{user},error}=await sb.auth.getUser();
+if(error||!user){state("Identifícate con tu cuenta de administración para continuar.");el("login").hidden=false}
+else if(user.email?.toLowerCase()!=="oporadarcadiz@gmail.com"){state("Esta cuenta no tiene autorización administrativa. Comprueba con qué correo has iniciado sesión.")}
+else{el("refresh").hidden=false;await load()}
+</script></body></html>
