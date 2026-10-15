@@ -1,0 +1,48 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b1f33"><title>Biblioteca privada · Tema 1 | OpoRadarCádiz</title><style>:root{--navy:#0b1f33;--gold:#e5b84b;--ink:#19354c;--muted:#607283}*{box-sizing:border-box}body{background:var(--navy);font:16px/1.55 system-ui,sans-serif;color:var(--ink);margin:0;padding:20px 12px}main{max-width:960px;margin:0 auto;background:#faf8f2;border-radius:22px;padding:clamp(18px,4vw,42px)}h1{font-size:clamp(29px,5vw,40px);line-height:1.1;margin:9px 0}h2{font-size:24px;color:var(--navy)}a{color:#075e99}.brand{color:#a2771c;font-weight:900;font-size:12px;letter-spacing:.1em}.status{background:#eaf1f5;border-radius:11px;padding:14px;margin:18px 0}.tabs{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}button,.button{font:inherit;border:0;border-radius:11px;background:var(--navy);color:white;font-weight:800;padding:12px 15px;cursor:pointer}button.secondary{background:#dae7ee;color:#23445c}.list{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}.item{padding:17px;background:white;border:1px solid #dce3e7;border-radius:13px}.item strong{display:block;margin-bottom:6px}.item .name{color:var(--muted);font-size:13px}audio,video{display:block;width:100%;max-height:65dvh;margin:15px 0}.small{font-size:13px;color:var(--muted)}.player{background:#fff;padding:18px;border-radius:14px;border:1px solid #dce3e7;margin-top:20px}a:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}[hidden]{display:none!important}</style></head><body><main>
+<div class="brand">OPORADARCÁDIZ · TEMA 1</div><h1>Tu biblioteca digital</h1><p>Escucha la Constitución por capítulos, incluso sin tener el libro a mano. Los vídeos y audios nuevos aparecen automáticamente aquí cuando se publican.</p>
+<div class="status" id="status" aria-live="polite">Comprobando acceso personal…</div>
+<div id="library" hidden>
+<div class="tabs"><button id="showAudios">🎧 Audios</button><button id="showVideos" class="secondary">🎬 Vídeos</button></div>
+<div id="playlist" class="list"></div>
+<div id="playerbox" class="player" hidden><h2 id="playingTitle">Reproduciendo</h2><div id="media"></div><button id="next" class="secondary" hidden>Siguiente audio →</button><p class="small">Los archivos se sirven desde una biblioteca privada con autorización individual.</p></div>
+</div><p><a href="../">← Volver al Radar Digital</a></p>
+</main><script type="module">
+import {createClient} from "https://esm.sh/@supabase/supabase-js@2";
+const sb=createClient("https://jtyjdrrxmuppulbekfai.supabase.co","sb_publishable_-9m9ilEwGsM4tEBTVXS3FA_aRlVhNNc",{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+const $=id=>document.getElementById(id);
+let items=[],type="audios",index=-1;
+const friendly=name=>name.replace(/\.(mp3|m4a|mp4|webm)$/i,"").replace(/^\d{2}[-_]/,"").replace(/[-_]/g," ").replace(/\b\p{L}/gu,ch=>ch.toUpperCase());
+async function access(){
+ const {data:{user}}=await sb.auth.getUser();
+ if(!user){$("status").innerHTML='Para entrar debes <a href="../../acceso/">identificarte con tu correo</a>.';return false}
+ const {data:grant,error}=await sb.from("tema1_access").select("active,expires_at").eq("user_id",user.id).maybeSingle();
+ if(error){$("status").textContent="No se puede verificar tu acceso ahora.";return false}
+ const ok=grant?.active===true&&(!grant.expires_at||Date.parse(grant.expires_at)>Date.now());
+ if(!ok){$("status").innerHTML='Tu compra está pendiente de aprobación. <a href="../../acceso/">Consultar mi solicitud</a>.';return false}
+ $("library").hidden=false;return true;
+}
+async function list(folder){
+ type=folder;index=-1;$("playerbox").hidden=true;$("media").replaceChildren();$("playlist").replaceChildren();
+ $("showAudios").className=folder==="audios"?"":"secondary";
+ $("showVideos").className=folder==="videos"?"":"secondary";
+ const {data,error}=await sb.storage.from("tema1-premium").list(folder,{limit:100,sortBy:{column:"name",order:"asc"}});
+ if(error){$("status").textContent="No se pudo cargar la biblioteca. Inténtalo más tarde.";return}
+ items=(data||[]).filter(x=>folder==="audios"?/\.(mp3|m4a)$/i.test(x.name):/\.(mp4|webm)$/i.test(x.name)).map(x=>({name:x.name,path:folder+"/"+x.name,title:friendly(x.name)}));
+ $("status").textContent=items.length?items.length+" recursos disponibles. Elige uno para empezar.":"En construcción. Vuelve pronto. Los nuevos recursos aparecerán aquí sin cambiar el QR.";
+ items.forEach((x,i)=>{const d=document.createElement("div");d.className="item";const strong=document.createElement("strong");strong.textContent=(i+1)+". "+x.title;const p=document.createElement("p");p.className="name";p.textContent=folder==="audios"?"Escuchar audio":"Ver vídeo";const b=document.createElement("button");b.textContent="▶ "+(folder==="audios"?"Escuchar":"Reproducir");b.onclick=()=>play(i);d.append(strong,p,b);$("playlist").append(d)});
+}
+async function play(i){
+ const entry=items[i];if(!entry)return;
+ $("status").textContent="Preparando reproducción privada…";
+ const {data,error}=await sb.storage.from("tema1-premium").createSignedUrl(entry.path,3600);
+ if(error||!data?.signedUrl){$("status").textContent="No se pudo abrir el recurso. Verifica tu sesión o vuelve más tarde.";return}
+ index=i;$("playerbox").hidden=false;$("playingTitle").textContent=entry.title;
+ const player=document.createElement(type==="audios"?"audio":"video");player.controls=true;player.preload="metadata";player.src=data.signedUrl;player.style.width="100%";
+ $("media").replaceChildren(player);$("next").hidden=type!=="audios"||i===items.length-1;
+ player.onended=()=>{if(type==="audios"&&index+1<items.length)play(index+1)};
+ $("status").textContent="Reproduciendo "+entry.title;
+ try{await player.play()}catch(_){}$("playerbox").scrollIntoView({behavior:"smooth",block:"center"});
+}
+$("next").onclick=()=>play(index+1);$("showAudios").onclick=()=>list("audios");$("showVideos").onclick=()=>list("videos");
+if(await access()){list(location.hash==="#videos"?"videos":"audios")}
+</script></body></html>
