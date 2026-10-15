@@ -51,3 +51,10 @@ Inspirarse en fichas, repaso espaciado, simulacros, microjuegos, progreso y téc
 ## Principios de diseño
 
 Sesiones cortas; comprensión antes que memorización; corrección explicada; repetir fallos y dudas; modo concentración; progreso visible sin premios vacíos. Preguntas oficiales, adaptadas y creadas siempre diferenciadas.
+
+## Revisión de procedencia y mensajes del juego (16/10/2026)
+
+- En Centro Radar, las cinco preguntas marcadas provisionalmente como literales en `literalIds` **no se presentan como literalidad verificada**. La interfaz muestra ahora `BANCO ATRIBUIDO · LITERALIDAD SIN COTEJAR`, con explicación de que debe contrastarse el cuadernillo.
+- Las fichas tipo tarjeta del Centro Radar, al marcarlas como fallo o duda, emplean una explicación constitucional disponible (`q.explanation`) en vez de presentar la nota documental de procedencia como explicación.
+- Cambios verificados mediante lectura del código actualizado en GitHub; **no equivalen a prueba funcional en Safari/Chrome ni a cotejo jurídico exhaustivo**.
+- Preguntas a cotejar prioritariamente antes de certificarlas literales: `g26-01`, `c25-01`, `s22-08`, `s22-09` y `s22-13`. Deben compararse con PDF fuente, opciones, plantilla correctora y organismo.
