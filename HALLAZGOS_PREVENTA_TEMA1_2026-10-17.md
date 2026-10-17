@@ -4,12 +4,14 @@ Fecha: 17 de octubre de 2026.
 
 ## Decisión editorial
 
-No usar como fuente de publicación ninguno de los PDF locales etiquetados como KDP:
+La revisión posterior ha identificado un modelo editorial más reciente que el PDF de 26 páginas con cuadrícula de iconos.
 
-- `OpoRadarCadiz_Tema_1_KDP_LISTO_PARA_PUBLICAR.pdf` tiene 27 páginas y en su página 1 no está el QR de Radar Digital.
+- `OpoRadarCadiz_Tema_1_KDP_LISTO_PARA_PUBLICAR.pdf` es la base visual moderna: mantiene la guía sin iconos, pero tiene 27 páginas, no incorpora el QR de Radar Digital en la página 1 y contiene QR heredados que no cumplen la regla de dos QR.
 - `OpoRadarCadiz_Tema_1_KDP_DOS_QR_FINAL.pdf` tiene 26 páginas, pero recupera la cuadrícula de iconos retirada de la guía de uso. No coincide con la versión editorial actual.
 
-El original `OpoRadarCadiz_Tema_1_DOS_QR_EXTRAS_SABER_MAS.pdf` no está en la copia del proyecto ni en la carpeta de Drive actualmente accesible. Recuperarlo es un bloqueo previo a cualquier exportación KDP o digital.
+De la base visual moderna se ha generado localmente un candidato de 26 páginas, conservando las dos páginas de notas y limitando los QR a Radar Digital (página 1) y Saber más (página 2). Aún no debe publicarse: los dos destinos exigidos siguen sin estar operativos en Netlify.
+
+El original `OpoRadarCadiz_Tema_1_DOS_QR_EXTRAS_SABER_MAS.pdf` no está en la copia del proyecto ni en la carpeta de Drive actualmente accesible. Su ausencia no impide conservar la composición moderna, pero sí impide comparar contra ese archivo histórico concreto.
 
 ## Web y seguridad
 
@@ -20,4 +22,4 @@ El original `OpoRadarCadiz_Tema_1_DOS_QR_EXTRAS_SABER_MAS.pdf` no está en la co
 
 ## No activar todavía
 
-No activar venta, pagos, entregas ni publicación KDP hasta recuperar el PDF fuente correcto, superar su revisión integral y completar una prueba de acceso autorizado de extremo a extremo.
+No activar venta, pagos, entregas ni publicación KDP hasta que los dos destinos QR vuelvan a responder, se complete la revisión integral del PDF candidato y se supere una prueba de acceso autorizado de extremo a extremo.
