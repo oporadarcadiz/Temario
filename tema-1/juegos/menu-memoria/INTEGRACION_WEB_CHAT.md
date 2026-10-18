@@ -13,7 +13,7 @@ Actualizado: 18/10/2026. Esta rama es una propuesta. No se ha modificado la rama
 
 ## Integración solicitada a Web Chat
 
-1. Integrar **los tres HTML nuevos** de esta rama en el despliegue del repositorio `Temario`, conservando el resto del trabajo de Web Chat (`preventa-tema1-seguridad`).
+1. Integrar **los archivos modificados y nuevos de esta rama** de esta rama en el despliegue del repositorio `Temario`, conservando el resto del trabajo de Web Chat (`preventa-tema1-seguridad`).
 2. En la sección **Juegos y actividades** de `tema-1/radar/index.html` añadir **un enlace destacado** a `../juegos/menu-memoria/` («Ver todos los entrenamientos de memoria»). Mantener enlaces individuales ya existentes o sustituirlos solo tras inspección de accesibilidad.
 3. No alterar la ruta permanente del QR Radar Digital `/tema-1/radar/`, Saber más `/tema-1/saber-mas/`, ni la maquetación de las 47 páginas. El menú es un destino secundario y no requiere QR nuevo.
 4. No añadir Audios/Vídeos al menú de juegos. No configurar contraseñas, pasarela ni Supabase en esta tarea.
@@ -51,3 +51,14 @@ Prototipo jugable EN REVISIÓN: «Artículo en imagen». En construcción: «Ima
 - Menú enlaza al HTML real; los 4 pendientes restantes enlazan a su ficha; sin contraseñas.
 - Pruebas de navegación por navegador móvil real, sincronización, y lectura de todos los gráficos SVG siguen **pendientes**. No equivale a prueba de uso en iOS/Android.
 - El ejemplo de soberanía art. 1.2, bandera 4.1, igualdad 14, domicilio 18.2, participación 23.1, enseñanza 27.4, Cortes 66.1 y municipio 140 proviene de los bloques del PDF de 47 páginas (nivel 3). No adicionar artículos ni presentar preguntas como exámenes oficiales.
+
+## Avance funcional adicional · 18/10/2026
+
+- Entrada histórica `tema-1/juegos/index.html`: sustituido el texto antiguo «no hay índice público» por redirección accesible al menú `menu-memoria/`. **La decisión actual es que SÍ habrá menú de juegos**.
+- `tema-1/juegos/fichas-radar.html`: pulsar Acerté/Dudé/Fallé registra la valoración pero deja visible la respuesta hasta pulsar el botón nuevo «Siguiente ficha». No se modifica su banco.
+- Repo `Tarjetas-repaso`, PR https://github.com/oporadarcadiz/Tarjetas-repaso/pull/1: `Traduce el jurídico` mantiene su explicación visible tras marcar; botón manual «Siguiente tarjeta». Esta PR es **separada y en borrador**; no asumir desplegada.
+- Menú ampliado a **20 recursos**: añade detector verdadero/falso y las 13 tarjetas de vocabulario existentes; no crea una colección nueva.
+- Están redactados 8 encargos coherentes para Gemini en `PROMPTS_ILUSTRACIONES_GEMINI.md`, para los artículos 1.2, 4.1, 14, 18.2, 23.1, 27.4, 66.1 y 140. Reemplazo de SVG solo tras validación de imágenes, no automático.
+- En `Tarjetas-repaso` también existe un Test Radar antiguo alimentado por Google Sheets. No se ha integrado directamente como entrada nueva hasta verificar demo/banco y no exponer preguntas comerciales: el menú enlaza el Test Tema 1 existente.
+- Verificaciones de código fuente: el JS modificado compila, no hay IDs HTML duplicados ni referencias DOM a IDs ausentes. Esto NO equivale a ejecutar los juegos en Chrome/Safari.
+- Todas las operaciones están en ramas y solicitudes de integración en borrador; no se tocaron bancos, PDF, QR, autenticación, pagos ni flujos n8n.
