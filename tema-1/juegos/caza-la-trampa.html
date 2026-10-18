@@ -28,7 +28,7 @@
 </head>
 <body>
 <div class="bg"><div class="shell">
-<header class="header"><div class="brand">OpoRadar<b>Cádiz</b><span>Tema 1 · Constitución Española</span></div></header>
+<header class="header"><div class="brand">OpoRadar<b>Cádiz</b><span>Tema 1 · Constitución Española</span></div><a class="home" href="menu-memoria/" aria-label="Volver al menú de juegos del Tema 1">← Menú de juegos</a></header>
 <div class="surface"><div class="hero"><div class="eyebrow">Nivel 3 · Desafío de precisión</div><h1>CAZA LA <span class="yellow">TRAMPA</span></h1><p>Dos afirmaciones son correctas y una contiene un error. ¿Detectarás la trampa antes de que te engañe?</p></div>
 <div class="content">
 <section class="screen" id="startScreen">
@@ -121,7 +121,7 @@ const box=$('feedback');box.className='feedback'+(win?'':' error');box.replaceCh
 function next(){stopClock();state.index++;if(state.index>=state.rounds.length){end(false);return}draw()}
 function end(quit){stopClock();show('resultScreen');$('finalScore').textContent=String(state.points);$('resHits').textContent=String(state.hits);$('resMiss').textContent=String(state.misses);$('resStreak').textContent=String(state.bestStreak);$('award').textContent=state.hits===state.rounds.length?'🏆 Radar impecable':state.hits>=Math.ceil(state.rounds.length*.7)?'⭐ Buen ojo jurídico':'🧭 Cada error marca una pista';$('endTitle').textContent=quit?'Sesión terminada':'¡Desafío completado!';$('endDesc').textContent='Has detectado '+state.hits+' de '+(state.hits+state.misses)+' trampas. Revisa las falladas y vuelve cuando quieras.';const misses=[...new Set(state.sessionWrong)];$('reviewBtn').disabled=misses.length===0;$('reviewBtn').textContent=misses.length?'Repasar '+misses.length+' errores':'No hay errores que repasar';$('reviewBtn').onclick=()=>start(misses)}
 $('playBtn').onclick=()=>start();$('reviewOldBtn').onclick=()=>start(loadWrong());$('nextBtn').onclick=next;$('quitBtn').onclick=()=>end(true);$('retryBtn').onclick=()=>{show('startScreen');refreshReviewBtn()};
-document.addEventListener('keydown',e=>{if($('gameScreen').hidden||e.altKey||e.ctrlKey||e.metaKey)return;if(!state.answered&&['1','2','3'].includes(e.key)){e.preventDefault();choose(Number(e.key)-1)}else if(state.answered&&(e.key==='Enter'||e.key===' ')){e.preventDefault();next()}});
+document.addEventListener('keydown',e=>{if($('gameScreen').hidden||e.altKey||e.ctrlKey||e.metaKey)return;const target=e.target;if(target?.closest?.('a,button,input,select,textarea,[role="button"]'))return;if(!state.answered&&['1','2','3'].includes(e.key)){e.preventDefault();choose(Number(e.key)-1)}else if(state.answered&&(e.key==='Enter'||e.key===' ')){e.preventDefault();next()}});
 refreshReviewBtn();
 </script>
 </body></html>
