@@ -28,7 +28,9 @@ ALTER TABLE public.opportunities
 CREATE UNIQUE INDEX IF NOT EXISTS opportunities_slug_unique_idx ON public.opportunities(slug) WHERE slug IS NOT NULL;
 -- El slug puede asignarse una vez, pero nunca renombrarse.
 CREATE OR REPLACE FUNCTION public.opportunities_immutable_slug() RETURNS trigger
-LANGUAGE plpgsql AS $$
+LANGUAGE plpgsql
+SET search_path = ''
+AS $$
 BEGIN
  IF OLD.slug IS NOT NULL AND NEW.slug IS DISTINCT FROM OLD.slug THEN
   RAISE EXCEPTION 'Slug permanente: no se permite modificarlo';
@@ -66,9 +68,11 @@ CREATE TABLE IF NOT EXISTS public.opportunity_events (
  )
 );
 CREATE OR REPLACE FUNCTION public.opportunity_events_touch_updated_at() RETURNS trigger
-LANGUAGE plpgsql AS $$
+LANGUAGE plpgsql
+SET search_path = ''
+AS $$
 BEGIN
- NEW.updated_at = now();
+ NEW.updated_at = pg_catalog.now();
  RETURN NEW;
 END;
 $$;
