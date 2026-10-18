@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1f33"><meta name="robots" content="noindex">
+<title>Artículo en imagen · OpoRadarCádiz · Tema 1</title>
+<style>
+:root{color-scheme:light;--n:#0b1f33;--paper:#faf8f3;--ink:#173047;--sub:#526575;--gold:#e5b84b;--edge:#d9e1e2;--ok:#236c52;--bad:#9e3540}
+*{box-sizing:border-box}body{margin:0;background:var(--n);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:860px;margin:18px auto 46px;padding:clamp(19px,5vw,38px);background:var(--paper);border-radius:22px;min-height:calc(100vh - 64px)}
+header{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.brand{font-size:20px;font-weight:900;color:var(--n)}.brand span{color:#9d721a}
+a{color:#145781;font-weight:700}a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+h1{font-size:clamp(29px,5vw,40px);line-height:1.12;letter-spacing:-.035em;margin:22px 0 10px}
+h2{margin:12px 0 10px;font-size:23px}.eyebrow{font-size:12px;letter-spacing:.13em;font-weight:800;color:#815f1d}
+.lead{max-width:620px;line-height:1.65;color:var(--sub)}.note{padding:14px 17px;background:#edf1f1;border-radius:12px;color:#425a68;margin:16px 0}
+.panel{background:white;border:1px solid var(--edge);border-radius:18px;padding:clamp(16px,4vw,27px)}
+.meter{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:14px;color:var(--sub);margin:12px 0}
+.progress{height:8px;background:#e0e5e6;border-radius:9px;overflow:hidden;margin:12px 0}.fill{height:100%;background:#947021;width:0}
+.visual{background:var(--n);border-radius:16px;overflow:hidden;margin:13px 0;aspect-ratio:16/9;max-height:390px;display:grid;place-items:center}
+.visual svg{width:100%;height:100%;display:block}
+label{display:block;font-weight:780;margin:14px 0 7px}input{font:inherit;border:2px solid #9aaebb;border-radius:10px;min-height:50px;width:100%;padding:10px 13px;background:white;color:var(--ink)}
+.controls{display:flex;gap:9px;flex-wrap:wrap;margin:17px 0 5px}
+button{cursor:pointer;border:0;border-radius:10px;padding:12px 18px;min-height:48px;background:var(--n);font:inherit;font-weight:800;color:#fff}
+button.secondary{background:#e6ebee;color:#15334a}button.good{background:var(--ok)}button.doubt{background:#977321}button.wrong{background:var(--bad)}
+button[disabled]{opacity:.55;cursor:default}
+.result{padding:16px;border:1px solid #d5e2d9;border-left:6px solid var(--ok);background:#f1f7f2;border-radius:12px;margin:12px 0}
+.result.bad{border-color:#edcfce;border-left-color:var(--bad);background:#fff4f2}
+.result h3{margin:0 0 6px;color:var(--n)}.result p{margin:7px 0}
+.hidden,[hidden]{display:none!important}
+.summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:20px 0}.number{background:#eff3f3;border-radius:12px;text-align:center;padding:15px 6px}.number strong{display:block;font-size:27px}
+footer{margin-top:28px;border-top:1px solid var(--edge);padding-top:16px;font-size:13px;color:var(--sub)}
+@media(max-width:600px){main{margin:0;border-radius:0;min-height:100vh;padding:18px}.controls button{flex:1 1 145px}.visual{margin:10px 0}.panel{padding:16px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<main>
+<header><div class="brand">OpoRadar<span>Cádiz</span></div><a href="./">← Menú de memoria</a></header>
+<p class="eyebrow">TEMA 1 · NIVEL 2 · MEMORIA VISUAL</p>
+<h1>Artículo en imagen</h1>
+<p class="lead">Observa la ilustración e intenta recuperar el número del artículo. No es un test de opciones: debes recordarlo tú. Después verás una explicación breve y podrás repasar las dudas.</p>
+<section id="start" class="panel">
+<h2>Primera ronda · 8 imágenes</h2>
+<p>Incluye soberanía, bandera, igualdad, domicilio, participación, educación, Cortes Generales y municipio. Sin cronómetro ni premios.</p>
+<p class="note">Las ilustraciones son esquemas vectoriales de prueba. Podemos sustituirlas por imágenes de Gemini tras revisar que representen correctamente cada concepto. Las respuestas se basan en el Tema 1 revisado.</p>
+<div class="controls"><button id="startAll">Empezar las 8 imágenes</button><button class="secondary" id="startMissed">Repasar dudas y fallos</button></div>
+<p id="savedState" role="status"></p>
+</section>
+<section id="game" class="panel" hidden>
+<div class="meter"><strong id="counter">1 / 8</strong><span id="score">Sin responder todavía</span></div>
+<div class="progress" aria-hidden="true"><div class="fill" id="progressFill"></div></div>
+<div id="visual" class="visual" aria-live="polite"></div>
+<p class="lead">¿Qué artículo de la Constitución representa esta imagen?</p>
+<button id="clue" class="secondary">Ver una pista</button><p id="clueText" class="note" hidden></p>
+<label for="guess">Escribe el número del artículo</label>
+<input id="guess" type="text" inputmode="decimal" autocomplete="off" maxlength="15" placeholder="Ej. 14 o 18.2" aria-describedby="help">
+<p id="help" class="lead">Puedes escribir «artículo 18» o «18.2». Si sabes el apartado, añádelo.</p>
+<div class="controls" id="entryButtons"><button id="check">Comprobar</button><button id="reveal" class="secondary">No lo recuerdo</button></div>
+<div id="answer" class="result" hidden aria-live="polite"></div>
+<div id="rating" class="controls" hidden>
+<button class="good" id="knew">Lo sabía</button><button class="doubt" id="uncertain">Dudé</button><button class="wrong" id="missed">Fallé</button>
+</div>
+<div class="controls"><button id="next" hidden>Siguiente imagen →</button><button id="quit" class="secondary">Terminar ronda</button></div>
+<p id="message" role="status"></p>
+</section>
+<section id="finish" class="panel" hidden>
+<h2>Repaso completado</h2><p>El objetivo no es acumular puntos: identificar qué artículos recuerdas y cuáles debes volver a estudiar.</p>
+<div class="summary">
+<div class="number"><strong id="okCount">0</strong>Recuperados</div>
+<div class="number"><strong id="doubtCount">0</strong>Dudas</div>
+<div class="number"><strong id="failCount">0</strong>Fallos</div>
+</div>
+<p id="finishMessage" class="note"></p>
+<div class="controls"><button id="again">Otra ronda</button><button id="repeat" class="secondary">Repetir dudas y fallos</button><a href="./">Volver al menú →</a></div>
+</section>
+<footer>OpoRadarCádiz · Prototipo pedagógico no publicado comercialmente. Progreso local en este navegador; no se sincroniza. <a target="_blank" rel="noopener noreferrer" href="https://www.boe.es/buscar/act.php?id=BOE-A-1978-31229">Consultar Constitución en el BOE ↗</a></footer>
+</main>
+<script>
+'use strict';
+const SVG_START='<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 640 360" preserveAspectRatio="xMidYMid meet"><rect width="640" height="360" fill="#0b1f33"/><circle cx="522" cy="59" r="118" fill="#15364e" opacity=".7"/>';
+const SVG_END='</svg>';
+const GOLD='#e5b84b',WHITE='#e8f1f6',BLUE='#4483a7',RED='#af414e';
+function people(x,y,s=1){return '<g transform="translate('+x+' '+y+') scale('+s+')" stroke="'+WHITE+'" stroke-width="7" fill="none" stroke-linecap="round"><circle cx="0" cy="0" r="16" fill="'+GOLD+'" stroke="none"/><path d="M-25 63 Q-23 26 0 26 Q23 26 25 63"/></g>'}
+function book(x,y){return '<g transform="translate('+x+' '+y+')" fill="none" stroke="'+GOLD+'" stroke-width="7" stroke-linejoin="round"><path d="M0 10 Q60-3 120 17 L120 132 Q60 108 0 123 Z"/><path d="M120 17 Q180-3 240 10 L240 123 Q180 108 120 132 Z"/><path d="M120 17 V132"/></g>'}
+const cards=[
+{id:'a1',article:'1',precision:'1.2',tag:'Soberanía nacional',clue:'El poder del Estado procede del pueblo español.',detail:'El artículo 1.2 establece que la soberanía nacional reside en el pueblo español, del que emanan los poderes del Estado.',scene:people(240,160)+people(320,150)+people(400,160)+'<path d="M196 270 H443" stroke="'+GOLD+'" stroke-width="8" stroke-linecap="round"/>'},
+{id:'a4',article:'4',precision:'4.1',tag:'Bandera de España',clue:'Tres franjas horizontales; la central tiene doble anchura.',detail:'El artículo 4.1 regula la bandera de España: roja, amarilla y roja, siendo la amarilla de doble anchura que cada roja.',scene:'<rect x="154" y="83" width="340" height="63" fill="#ba3446"/><rect x="154" y="146" width="340" height="126" fill="#e8b942"/><rect x="154" y="272" width="340" height="63" fill="#ba3446"/><path d="M144 70 V344" stroke="'+WHITE+'" stroke-width="10"/>'},
+{id:'a14',article:'14',precision:'14',tag:'Igualdad ante la ley',clue:'Mismo trato ante la ley, sin discriminación.',detail:'El artículo 14 establece la igualdad de los españoles ante la ley y prohíbe las discriminaciones que enumera.',scene:'<path d="M320 65 V281 M180 119 H460 M320 65 L291 107 H348 M255 281 H385" stroke="'+GOLD+'" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M215 119 L170 216 H260 Z M425 119 L380 216 H470 Z" stroke="'+WHITE+'" stroke-width="6" fill="none"/><path d="M168 229 Q215 250 262 229 M378 229 Q425 250 472 229" stroke="'+GOLD+'" stroke-width="7" fill="none"/>'},
+{id:'a18',article:'18',precision:'18.2',tag:'Inviolabilidad del domicilio',clue:'Entrada al domicilio: consentimiento, resolución judicial o flagrante delito.',detail:'El artículo 18.2 establece la inviolabilidad del domicilio y sus excepciones. Recuerda el apartado 2.',scene:'<path d="M178 173 L320 67 L462 173 V309 H178 Z" stroke="'+GOLD+'" stroke-width="8" stroke-linejoin="round" fill="#133d59"/><rect x="282" y="197" width="76" height="112" rx="3" fill="#205576" stroke="'+WHITE+'" stroke-width="5"/><circle cx="345" cy="258" r="5" fill="'+GOLD+'"/><path d="M320 139 L350 151 V182 Q320 204 290 182 V151 Z" fill="'+GOLD+'" opacity=".9"/>'},
+{id:'a23',article:'23',precision:'23.1',tag:'Participación en asuntos públicos',clue:'Participar directamente o mediante representantes elegidos por sufragio universal.',detail:'El artículo 23.1 reconoce el derecho de los ciudadanos a participar en asuntos públicos directamente o por medio de representantes libremente elegidos.',scene:'<rect x="208" y="166" width="222" height="142" rx="11" stroke="'+GOLD+'" stroke-width="8" fill="#144564"/><path d="M268 194 H370" stroke="'+WHITE+'" stroke-width="8"/><g transform="rotate(-16 322 125)"><rect x="278" y="67" width="88" height="105" rx="7" stroke="'+WHITE+'" stroke-width="6" fill="#2e6884"/><path d="M297 119 L314 135 L350 96" fill="none" stroke="'+GOLD+'" stroke-width="8"/></g>'},
+{id:'a27',article:'27',precision:'27.4',tag:'Enseñanza básica',clue:'La enseñanza básica es obligatoria y gratuita.',detail:'El artículo 27.4 dispone que la enseñanza básica es obligatoria y gratuita. La imagen sirve para recordar el apartado 4.',scene:book(200,112)+'<path d="M193 268 H456" stroke="'+WHITE+'" stroke-width="7" stroke-linecap="round"/><path d="M277 96 L320 63 L363 96 L320 128 Z" fill="'+GOLD+'" opacity=".75"/>'},
+{id:'a66',article:'66',precision:'66.1',tag:'Cortes Generales',clue:'Congreso de los Diputados y Senado representan al pueblo español.',detail:'El artículo 66.1 establece que las Cortes Generales representan al pueblo español y están formadas por Congreso y Senado.',scene:'<path d="M132 246 Q320 58 508 246" stroke="'+GOLD+'" stroke-width="8" fill="none"/><path d="M165 246 Q320 97 475 246 M200 246 Q320 138 440 246" stroke="'+WHITE+'" stroke-width="7" fill="none"/><g fill="'+BLUE+'"><circle cx="208" cy="237" r="15"/><circle cx="267" cy="204" r="15"/><circle cx="320" cy="193" r="15"/><circle cx="373" cy="204" r="15"/><circle cx="432" cy="237" r="15"/></g><rect x="293" y="263" width="54" height="38" rx="5" fill="'+GOLD+'"/>'},
+{id:'a140',article:'140',precision:'140',tag:'Autonomía municipal',clue:'El gobierno y la administración del municipio corresponden al Ayuntamiento.',detail:'El artículo 140 garantiza la autonomía de los municipios y regula su gobierno y administración por los Ayuntamientos.',scene:'<path d="M183 304 V155 L320 82 L457 155 V304 Z" fill="#153e59" stroke="'+GOLD+'" stroke-width="7"/><rect x="280" y="223" width="80" height="81" fill="#286888"/><rect x="215" y="186" width="45" height="40" fill="'+BLUE+'"/><rect x="380" y="186" width="45" height="40" fill="'+BLUE+'"/><path d="M290 82 V49 H350 V82" stroke="'+WHITE+'" stroke-width="6" fill="none"/><path d="M162 310 H478" stroke="'+WHITE+'" stroke-width="7"/>'}
+];
+const $=id=>document.getElementById(id);
+const KEY='oporadar_t1_visual_article_v1';
+let progress={},order=[],index=0,marks=[],selected=null,checked=false,proposed='',hint=false;
+try{const raw=JSON.parse(localStorage.getItem(KEY)||'{}');if(raw&&typeof raw==='object'&&!Array.isArray(raw))progress=raw}catch(_){}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(progress))}catch(_){}}
+function show(id){for(const x of ['start','game','finish'])$(x).hidden=x!==id;}
+function poolTrouble(){return cards.filter(c=>progress[c.id]?.status==='fallo'||progress[c.id]?.status==='duda')}
+function refreshStart(){const n=poolTrouble().length;$('savedState').textContent=n?'Tienes '+n+' imágenes pendientes de reforzar en este dispositivo.':'Todavía no hay dudas o fallos guardados.';$('startMissed').disabled=!n;}
+function begin(repeat=false){order=repeat?poolTrouble():cards.slice();if(!order.length){refreshStart();return;}index=0;marks=[];selected=null;checked=false;show('game');render();}
+function render(){if(index>=order.length){finish();return;}const c=order[index];checked=false;selected=null;hint=false;proposed='';
+$('counter').textContent=(index+1)+' / '+order.length;
+$('score').textContent=marks.length+' respuestas registradas';
+$('progressFill').style.width=(100*index/order.length)+'%';
+$('visual').innerHTML=SVG_START+'<title>Ilustración: '+c.tag+'</title>'+c.scene+SVG_END;
+$('guess').value='';$('guess').disabled=false;$('guess').hidden=false;$('check').hidden=false;$('reveal').hidden=false;$('entryButtons').hidden=false;$('clue').hidden=false;$('clueText').hidden=true;$('clueText').textContent=c.clue;
+$('answer').hidden=true;$('rating').hidden=true;$('next').hidden=true;$('message').textContent='';
+$('guess').focus({preventScroll:true});}
+function norm(v){return String(v).toLowerCase().replace(/art[íi]culo|art\.?/g,'').replace(/apartado/g,'').replace(/\s+/g,'').replace(',', '.').replace(/\.$/,'')}
+function check(reveal=false){if(checked)return;const c=order[index],input=norm($('guess').value);
+if(!reveal&&!/^\d+(?:\.\d+)?$/.test(input)){$('message').textContent='Introduce un número de artículo o pulsa «No lo recuerdo».';return;}
+checked=true;const success=!reveal&&(input===c.article||input===c.precision);
+const exact=input===c.precision;
+proposed=success?(hint?'duda':'acierto'):'fallo';
+$('answer').hidden=false;$('answer').className='result'+(success?'':' bad');
+const heading=document.createElement('h3');heading.textContent=success?'Has identificado el artículo.':'Este es el artículo que buscábamos:';
+const body=document.createElement('p');body.textContent='Artículo '+c.precision+' · '+c.tag+'. '+c.detail;
+const extra=document.createElement('p');extra.textContent=success&&!exact&&c.precision!==c.article?'Correcto: has recuperado el artículo '+c.article+'. El apartado concreto es '+c.precision+'.':reveal?'Has elegido revelar la respuesta; repasaremos este concepto.':success?'Ahora confirma si lo recordabas con seguridad o dudaste.':'No pasa nada: este concepto queda para el repaso.';
+$('answer').replaceChildren(heading,body,extra);
+$('guess').disabled=true;$('entryButtons').hidden=true;$('clue').hidden=true;$('rating').hidden=!success;
+$('next').hidden=success;$('message').textContent=success?'Marca cómo lo recordaste.':'Registrado para repasar.';
+if(!success)mark('fallo');}
+function mark(status){if(selected)return;selected=status;const c=order[index];
+progress[c.id]={status,lastReviewed:new Date().toISOString()};
+persist();marks.push({id:c.id,status});
+$('rating').hidden=true;$('next').hidden=false;
+$('message').textContent=status==='acierto'?'Recuperado.':'Este concepto tendrá prioridad en futuras sesiones.';}
+function finish(){show('finish');const total=(status)=>marks.filter(x=>x.status===status).length;
+$('okCount').textContent=total('acierto');$('doubtCount').textContent=total('duda');$('failCount').textContent=total('fallo');
+$('finishMessage').textContent=marks.length===order.length?'Sesión completa. Los errores y dudas quedan guardados solo en este navegador.':'Sesión terminada antes del final. Se conservan únicamente las imágenes que ya respondiste.';
+$('repeat').disabled=!poolTrouble().length;refreshStart();}
+$('startAll').onclick=()=>begin(false);
+$('startMissed').onclick=()=>begin(true);
+$('clue').onclick=()=>{hint=true;$('clueText').hidden=false;$('clue').hidden=true};
+$('check').onclick=()=>check(false);
+$('reveal').onclick=()=>check(true);
+$('guess').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();check(false)}});
+$('knew').onclick=()=>mark('acierto');
+$('uncertain').onclick=()=>mark('duda');
+$('missed').onclick=()=>mark('fallo');
+$('next').onclick=()=>{index++;render()};
+$('quit').onclick=finish;
+$('again').onclick=()=>begin(false);
+$('repeat').onclick=()=>begin(true);
+refreshStart();
+</script>
+</body></html>
