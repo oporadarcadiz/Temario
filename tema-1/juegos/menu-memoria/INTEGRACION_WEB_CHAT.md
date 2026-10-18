@@ -63,3 +63,12 @@ El recurso **Vocabulario jurídico** es una puerta de entrada, no un banco dupli
 - Eliminar el rótulo técnico «Código existente · En revisión» **del frontal de las tarjetas**. Los recursos que requieren conexión siguen identificados correctamente en la vista de detalles de la demo, sin presentarlos como publicados.
 - Renombre exclusivamente visible: `Completa la frase` -> enlace original modo `completa` (no renombrar ruta de aplicación ni bancos).
 - Vista previa móvil autocontenida actualizada para revisión: `OpoRadarCadiz_Tema1_Menu_9_Juegos_Vista_Previa_v2.html` en Drive `JUEGOS_LIBRO/TEMA_1/VISTAS_PREVIAS`.
+
+## Actualización funcional 18/10/2026 — Caza la trampa y regresión de cuatro juegos
+- `/tema-1/juegos/caza-la-trampa.html` conserva el banco existente (35 rondas educativas).
+- **Nueva función:** después de contestar correctamente puede pulsarse `Marcar como duda para repasar`. No cuenta la duda como fallo ni modifica la puntuación de la respuesta. Usa `oporadar-tema1-caza-trampa-dudas-v1`, distinta de la clave preexistente `oporadar-tema1-caza-trampa-fallos-v1`.
+- Inicio y resultados ofrecen repetir la **unión única** de fallos y dudas propios del juego; los datos previos de fallos se conservan. Al acertar una pregunta previamente difícil sin marcar duda, sale de la cola de repaso.
+- La explicación nunca desaparece por seleccionar una respuesta o calificar una duda: el usuario pulsa `Siguiente ronda` manualmente.
+- **Pruebas JS por DOM simulado, satisfactorias:** Caza (respuesta correcta, no avance automático, marcar duda, guardar y recuperar un fallo, repaso de ambos, eliminación después de acertar), Fichas Radar (revelar, marcar Dudé, leer explicación, pulsar Siguiente), Traduce el jurídico (girar, calificar, explicación visible, pulsar Siguiente) y Artículo en imagen (cargar imagen 18.2, error, explicación y repaso de ese error).
+- **Sin integración transversal:** no se modifica `mis-fallos` ni `resources.js`. Cada juego conserva su propio almacenamiento local y no necesita contraseñas.
+- **Limitación:** las pruebas son de lógica simulada. La prueba táctil en dispositivos físicos, la respuesta pública HTTP de GitHub Pages y la visualización tras desplegar Netlify siguen pendientes. La corrección de Traduce el jurídico reside en la PR en borrador `Tarjetas-repaso#1`, no en la rama principal publicada.
