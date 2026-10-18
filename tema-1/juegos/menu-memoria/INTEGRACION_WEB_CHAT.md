@@ -48,3 +48,10 @@ El recurso **Vocabulario jurídico** es una puerta de entrada, no un banco dupli
 ## Pruebas y límites
 - Verificado el código y rutas relativas de archivos GitHub; las comprobaciones de lógica previas de Fichas Radar, Traduce el jurídico y Artículo en imagen usaron simulación de DOM.
 - **No se ha certificado la carga pública en Netlify**, ni la accesibilidad real de GitHub Pages, ni pruebas físicas en iOS/Android. Esto queda pendiente.
+
+## Comprobaciones ejecutadas en Chat · 18/10/2026
+- Menú reducido: 9 tarjetas únicas; las 9 rutas corresponden a archivos existentes en `Temario` o `Tarjetas-repaso` según sus respectivos árboles Git. Las tres rutas internas de «Vocabulario jurídico» también se localizaron en los repositorios. 4 recursos futuros figuran solo en nota «En construcción».
+- No hay acceso `Mis errores` central. El registro de fallos no se ha unificado y ninguno de los bancos ha cambiado.
+- Simulación de Caza la trampa: iniciar ronda, acertar, **quedarse en la misma pregunta con explicación visible**, pulsar «Siguiente», fallar, almacenar un error y permitir continuar. Resultado conforme.
+- Fichas Radar, Traduce el jurídico y Artículo en imagen: simulaciones anteriores de valoración y avance manual satisfactorias; los cambios recientes de Fichas y Artículo solo afectan a colores/retroceso.
+- No verificado desde un navegador externo: las URLs publicadas de GitHub Pages devolvieron error en la herramienta de consulta web. No atribuir disponibilidad HTTP sin prueba en navegador real.
