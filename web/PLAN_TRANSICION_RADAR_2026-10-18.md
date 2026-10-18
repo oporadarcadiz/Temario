@@ -46,3 +46,14 @@ Campos: `evento_id`, `convocatoria_id` (FK `opportunities.id`), `evento_dedupe_k
 - No sustituir aún `published=true` con una condición que oculte retrospectivamente los 9 expedientes antes de auditar su aprobación.
 - La copia de respaldo JSON es pública y necesita un proceso editorial fiable; nunca incorporar candidatos pendientes.
 - La tabla de eventos debe quedar en RLS restrictiva antes de conectar cualquier productor.
+
+## IDs y claves para n8n — contrato de generación
+- Los 9 IDs actuales (ocho `OPO-0001` a `OPO-0008`, más el expediente BOP existente) son inmutables; sus favoritos se mantienen por `opportunities.id`.
+- Procesos nuevos: `OPO-{AÑO}-{HUELLA_ESTABLE}`. Eventos: `EVT-{convocatoria_id}-{HUELLA_ESTABLE}`.
+- Nunca generar `MAX(id)+1`. Canonicalizar las claves con normalización Unicode, espacios, URL sin parámetros de rastreo y casefolding coherente. La HUELLA_ESTABLE se deriva de una función hash determinista de `dedupe_key`, con longitud acordada y detección de colisiones. No volver a generar después de asignar el ID.
+- `dedupe_key` de convocatoria: (1) organismo normalizado + expediente oficial; si falta (2) boletín + número de anuncio; si falta (3) URL canónica de bases; si no es inequívoco (4) cola de revisión manual.
+- `evento_dedupe_key`: convocatoria_id + tipo_evento + fecha_oficial + (referencia_oficial o URL canónica). Si no hay fecha o referencia segura, revisión manual. No tratar fecha_detectada como fecha_oficial.
+- Los nuevos eventos nacen `estado_validacion='pendiente'`, `publicado=false`; solo aprobación Telegram autorizada puede pasar a `aprobado` y publicado con marca `aprobado_en`.
+- Contrato público: `publicado=true`, `estado_validacion='aprobado'`, `retirado_en IS NULL`. El navegador no debe recibir otros eventos. Fecha de última consulta y `updated_at` jamás son novedades.
+- Estados permitidos de validación: `pendiente`, `aprobado`, `corregir`, `rechazado`. Tipos de evento: `convocatoria_publicada`, `apertura_plazo`, `correccion_bases`, `lista_provisional`, `lista_definitiva`, `fecha_examen`, `cambio_fecha_examen`, `resultado_examen`, `valoracion_meritos`, `propuesta_nombramiento`, `resolucion_final`, `plazo_finalizado`, `incidencia`, `otro`.
+- Trigger de `opportunity_events.updated_at` solo actualiza control técnico; no afecta a la fecha oficial.
