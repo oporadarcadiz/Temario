@@ -83,13 +83,13 @@
     const details=addText('button','opportunity-expand',expanded.has(record.id)?'Ocultar seguimiento':'Ver seguimiento');details.type='button';details.setAttribute('aria-expanded',String(expanded.has(record.id)));details.setAttribute('aria-controls',`tracking-${record.id}`);
     const panel=trackingPanel(record,state);
     details.addEventListener('click',()=>{const open=!expanded.has(record.id);open?expanded.add(record.id):expanded.delete(record.id);panel.hidden=!open;details.setAttribute('aria-expanded',String(open));details.textContent=open?'Ocultar seguimiento':'Ver seguimiento';});
-    links.append(follow,details);
+    const detailLink=document.createElement('a');detailLink.href='/convocatoria.html?id='+encodeURIComponent(record.id);detailLink.textContent='Ver ficha →';links.append(detailLink,follow);
     const meta=addText('div','compact-meta',record.location+' · '+labels[record.processType]+(record.places!=null?' · '+record.places+' plazas':''));
     const status=addText('div','compact-state',isArchived(record)?'Archivada':state==='review'?'Plazo por verificar':stateLabels[state]||'Publicada');
     status.append(addText('small','', 'Publicado: '+dateLabel(record.publishedOn)),addText('small','',record.applicationsEndOn?'Fin de plazo: '+dateLabel(record.applicationsEndOn):'Fin de plazo: consultar bases'));
     const change=lastChange(record),news=addText('div','compact-news',change.title);news.append(addText('small','',dateLabel(change.date)));
-    const title=content.querySelector('h3');if(title){const button=addText('button','compact-title',record.title);button.type='button';button.setAttribute('aria-expanded',String(expanded.has(record.id)));button.setAttribute('aria-controls',`tracking-${record.id}`);button.addEventListener('click',()=>details.click());title.replaceChildren(button);}
-    article.append(places,content,meta,status,news,links,panel);return article;
+    const title=content.querySelector('h3');if(title){const link=document.createElement('a');link.className='compact-title';link.href='/convocatoria.html?id='+encodeURIComponent(record.id);link.textContent=record.title;title.replaceChildren(link);}
+    article.append(places,content,meta,status,news,links);article.addEventListener('click',event=>{if(event.target.closest('a,button'))return;location.href='/convocatoria.html?id='+encodeURIComponent(record.id);});return article;
   }
   function render(){
     if(!ready)return;
