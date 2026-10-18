@@ -1,72 +1,50 @@
-# Coordinación Juegos ↔ Web Chat · Tema 1
+# Contrato para Web Chat — Centro de Juegos del Tema 1
 
-Actualizado: 18/10/2026. Esta rama es una propuesta. No se ha modificado la rama de Web Chat ni los QR del PDF.
+Actualizado 18/10/2026. Este documento sustituye el listado anterior de 20 tarjetas visibles. **El repositorio conserva los recursos; el menú principal se ha reducido a 9 accesos.**
 
-## Menú de juegos terminado a nivel de archivos
+## Decisiones definitivas de diseño
+- Sí hay menú de juegos, en `/tema-1/juegos/menu-memoria/`. La ruta histórica `/tema-1/juegos/` redirige al nuevo menú.
+- **Marca**: mismos colores que `web/styles.css`: azul noche `#08182d`, azul profundo `#061222`, dorado `#f6cb78`, texto `#f3f3f0`, texto secundario `#b4c1d0`. Tipografía DM Sans y Playfair Display. No usar la paleta antigua del menú.
+- **No habrá «Mis errores» centralizado** en el menú ni agregación de datos entre juegos. Cada actividad conserva sus fallos y dudas por separado, según su propio funcionamiento.
+- No duplicar bancos ni juegos, no implementar contraseñas/pagos, no modificar PDF, QR ni convocatorias.
+- Recursos alojados en GitHub Pages usan otro origen de navegador. No anunciar sincronización del progreso con Netlify.
 
-- Menú: `/tema-1/juegos/menu-memoria/` (archivo `tema-1/juegos/menu-memoria/index.html`).
-- Prototipo creado: `/tema-1/juegos/menu-memoria/articulo-en-imagen.html`. Ocho dibujos vectoriales sobrios y respuestas abiertas por número de artículo; pista opcional, explicación de apartado y registro local de aciertos, dudas y fallos. Requiere prueba funcional en móvil y aprobación editorial; NO anunciar como versión final y reemplazar ilustraciones por Gemini solo cuando estén verificadas.
-- Pendientes: `/tema-1/juegos/menu-memoria/en-construccion.html?juego=<identificador>`.
-- Cada tarjeta pulsa una URL existente o una ficha «En construcción», con estado visible.
-- Estilo adulto, centrado en recuperación de memoria y vocabulario; sin contraseña ni cobro.
-- El recurso «Artículo en imagen» está EN CONSTRUCCIÓN: no confundirlo con «Mapa constitucional» existente, que no exige siempre identificar el número del artículo.
+## Menú actual (9 accesos)
+| Grupo | Nombre visible | Ruta |
+| --- | --- | --- |
+| Memoria visual | Artículo en imagen | `/tema-1/juegos/menu-memoria/articulo-en-imagen.html` |
+| Memoria visual | Mapa constitucional | `https://oporadarcadiz.github.io/Tarjetas-repaso/juegos/centro-radar/tema-1/?modo=visual&radar=4` |
+| Fichas y vocabulario | Fichas Radar | `/tema-1/juegos/fichas-radar.html` |
+| Fichas y vocabulario | Vocabulario jurídico | `/tema-1/juegos/menu-memoria/vocabulario-juridico.html` |
+| Fichas y vocabulario | El candado 4-9-1-1 | `/tema-1/juegos/nivel2-disposiciones.html` |
+| Precisión y examen | Detecta el error (Caza la trampa) | `/tema-1/juegos/caza-la-trampa.html` |
+| Precisión y examen | Completa la norma | `https://oporadarcadiz.github.io/Tarjetas-repaso/juegos/centro-radar/tema-1/?modo=completa&radar=4` |
+| Precisión y examen | Test Radar | `/tema-1/juegos/nivel3-test.html` — redirige al modo mixto de Centro Radar |
+| Precisión y examen | Simulacro | `/tema-1/simulacro/` |
 
-## Integración solicitada a Web Chat
+El recurso **Vocabulario jurídico** es una puerta de entrada, no un banco duplicado. Integra:
+- `/tema-1/juegos/nivel1-conceptos.html` — Conceptos constitucionales.
+- `https://oporadarcadiz.github.io/Tarjetas-repaso/juegos/tarjetas-radar/vocabulario-tema-1/` — Tarjetas de vocabulario.
+- `https://oporadarcadiz.github.io/Tarjetas-repaso/juegos/centro-radar/traduce-juridico/` — Traduce el jurídico, con arreglo funcional pendiente en PR https://github.com/oporadarcadiz/Tarjetas-repaso/pull/1.
 
-1. Integrar **los archivos modificados y nuevos de esta rama** de esta rama en el despliegue del repositorio `Temario`, conservando el resto del trabajo de Web Chat (`preventa-tema1-seguridad`).
-2. En la sección **Juegos y actividades** de `tema-1/radar/index.html` añadir **un enlace destacado** a `../juegos/menu-memoria/` («Ver todos los entrenamientos de memoria»). Mantener enlaces individuales ya existentes o sustituirlos solo tras inspección de accesibilidad.
-3. No alterar la ruta permanente del QR Radar Digital `/tema-1/radar/`, Saber más `/tema-1/saber-mas/`, ni la maquetación de las 47 páginas. El menú es un destino secundario y no requiere QR nuevo.
-4. No añadir Audios/Vídeos al menú de juegos. No configurar contraseñas, pasarela ni Supabase en esta tarea.
-5. Mantener el menú como **propuesta/noindex** hasta aprobarlo. Antes de incorporar enlaces comerciales, comprobar qué contenido debe ser demo público y cuál de pago.
+## Recursos pendientes, NO visibles como juegos disponibles
+«Imagen y concepto», «¿Quién hace qué?», «Empareja» y «Radar Express» se mencionan en una única nota **En construcción**. Mantener sus fichas antiguas para compatibilidad, pero no mostrarlas como cuatro nuevas tarjetas. Otras modalidades del Centro Radar se conservan en sus propios archivos y submenús.
 
-## Destinos de código enlazados
+## Cambios realizados en rama de propuesta
+- Menú rediseñado y reducido, nueva pantalla de vocabulario `vocabulario-juridico.html`.
+- Fichas Radar y Traduce el jurídico: controles de valoración no avanzan automáticamente, la explicación queda visible y debe pulsarse Siguiente (Traduce en PR aparte).
+- Caza la trampa: respuesta + explicación hasta pulsar Continuar, acceso visible al menú y teclado sin secuestrar el foco de enlaces.
+- Artículo en imagen: 8 JPG aprobados, SVG de respaldo, memoria activa, revisión de dudas y errores en el propio juego. El mapa de Cádiz es ilustración de concepto, NO cartografía exacta.
+- Conceptos, disposiciones y simulacro tienen enlace de regreso al menú. Las aplicaciones externas deberán comprobarse en su propio dominio antes de afirmar que tienen enlace de vuelta.
+- Otros juegos no se han reconstruido ni se han movido sus bancos.
 
-**Temario**: `../fichas-radar.html`, `../nivel1-conceptos.html`, `../caza-la-trampa.html`, `../nivel2-disposiciones.html`, `../nivel3-test.html`, `../../simulacro/`, `../../mis-fallos/`.
+## Integración segura por Web Chat
+1. Mantener la rama de Web Chat `preventa-tema1-seguridad` como base de su trabajo. Revisar PR borrador https://github.com/oporadarcadiz/Temario/pull/1: puede haber conflictos de fusión y hay que resolverlos conservando el trabajo de ambas ramas.
+2. Desde Radar Digital `/tema-1/radar/`, enlazar «Entrena tu memoria» a `../juegos/menu-memoria/`; **no cambiar las URL de QR del libro**.
+3. Verificar respuesta HTTP y carga efectiva de las aplicaciones externas GitHub Pages. Encontrar un archivo en GitHub no demuestra que su URL esté publicada y sea accesible.
+4. Probar en Chrome/Safari móvil: navegación de las 9 tarjetas; ir y volver de las actividades locales; responder, ver explicación, marcar dudas, continuar y repetir errores; comprobar contrastes de la marca.
+5. Hasta entonces PR en borrador, sin despliegue en producción y sin acceso comercial protegido.
 
-**Tarjetas-repaso / Centro Radar** (actuales en código):
-- `.../juegos/centro-radar/tema-1/?modo=visual&radar=4`
-- `.../juegos/centro-radar/tema-1/?modo=tarjetas&radar=4`
-- `.../juegos/centro-radar/tema-1/?modo=completa&radar=4`
-- `.../juegos/centro-radar/tema-1/?modo=real&radar=4`
-- `.../juegos/centro-radar/tema-1/` (selector general)
-- `.../juegos/centro-radar/traduce-juridico/`
-
-El parámetro `modo` está reconocido en `juegos/centro-radar/tema-1/app.js`. El modo `real` contiene preguntas atribuidas que no deben certificarse como literalmente verificadas sin auditoría.
-
-## Comprobaciones antes de publicar
-
-- Probar con viewport 390px y 320px, orientación móvil vertical, scroll y foco de teclado.
-- Desde Radar Digital -> menú -> fichas/vocabulario/trampas/disposiciones/test -> volver; desde cada juego pendiente -> «En construcción» -> volver.
-- Comprobar respuestas y botones en Chrome y Safari (si es posible dispositivo físico).
-- Confirmar publicación de las rutas Github Pages y Netlify. El estado «archivo existente» no equivale a contenido editorial validado.
-- Las rutas publicadas actualmente no garantizan protección premium; no presentarlas como contenido exclusivo.
-
-## Inventario pendiente
-
-Prototipo jugable EN REVISIÓN: «Artículo en imagen». En construcción: «Imagen y concepto», «¿Quién hace qué?», «Empareja», «Radar Express». Estas actividades no inventan preguntas ni resultados.
-
-## Verificaciones estáticas del prototipo (18/10/2026)
-
-- Se verificó desde GitHub la existencia de 8 tarjetas con ID único, número de artículo y apartado coherentes.
-- Menú enlaza al HTML real; los 4 pendientes restantes enlazan a su ficha; sin contraseñas.
-- Pruebas de navegación por navegador móvil real, sincronización, y lectura de todos los gráficos SVG siguen **pendientes**. No equivale a prueba de uso en iOS/Android.
-- El ejemplo de soberanía art. 1.2, bandera 4.1, igualdad 14, domicilio 18.2, participación 23.1, enseñanza 27.4, Cortes 66.1 y municipio 140 proviene de los bloques del PDF de 47 páginas (nivel 3). No adicionar artículos ni presentar preguntas como exámenes oficiales.
-
-## Avance funcional adicional · 18/10/2026
-
-- Entrada histórica `tema-1/juegos/index.html`: sustituido el texto antiguo «no hay índice público» por redirección accesible al menú `menu-memoria/`. **La decisión actual es que SÍ habrá menú de juegos**.
-- `tema-1/juegos/fichas-radar.html`: pulsar Acerté/Dudé/Fallé registra la valoración pero deja visible la respuesta hasta pulsar el botón nuevo «Siguiente ficha». No se modifica su banco.
-- Repo `Tarjetas-repaso`, PR https://github.com/oporadarcadiz/Tarjetas-repaso/pull/1: `Traduce el jurídico` mantiene su explicación visible tras marcar; botón manual «Siguiente tarjeta». Esta PR es **separada y en borrador**; no asumir desplegada.
-- Menú ampliado a **20 recursos**: añade detector verdadero/falso y las 13 tarjetas de vocabulario existentes; no crea una colección nueva.
-- Están redactados 8 encargos coherentes para Gemini en `PROMPTS_ILUSTRACIONES_GEMINI.md`, para los artículos 1.2, 4.1, 14, 18.2, 23.1, 27.4, 66.1 y 140. Reemplazo de SVG solo tras validación de imágenes, no automático.
-- En `Tarjetas-repaso` también existe un Test Radar antiguo alimentado por Google Sheets. No se ha integrado directamente como entrada nueva hasta verificar demo/banco y no exponer preguntas comerciales: el menú enlaza el Test Tema 1 existente.
-- Verificaciones de código fuente: el JS modificado compila, no hay IDs HTML duplicados ni referencias DOM a IDs ausentes. Esto NO equivale a ejecutar los juegos en Chrome/Safari.
-- Todas las operaciones están en ramas y solicitudes de integración en borrador; no se tocaron bancos, PDF, QR, autenticación, pagos ni flujos n8n.
-
-## Imágenes integradas · 18/10/2026
-- Se han guardado 8 archivos JPG optimizados 750×750 en `tema-1/juegos/menu-memoria/assets/`, además de copias de trabajo en Google Drive/Opo Radar Cádiz/OpoRadarCádiz/JUEGOS_LIBRO/TEMA_1/ARTICULO_EN_IMAGEN/.
-- `articulo-en-imagen.html` usa las imágenes reales en un contenedor 1:1. Si el JPG no carga, se mantiene el SVG anterior como respaldo; la valoración y los bancos no se modificaron.
-- Origen: ilustraciones de **Gemini** seleccionadas por la usuaria (arts. 1.2, 14, 18.2, 23.1) e imágenes creadas aquí con **ChatGPT** (arts. 4.1, 27.4, 66.1, 140).
-- El mapa de Cádiz (art. 140) es **una ilustración conceptual**, no cartografía oficial ni fuente de nombres/límites municipales. No usarla en exámenes de geografía ni preguntarle al alumno por posiciones municipales; la respuesta jurídica sí se basa en el artículo 140.
-- Hacer prueba de carga 8/8 de las imágenes en Chrome/Safari/móvil tras despliegue. Todas las rutas del repositorio han sido verificadas a nivel de árbol Git.
-- Web Chat: el enlace al menú sigue siendo `/tema-1/juegos/menu-memoria/`; no hacen falta QR adicionales. Fusionar únicamente tras revisión del borrador PR nº1 y prueba final, sin introducir contraseñas por ahora.
+## Pruebas y límites
+- Verificado el código y rutas relativas de archivos GitHub; las comprobaciones de lógica previas de Fichas Radar, Traduce el jurídico y Artículo en imagen usaron simulación de DOM.
+- **No se ha certificado la carga pública en Netlify**, ni la accesibilidad real de GitHub Pages, ni pruebas físicas en iOS/Android. Esto queda pendiente.
