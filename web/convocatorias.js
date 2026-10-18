@@ -65,8 +65,8 @@
     if(mode==='modified')return lastChange(b).date.localeCompare(lastChange(a).date)||a.id.localeCompare(b.id);
     if(mode==='deadline')return (a.applicationsEndOn||'9999-12-31').localeCompare(b.applicationsEndOn||'9999-12-31')||a.id.localeCompare(b.id);
     const x=lastChange(a),y=lastChange(b);
-    const xNew=Object.values(a.milestones||{}).filter(m=>m?.publishedOn&&safeUrl(m.url)&&m.approved!==false&&(!m.publicationStatus||['approved','published','publicada','validada'].includes(String(m.publicationStatus).toLowerCase()))).length+(a.announcements||[]).filter(e=>e.date&&safeUrl(e.url)&&e.approved!==false&&(!e.publicationStatus||['approved','published','publicada','validada'].includes(String(e.publicationStatus).toLowerCase()))).length+(isArchived(a)?1:0);
-    const yNew=Object.values(b.milestones||{}).filter(m=>m?.publishedOn&&safeUrl(m.url)).length+(b.announcements||[]).filter(e=>e.date&&safeUrl(e.url)).length+(isArchived(b)?1:0);
+    const xNew=verifiedEvents(a).length;
+    const yNew=verifiedEvents(b).length;
     return y.date.localeCompare(x.date)||yNew-xNew||a.id.localeCompare(b.id);
   }
   function renderRow(record){
