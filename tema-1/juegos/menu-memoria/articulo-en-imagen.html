@@ -16,8 +16,8 @@ h2{margin:12px 0 10px;font-size:23px}.eyebrow{font-size:12px;letter-spacing:.13e
 .panel{background:white;border:1px solid var(--edge);border-radius:18px;padding:clamp(16px,4vw,27px)}
 .meter{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:14px;color:var(--sub);margin:12px 0}
 .progress{height:8px;background:#e0e5e6;border-radius:9px;overflow:hidden;margin:12px 0}.fill{height:100%;background:#947021;width:0}
-.visual{background:var(--n);border-radius:16px;overflow:hidden;margin:13px 0;aspect-ratio:16/9;max-height:390px;display:grid;place-items:center}
-.visual svg{width:100%;height:100%;display:block}
+.visual{background:var(--n);border-radius:16px;overflow:hidden;margin:13px auto;aspect-ratio:1/1;max-width:520px;width:100%;display:grid;place-items:center}
+.visual svg,.visual img{width:100%;height:100%;display:block;object-fit:contain}
 label{display:block;font-weight:780;margin:14px 0 7px}input{font:inherit;border:2px solid #9aaebb;border-radius:10px;min-height:50px;width:100%;padding:10px 13px;background:white;color:var(--ink)}
 .controls{display:flex;gap:9px;flex-wrap:wrap;margin:17px 0 5px}
 button{cursor:pointer;border:0;border-radius:10px;padding:12px 18px;min-height:48px;background:var(--n);font:inherit;font-weight:800;color:#fff}
@@ -42,7 +42,7 @@ footer{margin-top:28px;border-top:1px solid var(--edge);padding-top:16px;font-si
 <section id="start" class="panel">
 <h2>Primera ronda · 8 imágenes</h2>
 <p>Incluye soberanía, bandera, igualdad, domicilio, participación, educación, Cortes Generales y municipio. Sin cronómetro ni premios.</p>
-<p class="note">Las ilustraciones son esquemas vectoriales de prueba. Podemos sustituirlas por imágenes de Gemini tras revisar que representen correctamente cada concepto. Las respuestas se basan en el Tema 1 revisado.</p>
+<p class="note">Estas ocho ilustraciones están preparadas para memorizar. El número del artículo permanece oculto hasta que respondas. El mapa de Cádiz es ilustrativo: no es cartografía oficial ni sirve para estudiar límites municipales.</p>
 <div class="controls"><button id="startAll">Empezar las 8 imágenes</button><button class="secondary" id="startMissed">Repasar dudas y fallos</button></div>
 <p id="savedState" role="status"></p>
 </section>
@@ -90,7 +90,7 @@ const cards=[
 {id:'a23',article:'23',precision:'23.1',tag:'Participación en asuntos públicos',clue:'Participar directamente o mediante representantes elegidos por sufragio universal.',detail:'El artículo 23.1 reconoce el derecho de los ciudadanos a participar en asuntos públicos directamente o por medio de representantes libremente elegidos.',scene:'<rect x="208" y="166" width="222" height="142" rx="11" stroke="'+GOLD+'" stroke-width="8" fill="#144564"/><path d="M268 194 H370" stroke="'+WHITE+'" stroke-width="8"/><g transform="rotate(-16 322 125)"><rect x="278" y="67" width="88" height="105" rx="7" stroke="'+WHITE+'" stroke-width="6" fill="#2e6884"/><path d="M297 119 L314 135 L350 96" fill="none" stroke="'+GOLD+'" stroke-width="8"/></g>'},
 {id:'a27',article:'27',precision:'27.4',tag:'Enseñanza básica',clue:'La enseñanza básica es obligatoria y gratuita.',detail:'El artículo 27.4 dispone que la enseñanza básica es obligatoria y gratuita. La imagen sirve para recordar el apartado 4.',scene:book(200,112)+'<path d="M193 268 H456" stroke="'+WHITE+'" stroke-width="7" stroke-linecap="round"/><path d="M277 96 L320 63 L363 96 L320 128 Z" fill="'+GOLD+'" opacity=".75"/>'},
 {id:'a66',article:'66',precision:'66.1',tag:'Cortes Generales',clue:'Congreso de los Diputados y Senado representan al pueblo español.',detail:'El artículo 66.1 establece que las Cortes Generales representan al pueblo español y están formadas por Congreso y Senado.',scene:'<path d="M132 246 Q320 58 508 246" stroke="'+GOLD+'" stroke-width="8" fill="none"/><path d="M165 246 Q320 97 475 246 M200 246 Q320 138 440 246" stroke="'+WHITE+'" stroke-width="7" fill="none"/><g fill="'+BLUE+'"><circle cx="208" cy="237" r="15"/><circle cx="267" cy="204" r="15"/><circle cx="320" cy="193" r="15"/><circle cx="373" cy="204" r="15"/><circle cx="432" cy="237" r="15"/></g><rect x="293" y="263" width="54" height="38" rx="5" fill="'+GOLD+'"/>'},
-{id:'a140',article:'140',precision:'140',tag:'Autonomía municipal',clue:'El gobierno y la administración del municipio corresponden al Ayuntamiento.',detail:'El artículo 140 garantiza la autonomía de los municipios y regula su gobierno y administración por los Ayuntamientos.',scene:'<path d="M183 304 V155 L320 82 L457 155 V304 Z" fill="#153e59" stroke="'+GOLD+'" stroke-width="7"/><rect x="280" y="223" width="80" height="81" fill="#286888"/><rect x="215" y="186" width="45" height="40" fill="'+BLUE+'"/><rect x="380" y="186" width="45" height="40" fill="'+BLUE+'"/><path d="M290 82 V49 H350 V82" stroke="'+WHITE+'" stroke-width="6" fill="none"/><path d="M162 310 H478" stroke="'+WHITE+'" stroke-width="7"/>'}
+{id:'a140',article:'140',precision:'140',tag:'Autonomía municipal',clue:'El gobierno y la administración del municipio corresponden al Ayuntamiento.',detail:'El artículo 140 garantiza la autonomía de los municipios y regula su gobierno y administración por los Ayuntamientos. El mapa es un recordatorio visual, no un mapa oficial de límites municipales.',scene:'<path d="M183 304 V155 L320 82 L457 155 V304 Z" fill="#153e59" stroke="'+GOLD+'" stroke-width="7"/><rect x="280" y="223" width="80" height="81" fill="#286888"/><rect x="215" y="186" width="45" height="40" fill="'+BLUE+'"/><rect x="380" y="186" width="45" height="40" fill="'+BLUE+'"/><path d="M290 82 V49 H350 V82" stroke="'+WHITE+'" stroke-width="6" fill="none"/><path d="M162 310 H478" stroke="'+WHITE+'" stroke-width="7"/>'}
 ];
 const $=id=>document.getElementById(id);
 const KEY='oporadar_t1_visual_article_v1';
@@ -101,11 +101,26 @@ function show(id){for(const x of ['start','game','finish'])$(x).hidden=x!==id;}
 function poolTrouble(){return cards.filter(c=>progress[c.id]?.status==='fallo'||progress[c.id]?.status==='duda')}
 function refreshStart(){const n=poolTrouble().length;$('savedState').textContent=n?'Tienes '+n+' imágenes pendientes de reforzar en este dispositivo.':'Todavía no hay dudas o fallos guardados.';$('startMissed').disabled=!n;}
 function begin(repeat=false){order=repeat?poolTrouble():cards.slice();if(!order.length){refreshStart();return;}index=0;marks=[];selected=null;checked=false;show('game');render();}
+const articleImages={
+a1:'T01_ART_1_2_01.jpg',a4:'T01_ART_4_1_02.jpg',a14:'T01_ART_14_03.jpg',a18:'T01_ART_18_2_04.jpg',
+a23:'T01_ART_23_1_05.jpg',a27:'T01_ART_27_4_06.jpg',a66:'T01_ART_66_1_07.jpg',a140:'T01_ART_140_08.jpg'};
+const imageDescriptions={
+a1:'Ciudadanos dialogando y flechas dirigidas hacia una institución.',
+a4:'Bandera roja, amarilla y roja sobre un edificio institucional.',
+a14:'Balanza equilibrada con personas a ambos lados.',
+a18:'Puerta de una vivienda protegida por un escudo dorado.',
+a23:'Ciudadanos votando con papeleta y urna electoral.',
+a27:'Docente y alumnado en un aula escolar.',
+a66:'Dos hemiciclos parlamentarios conectados visualmente.',
+a140:'Mapa ilustrativo de Cádiz dividido en municipios. Sus límites no son oficiales.'};
 function render(){if(index>=order.length){finish();return;}const c=order[index];checked=false;selected=null;hint=false;proposed='';
 $('counter').textContent=(index+1)+' / '+order.length;
 $('score').textContent=marks.length+' respuestas registradas';
 $('progressFill').style.width=(100*index/order.length)+'%';
-$('visual').innerHTML=SVG_START+'<title>Ilustración: '+c.tag+'</title>'+c.scene+SVG_END;
+const target=$('visual');target.replaceChildren();const picture=document.createElement('img');
+picture.src='assets/'+articleImages[c.id];picture.alt=imageDescriptions[c.id];picture.width=750;picture.height=750;picture.decoding='async';
+picture.onerror=()=>{target.innerHTML=SVG_START+'<title>Ilustración alternativa: '+c.tag+'</title>'+c.scene+SVG_END};
+target.append(picture);
 $('guess').value='';$('guess').disabled=false;$('guess').hidden=false;$('check').hidden=false;$('reveal').hidden=false;$('entryButtons').hidden=false;$('clue').hidden=false;$('clueText').hidden=true;$('clueText').textContent=c.clue;
 $('answer').hidden=true;$('rating').hidden=true;$('next').hidden=true;$('message').textContent='';
 $('guess').focus({preventScroll:true});}
