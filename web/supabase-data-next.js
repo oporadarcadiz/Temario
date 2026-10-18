@@ -22,9 +22,9 @@ window.OpoData={
   try{
    try{await window.OpoAccountReady}catch{}
    const client=window.OpoSupabaseClient;let rows;
-   if(client){const result=await client.from('opportunities').select('id,slug,data,published,reviewed_at').eq('published',true);if(result.error)throw result.error;rows=result.data||[]}
+   if(client){const result=await client.from('opportunities').select('id,data,published,reviewed_at').eq('published',true);if(result.error)throw result.error;rows=result.data||[]}
    else{
-    const response=await fetch('https://jtyjdrrxmuppulbekfai.supabase.co/rest/v1/opportunities?select=id,slug,data,published,reviewed_at&published=eq.true',{headers:{apikey:'sb_publishable_-9m9ilEwGsM4tEBTVXS3FA_aRlVhNNc'},cache:'no-store',signal:AbortSignal.timeout(12000)});
+    const response=await fetch('https://jtyjdrrxmuppulbekfai.supabase.co/rest/v1/opportunities?select=id,data,published,reviewed_at&published=eq.true',{headers:{apikey:'sb_publishable_-9m9ilEwGsM4tEBTVXS3FA_aRlVhNNc'},cache:'no-store',signal:AbortSignal.timeout(12000)});
     if(!response.ok)throw Error('HTTP '+response.status);rows=await response.json();
    }
    if(!Array.isArray(rows))throw Error('Respuesta de radar inválida');
