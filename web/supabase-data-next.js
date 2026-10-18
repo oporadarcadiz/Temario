@@ -10,7 +10,7 @@ window.OpoData={
    reviewedOn:d.reviewedOn||r.reviewed_at||d.fecha_ultima_consulta?.slice(0,10)||d.publishedOn,
    publicationStatus:d.publicationStatus||d.estado_validacion,
    published:r.published??d.publicada??true,
-   events:Array.isArray(d.events)?d.events:[]};
+   events:(Array.isArray(d.events)?d.events:[]).filter(e=>e?.approved===true&&['approved','published'].includes(String(e.publicationStatus||e.estado_validacion||'').toLowerCase())&&e.publicado!==false&&!e.retirado_en&&!e.retiredAt),announcements:(Array.isArray(d.announcements)?d.announcements:[]).filter(e=>e?.approved!==false&&!e.retirado_en&&!e.retiredAt&&(!e.publicationStatus||['approved','published','publicada','validada'].includes(String(e.publicationStatus).toLowerCase()))),milestones:Object.fromEntries(Object.entries(d.milestones||{}).filter(([,e])=>e&&e.approved!==false&&!e.retirado_en&&!e.retiredAt&&(!e.publicationStatus||['approved','published','publicada','validada'].includes(String(e.publicationStatus).toLowerCase()))))};
  },
  async loadOpportunities(){
   const fallback=async(reason)=>{
@@ -36,7 +36,7 @@ window.OpoData={
  async loadPublishedEvents(convocatoriaId){
   // Requiere tabla migrada y política RLS. Si no existe, continuar con anuncios legacy.
   const client=window.OpoSupabaseClient;if(!client)return [];
-  try{const {data,error}=await client.from('opportunity_events').select('evento_id,convocatoria_id,tipo_evento,titulo_evento,fecha_oficial,url_evento,resumen,publicado,estado_validacion').eq('convocatoria_id',convocatoriaId).eq('publicado',true).eq('estado_validacion','aprobado').order('fecha_oficial',{ascending:false});if(error)return [];return (data||[]).map(e=>({id:e.evento_id,opportunityId:e.convocatoria_id,type:e.tipo_evento,title:e.titulo_evento,officialPublishedOn:e.fecha_oficial,url:e.url_evento,approved:true,publicationStatus:'approved'}))}
+  try{const {data,error}=await client.from('opportunity_events').select('evento_id,convocatoria_id,tipo_evento,titulo_evento,fecha_oficial,url_evento,resumen,publicado,estado_validacion,retirado_en').eq('convocatoria_id',convocatoriaId).eq('publicado',true).eq('estado_validacion','aprobado').is('retirado_en',null).order('fecha_oficial',{ascending:false});if(error)return [];return (data||[]).filter(e=>e.publicado===true&&e.estado_validacion==='aprobado'&&!e.retirado_en).map(e=>({id:e.evento_id,opportunityId:e.convocatoria_id,type:e.tipo_evento,title:e.titulo_evento,officialPublishedOn:e.fecha_oficial,url:e.url_evento,approved:true,publicationStatus:'approved'}))}
   catch{return []}
  }
 };
