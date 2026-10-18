@@ -6,11 +6,11 @@
   const revision=document.getElementById('opportunity-revision'),savedFilter=document.getElementById('saved-filter'),savedCount=document.getElementById('saved-count');
   const storageKey='oporadar:radar:saved:v1';
   const requestedPhase=window.location?.hash?.slice(1);
-  let opportunities=[],phase=Object.hasOwn(labels,requestedPhase)?requestedPhase:'all',ready=false,onlySaved=false,archiveView=false;
+  let pageSize=25,opportunities=[],phase=Object.hasOwn(labels,requestedPhase)?requestedPhase:'all',ready=false,onlySaved=false,archiveView=false;
   const archiveControls=[...document.querySelectorAll('[data-archive]')];
-  const fields={search:document.getElementById('radar-search'),place:document.getElementById('radar-place'),level:document.getElementById('radar-level'),deadline:document.getElementById('radar-deadline')};
+  const fields={search:document.getElementById('radar-search'),place:document.getElementById('radar-place'),level:document.getElementById('radar-level'),deadline:document.getElementById('radar-deadline'),municipality:document.getElementById('radar-municipality'),category:document.getElementById('radar-category'),status:document.getElementById('radar-status'),sort:document.getElementById('radar-sort')};
   const fold=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-  function matches(record){const text=fold(fields.search?.value),place=fields.place?.value,level=fields.level?.value,deadline=fields.deadline?.value;if(text&&!fold(record.organism+' '+record.title+' '+(record.requirements||'')).includes(text))return false;if(place&&record.location!==place)return false;if(level&&record.qualificationFilter!==level)return false;if(deadline&&deadline!=='all'){if(effectiveState(record)!=='open')return false;if(deadline==='soon'){const days=(Date.parse(record.applicationsEndOn)-Date.parse(today()))/86400000;if(!Number.isFinite(days)||days<0||days>7)return false;}}return true;}
+  function matches(record){const text=fold(fields.search?.value),place=fields.place?.value,level=fields.level?.value,deadline=fields.deadline?.value;if(text&&!fold(record.organism+' '+record.title+' '+record.location+' '+(record.requirements||'')).includes(text))return false;if(place&&record.location!==place)return false;if(fields.municipality?.value&&record.location!==fields.municipality.value)return false;if(fields.category?.value&&record.qualificationFilter!==fields.category.value)return false;if(fields.status?.value&&effectiveState(record)!==fields.status.value)return false;if(level&&record.qualificationFilter!==level)return false;if(deadline&&deadline!=='all'){if(effectiveState(record)!=='open')return false;if(deadline==='soon'){const days=(Date.parse(record.applicationsEndOn)-Date.parse(today()))/86400000;if(!Number.isFinite(days)||days<0||days>7)return false;}}return true;}
   const expanded=new Set();let saved=new Set();
   try { const ids=JSON.parse(localStorage.getItem(storageKey));if(Array.isArray(ids))saved=new Set(ids.filter(id=>typeof id==='string')); }catch{}
   const today=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Madrid',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
@@ -51,6 +51,23 @@
     if(record.selectionSystem==='merit'){panel.append(addText('p','tracking-note','Selección por méritos, sin examen ni plantilla de respuestas.'));if(record.details)panel.append(addText('p','tracking-note',record.details));if(Array.isArray(record.categories)){const breakdown=document.createElement('ul');breakdown.className='announcement-list';for(const category of record.categories)breakdown.append(addText('li','',category.title+': '+category.places+' plazas'));panel.append(addText('h4','','Plazas por categoría'),breakdown);}if(safeUrl(record.applicationUrl))panel.append(officialLink('Sede de solicitudes',record.applicationUrl));}
     return panel;
   }
+  function verifiedEvents(record){
+    const events=[{date:record.publishedOn,title:'Convocatoria publicada'},{date:record.boePublishedOn,title:'Publicación oficial'},...(Array.isArray(record.announcements)?record.announcements:[]).filter(x=>x.date&&x.title&&safeUrl(x.url))];
+    for(const [key,item] of Object.entries(record.milestones||{}))if(item?.publishedOn&&safeUrl(item.url))events.push({date:item.publishedOn,title:{lists:'Listas',exam:'Fecha de examen',key:'Plantilla',results:'Resultados'}[key]||key});
+    if(isArchived(record))events.push({date:record.closure.publishedOn,title:'Cierre documentado'});
+    return events.filter(e=>/^\\d{4}-\\d{2}-\\d{2}$/.test(e.date)).sort((a,b)=>b.date.localeCompare(a.date));
+  }
+  function lastChange(record){return verifiedEvents(record)[0]||{date:record.publishedOn,title:'Convocatoria publicada'};}
+  function sorting(a,b){
+    const mode=fields.sort?.value||'news';
+    if(mode==='published')return b.publishedOn.localeCompare(a.publishedOn)||a.id.localeCompare(b.id);
+    if(mode==='modified')return lastChange(b).date.localeCompare(lastChange(a).date)||a.id.localeCompare(b.id);
+    if(mode==='deadline')return (a.applicationsEndOn||'9999-12-31').localeCompare(b.applicationsEndOn||'9999-12-31')||a.id.localeCompare(b.id);
+    const x=lastChange(a),y=lastChange(b);
+    const xNew=Object.keys(a.milestones||{}).length+(a.announcements||[]).length+(isArchived(a)?1:0);
+    const yNew=Object.keys(b.milestones||{}).length+(b.announcements||[]).length+(isArchived(b)?1:0);
+    return y.date.localeCompare(x.date)||yNew-xNew||a.id.localeCompare(b.id);
+  }
   function renderRow(record){
     const article=document.createElement('article');article.className='opportunity-row';article.id=record.id;
     const places=addText('div','opportunity-places','');places.append(addText('strong','',record.places==null?'Bolsa':record.places),addText('span','',record.places==null?'sin nº fijo':'plazas'));
@@ -66,7 +83,13 @@
     const details=addText('button','opportunity-expand',expanded.has(record.id)?'Ocultar seguimiento':'Ver seguimiento');details.type='button';details.setAttribute('aria-expanded',String(expanded.has(record.id)));details.setAttribute('aria-controls',`tracking-${record.id}`);
     const panel=trackingPanel(record,state);
     details.addEventListener('click',()=>{const open=!expanded.has(record.id);open?expanded.add(record.id):expanded.delete(record.id);panel.hidden=!open;details.setAttribute('aria-expanded',String(open));details.textContent=open?'Ocultar seguimiento':'Ver seguimiento';});
-    links.append(follow,details);article.append(places,content,links,panel);return article;
+    links.append(follow,details);
+    const meta=addText('div','compact-meta',record.location+' · '+labels[record.processType]+(record.places!=null?' · '+record.places+' plazas':''));
+    const status=addText('div','compact-state',isArchived(record)?'Archivada':state==='review'?'Plazo por verificar':stateLabels[state]||'Publicada');
+    status.append(addText('small','', 'Publicado: '+dateLabel(record.publishedOn)),addText('small','',record.applicationsEndOn?'Fin de plazo: '+dateLabel(record.applicationsEndOn):'Fin de plazo: consultar bases'));
+    const change=lastChange(record),news=addText('div','compact-news',change.title);news.append(addText('small','',dateLabel(change.date)));
+    const title=content.querySelector('h3');if(title){const button=addText('button','compact-title',record.title);button.type='button';button.setAttribute('aria-expanded',String(expanded.has(record.id)));button.setAttribute('aria-controls',`tracking-${record.id}`);button.addEventListener('click',()=>details.click());title.replaceChildren(button);}
+    article.append(places,content,meta,status,news,links,panel);return article;
   }
   function render(){
     if(!ready)return;
@@ -74,16 +97,19 @@
     document.querySelectorAll('[data-phase]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.phase===phase)));
     document.querySelectorAll('[data-count]').forEach(el=>el.textContent=countFor(el.dataset.count));
     savedFilter.setAttribute('aria-pressed',String(onlySaved));savedCount.textContent=selectedRecords().filter(o=>saved.has(o.id)).length;
-    const visible=selectedRecords().filter(o=>(phase==='all'||o.processType===phase)&&(!onlySaved||saved.has(o.id))&&matches(o));
+    const visible=selectedRecords().filter(o=>(phase==='all'||o.processType===phase)&&(!onlySaved||saved.has(o.id))&&matches(o)).sort(sorting);
     summary.textContent=`${visible.length} ${visible.length===1?'convocatoria revisada':'convocatorias revisadas'}`;
     results.replaceChildren();
+    const more=document.getElementById('opportunity-more');if(more)more.hidden=true;
     if(!visible.length){const empty=document.createElement('div');empty.className='opportunity-empty';const heading=onlySaved?'Aún no sigues procesos en esta selección':archiveView?'Sin convocatorias archivadas en esta selección':`Sin procesos verificados en «${labels[phase]}»`;const copy=onlySaved?'Pulsa «Seguir» en una convocatoria. Inicia sesión para conservarla en tu cuenta.':archiveView?'Se archivan cuando se verifica el cierre, la cancelación o el fin de vigencia. El cierre de solicitudes no termina el seguimiento.':'Consulta «Todos» para ver los procesos registrados. Se incorporarán nuevos procesos tras verificar sus documentos oficiales.';empty.append(addText('h3','',heading),addText('p','',copy));results.append(empty);return;}
-    visible.forEach(record=>results.append(renderRow(record)));
+    visible.slice(0,pageSize).forEach(record=>results.append(renderRow(record)));const more=document.getElementById('opportunity-more');if(more){more.hidden=visible.length<=pageSize;more.textContent='Cargar más convocatorias ('+Math.max(0,visible.length-pageSize)+' restantes)';}
   }
   document.querySelectorAll('[data-phase]').forEach(button=>button.addEventListener('click',()=>{if(!ready)return;phase=button.dataset.phase;render();if(button.classList.contains('stage-select'))document.getElementById('convocatorias').scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});}));
   savedFilter.addEventListener('click',()=>{onlySaved=!onlySaved;render();});
   archiveControls.forEach(button=>button.addEventListener('click',()=>{archiveView=button.dataset.archive==='archived';render();}));
-  Object.values(fields).filter(Boolean).forEach(el=>el.addEventListener('input',render));
-  async function load(){try{await window.OpoAccountReady;try{saved=new Set(JSON.parse(localStorage.getItem(storageKey)||'[]'));}catch{saved=new Set();}const data=await window.OpoData.loadOpportunities();const seen=new Set();opportunities=data.opportunities.filter(o=>{if(!o.id||seen.has(o.id)||!o.title||!(Number.isInteger(o.places)&&o.places>=1||o.processType==='pool'&&o.places==null)||!stateLabels[o.state]||!labels[o.processType]||o.processType==='all'||!/^\d{4}-\d{2}-\d{2}$/.test(o.publishedOn)||!/^\d{4}-\d{2}-\d{2}$/.test(o.boePublishedOn)||!/^\d{4}-\d{2}-\d{2}$/.test(o.reviewedOn))return false;try{if(new URL(o.url).protocol!=='https:'||new URL(o.boeUrl).protocol!=='https:')return false;}catch{return false;}seen.add(o.id);return true;});if(opportunities.some(o=>o.id===requestedPhase)){onlySaved=false;archiveView=isArchived(opportunities.find(o=>o.id===requestedPhase));}ready=true;revision.textContent=`Radar actualizado el ${dateLabel(data.reviewedOn)}. Cada proceso muestra su última revisión; actualización verificada.${data.notice?' '+data.notice:''}`;render();if(opportunities.some(o=>o.id===requestedPhase))document.getElementById(requestedPhase)?.scrollIntoView({block:'start'});}catch{summary.textContent='No se han podido cargar las convocatorias.';results.replaceChildren(addText('p','opportunity-empty','Recarga la página para volver a intentarlo.'));}}
+  Object.values(fields).filter(Boolean).forEach(el=>el.addEventListener('input',()=>{pageSize=25;render();}));document.getElementById('opportunity-more')?.addEventListener('click',()=>{pageSize+=25;render();});
+  async function load(){try{await window.OpoAccountReady;try{saved=new Set(JSON.parse(localStorage.getItem(storageKey)||'[]'));}catch{saved=new Set();}const data=await window.OpoData.loadOpportunities();const seen=new Set();opportunities=data.opportunities.filter(o=>{if(!o.id||seen.has(o.id)||['detected','pending','draft','rejected'].includes(o.publicationStatus)||o.approved===false||!o.title||!(Number.isInteger(o.places)&&o.places>=1||o.processType==='pool'&&o.places==null)||!stateLabels[o.state]||!labels[o.processType]||o.processType==='all'||!/^\d{4}-\d{2}-\d{2}$/.test(o.publishedOn)||!/^\d{4}-\d{2}-\d{2}$/.test(o.boePublishedOn)||!/^\d{4}-\d{2}-\d{2}$/.test(o.reviewedOn))return false;try{if(new URL(o.url).protocol!=='https:'||new URL(o.boeUrl).protocol!=='https:')return false;}catch{return false;}seen.add(o.id);return true;});if(opportunities.some(o=>o.id===requestedPhase)){onlySaved=false;archiveView=isArchived(opportunities.find(o=>o.id===requestedPhase));}ready=true;
+    const towns=[...new Set(opportunities.map(o=>o.location).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));const municipal=fields.municipality;if(municipal)for(const town of towns){const option=document.createElement('option');option.value=town;option.textContent=town;municipal.append(option);}
+    revision.textContent=`Radar actualizado el ${dateLabel(data.reviewedOn)}. Cada proceso muestra su última revisión; actualización verificada.${data.notice?' '+data.notice:''}`;render();if(opportunities.some(o=>o.id===requestedPhase))document.getElementById(requestedPhase)?.scrollIntoView({block:'start'});}catch{summary.textContent='No se han podido cargar las convocatorias.';results.replaceChildren(addText('p','opportunity-empty','Recarga la página para volver a intentarlo.'));}}
   load();
 })();
