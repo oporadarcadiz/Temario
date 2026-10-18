@@ -62,3 +62,11 @@ Prototipo jugable EN REVISIÓN: «Artículo en imagen». En construcción: «Ima
 - En `Tarjetas-repaso` también existe un Test Radar antiguo alimentado por Google Sheets. No se ha integrado directamente como entrada nueva hasta verificar demo/banco y no exponer preguntas comerciales: el menú enlaza el Test Tema 1 existente.
 - Verificaciones de código fuente: el JS modificado compila, no hay IDs HTML duplicados ni referencias DOM a IDs ausentes. Esto NO equivale a ejecutar los juegos en Chrome/Safari.
 - Todas las operaciones están en ramas y solicitudes de integración en borrador; no se tocaron bancos, PDF, QR, autenticación, pagos ni flujos n8n.
+
+## Imágenes integradas · 18/10/2026
+- Se han guardado 8 archivos JPG optimizados 750×750 en `tema-1/juegos/menu-memoria/assets/`, además de copias de trabajo en Google Drive/Opo Radar Cádiz/OpoRadarCádiz/JUEGOS_LIBRO/TEMA_1/ARTICULO_EN_IMAGEN/.
+- `articulo-en-imagen.html` usa las imágenes reales en un contenedor 1:1. Si el JPG no carga, se mantiene el SVG anterior como respaldo; la valoración y los bancos no se modificaron.
+- Origen: ilustraciones de **Gemini** seleccionadas por la usuaria (arts. 1.2, 14, 18.2, 23.1) e imágenes creadas aquí con **ChatGPT** (arts. 4.1, 27.4, 66.1, 140).
+- El mapa de Cádiz (art. 140) es **una ilustración conceptual**, no cartografía oficial ni fuente de nombres/límites municipales. No usarla en exámenes de geografía ni preguntarle al alumno por posiciones municipales; la respuesta jurídica sí se basa en el artículo 140.
+- Hacer prueba de carga 8/8 de las imágenes en Chrome/Safari/móvil tras despliegue. Todas las rutas del repositorio han sido verificadas a nivel de árbol Git.
+- Web Chat: el enlace al menú sigue siendo `/tema-1/juegos/menu-memoria/`; no hacen falta QR adicionales. Fusionar únicamente tras revisión del borrador PR nº1 y prueba final, sin introducir contraseñas por ahora.
