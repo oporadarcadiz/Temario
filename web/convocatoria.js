@@ -13,7 +13,7 @@
  function events(r){
   const all=[{date:r.publishedOn,title:'Convocatoria publicada',url:r.url,type:'published',approved:true},{date:r.boePublishedOn,title:'Publicación en '+(r.officialBulletin||'BOE'),url:r.boeUrl,type:'bulletin',approved:true}];
   for(const a of Array.isArray(r.announcements)?r.announcements:[])all.push({date:a.date,title:a.title,url:a.url,id:a.id,type:a.type||'announcement',approved:visibleEvent(a)});
-  for(const a of Array.isArray(r.events)?r.events:[])if(visibleEvent(a))all.push({date:a.officialPublishedOn||a.date,title:a.title,url:a.url,id:a.id,type:a.type||'other',approved:true});
+  for(const a of Array.isArray(r.events)?r.events:[])if(a.approved===true&&['approved','published'].includes(String(a.publicationStatus||'').toLowerCase()))all.push({date:a.officialPublishedOn||a.date,title:a.title,url:a.url,id:a.id,type:a.type||'other',approved:true});
   const names={lists:'Lista de admisión',exam:'Fecha de examen',key:'Plantilla de respuestas',results:'Resultados'};
   for(const [type,a] of Object.entries(r.milestones||{}))if(a)all.push({date:a.publishedOn,title:a.text||names[type]||'Anuncio',url:a.url,type,id:a.id,approved:visibleEvent(a)});
   if(r.closure?.url&&r.closure?.publishedOn)all.push({date:r.closure.publishedOn,title:r.closure.text||'Resolución de cierre',url:r.closure.url,type:'closure',approved:visibleEvent(r.closure)});
