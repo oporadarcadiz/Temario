@@ -1,7 +1,7 @@
 'use strict';
 (()=>{
  const mount=document.getElementById('detail-content'),message=document.getElementById('detail-message');
- const id=new URLSearchParams(location.search).get('id');const savedKey='oporadar:radar:saved:v1';
+ const params=new URLSearchParams(location.search);const id=params.get('id');const slug=params.get('slug');const savedKey='oporadar:radar:saved:v1';
  const labels={opposition:'Oposición',combined:'Concurso-oposición',merit:'Concurso de méritos',pool:'Bolsa de trabajo'};
  const statuses={published:'Convocatoria publicada',open:'Plazo abierto según última revisión',lists:'Listas publicadas',exam:'Examen anunciado'};
  const validDate=v=>/^\d{4}-\d{2}-\d{2}$/.test(v||'')&&!Number.isNaN(Date.parse(v+'T12:00:00Z'));
@@ -34,7 +34,7 @@
   const actions=el('section','detail-block');actions.append(el('h2','','Guardar este expediente'));const actionRow=el('div','detail-actions'),button=el('button','');button.type='button';const read=()=>{try{const v=JSON.parse(localStorage.getItem(savedKey)||'[]');return Array.isArray(v)?v.filter(x=>typeof x==='string'):[]}catch{return []}};const update=()=>{const isSaved=read().includes(r.id);button.textContent=isSaved?'✦ Quitar de favoritos':'✧ Guardar en favoritos';button.setAttribute('aria-pressed',String(isSaved))};button.addEventListener('click',()=>{try{const list=new Set(read());list.has(r.id)?list.delete(r.id):list.add(r.id);localStorage.setItem(savedKey,JSON.stringify([...list]));update()}catch{button.textContent='No se pudo guardar en este navegador'}});update();actionRow.append(button);actions.append(actionRow,el('p','detail-notice','Los favoritos se conservan en este navegador. Verifica los detalles y requisitos en el organismo oficial.'));mount.append(actions);
  }
  async function init(){
-  if(!id||! /^[A-Za-z0-9][A-Za-z0-9._:-]{0,119}$/.test(id)){message.textContent='El enlace no contiene un identificador válido de convocatoria.';return}
-  try{const data=await window.OpoData.loadOpportunities();const r=data.opportunities.find(x=>x.id===id);if(!r||!r.title||!r.organism||!safeUrl(r.url)||r.approved===false||(r.publicationStatus!=null&&!['published','approved','publicada','validada'].includes(String(r.publicationStatus).toLowerCase()))){message.textContent='No se encuentra este expediente entre las convocatorias publicadas. Puedes volver al listado.';return}document.title=r.title+' · OpoRadarCádiz';show(r)}catch{message.textContent='No ha sido posible cargar la ficha. Vuelve al listado e inténtalo de nuevo.'}
+  if(!(id&&/^[A-Za-z0-9][A-Za-z0-9._:-]{0,119}$/.test(id))&&!(slug&&/^[a-z0-9][a-z0-9-]{0,160}$/.test(slug))){message.textContent='El enlace no contiene un identificador válido de convocatoria.';return}
+  try{const data=await window.OpoData.loadOpportunities();const r=data.opportunities.find(x=>id?x.id===id:x.slug===slug);if(!r||!r.title||!r.organism||!safeUrl(r.url)||r.approved===false||(r.publicationStatus!=null&&!['published','approved','publicada','validada'].includes(String(r.publicationStatus).toLowerCase()))){message.textContent='No se encuentra este expediente entre las convocatorias publicadas. Puedes volver al listado.';return}document.title=r.title+' · OpoRadarCádiz';show(r)}catch{message.textContent='No ha sido posible cargar la ficha. Vuelve al listado e inténtalo de nuevo.'}
  }init();
 })();
