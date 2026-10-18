@@ -18,7 +18,7 @@ Actualizado 18/10/2026. Este documento sustituye el listado anterior de 20 tarje
 | Fichas y vocabulario | Vocabulario jurídico | `/tema-1/juegos/menu-memoria/vocabulario-juridico.html` |
 | Fichas y vocabulario | El candado 4-9-1-1 | `/tema-1/juegos/nivel2-disposiciones.html` |
 | Precisión y examen | Detecta el error (Caza la trampa) | `/tema-1/juegos/caza-la-trampa.html` |
-| Precisión y examen | Completa la norma | `https://oporadarcadiz.github.io/Tarjetas-repaso/juegos/centro-radar/tema-1/?modo=completa&radar=4` |
+| Precisión y examen | Completa la frase | `https://oporadarcadiz.github.io/Tarjetas-repaso/juegos/centro-radar/tema-1/?modo=completa&radar=4` |
 | Precisión y examen | Test Radar | `/tema-1/juegos/nivel3-test.html` — redirige al modo mixto de Centro Radar |
 | Precisión y examen | Simulacro | `/tema-1/simulacro/` |
 
@@ -55,3 +55,11 @@ El recurso **Vocabulario jurídico** es una puerta de entrada, no un banco dupli
 - Simulación de Caza la trampa: iniciar ronda, acertar, **quedarse en la misma pregunta con explicación visible**, pulsar «Siguiente», fallar, almacenar un error y permitir continuar. Resultado conforme.
 - Fichas Radar, Traduce el jurídico y Artículo en imagen: simulaciones anteriores de valoración y avance manual satisfactorias; los cambios recientes de Fichas y Artículo solo afectan a colores/retroceso.
 - No verificado desde un navegador externo: las URLs publicadas de GitHub Pages devolvieron error en la herramienta de consulta web. No atribuir disponibilidad HTTP sin prueba en navegador real.
+
+## Presentación final solicitada para tarjetas de menú
+- Dos tarjetas por fila en móvil habitual desde 351 px de anchura; una sola en pantallas especialmente estrechas.
+- Número de grupo `01/02/03` pequeño, arriba a la derecha del encabezado, sin cifras grandes.
+- Nombres de juegos en blanco; subtítulos muy cortos y dorados; el enlace sigue siendo toda la tarjeta.
+- Eliminar el rótulo técnico «Código existente · En revisión» **del frontal de las tarjetas**. Los recursos que requieren conexión siguen identificados correctamente en la vista de detalles de la demo, sin presentarlos como publicados.
+- Renombre exclusivamente visible: `Completa la frase` -> enlace original modo `completa` (no renombrar ruta de aplicación ni bancos).
+- Vista previa móvil autocontenida actualizada para revisión: `OpoRadarCadiz_Tema1_Menu_9_Juegos_Vista_Previa_v2.html` en Drive `JUEGOS_LIBRO/TEMA_1/VISTAS_PREVIAS`.
