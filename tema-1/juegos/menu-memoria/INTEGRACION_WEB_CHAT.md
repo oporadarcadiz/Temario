@@ -72,3 +72,13 @@ El recurso **Vocabulario jurídico** es una puerta de entrada, no un banco dupli
 - **Pruebas JS por DOM simulado, satisfactorias:** Caza (respuesta correcta, no avance automático, marcar duda, guardar y recuperar un fallo, repaso de ambos, eliminación después de acertar), Fichas Radar (revelar, marcar Dudé, leer explicación, pulsar Siguiente), Traduce el jurídico (girar, calificar, explicación visible, pulsar Siguiente) y Artículo en imagen (cargar imagen 18.2, error, explicación y repaso de ese error).
 - **Sin integración transversal:** no se modifica `mis-fallos` ni `resources.js`. Cada juego conserva su propio almacenamiento local y no necesita contraseñas.
 - **Limitación:** las pruebas son de lógica simulada. La prueba táctil en dispositivos físicos, la respuesta pública HTTP de GitHub Pages y la visualización tras desplegar Netlify siguen pendientes. La corrección de Traduce el jurídico reside en la PR en borrador `Tarjetas-repaso#1`, no en la rama principal publicada.
+
+## Actualización del repositorio Tarjetas-repaso · 19/10/2026
+
+La PR **https://github.com/oporadarcadiz/Tarjetas-repaso/pull/1** contiene ahora ajustes para **tres** recursos que ya existían, no solo Traduce el jurídico:
+
+- `juegos/centro-radar/traduce-juridico/`: mantener explicación visible al valorar, botón Siguiente, botón Volver contextual, marca azul noche y dorado.
+- `juegos/tarjetas-radar/vocabulario-tema-1/`: sus **13 tarjetas** siguen intactas; añade el botón `Dudé`, repaso local y avance únicamente con `Siguiente tarjeta`, sin perder fallos anteriores. Simulación completada: 13 tarjetas, marcar duda, cerrar ronda, repetirla y eliminarla al acertar.
+- `juegos/centro-radar/tema-1/`: regreso al Centro de Juegos únicamente cuando se entra desde su menú; no modifica la ruta QR ni la navegación directa. Mismos colores de la web. Modo `completa` renombrado visualmente a `Completa la frase`, sin cambiar sus datos ni parámetros.
+
+**Importante:** Los enlaces de GitHub Pages siguen sin verificarse por HTTP; no se ha desplegado esta PR. El conector Firecrawl no tiene créditos actualmente. Web Chat deberá confirmar las URLs públicas al integrar la propuesta y comprobar el aspecto en móvil. La PR de Temario nº1 debe integrarse sin sobrescribir el trabajo de `preventa-tema1-seguridad`.
