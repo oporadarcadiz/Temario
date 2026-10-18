@@ -4,3 +4,5 @@
 /saber-mas /tema-1/saber-mas/ 301
 /tema-1/sabermas /tema-1/saber-mas/ 301
 /tema-1/venta /tema1-venta.html 302
+
+/convocatorias/:slug /convocatoria.html?slug=:slug 200
