@@ -22,6 +22,8 @@ ALTER TABLE public.opportunities
  ADD COLUMN IF NOT EXISTS aprobado_en timestamptz,
  ADD COLUMN IF NOT EXISTS retirada_en timestamptz,
  ADD COLUMN IF NOT EXISTS motivo_retirada text;
+-- No restringir estado_validacion de los nueve registros heredados hasta auditarlos.
+-- La restricción de oportunidades puede añadirse NOT VALID tras la revisión editorial.
 -- No generar slug automáticamente a partir de nombres: asignación única e inmutable desde proceso editorial.
 CREATE UNIQUE INDEX IF NOT EXISTS opportunities_slug_unique_idx ON public.opportunities(slug) WHERE slug IS NOT NULL;
 -- El slug puede asignarse una vez, pero nunca renombrarse.
@@ -42,7 +44,7 @@ CREATE TABLE IF NOT EXISTS public.opportunity_events (
  evento_id text PRIMARY KEY,
  convocatoria_id text NOT NULL REFERENCES public.opportunities(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
  evento_dedupe_key text NOT NULL UNIQUE,
- tipo_evento text NOT NULL,
+ tipo_evento text NOT NULL CHECK (tipo_evento IN ('convocatoria_publicada','apertura_plazo','correccion_bases','lista_provisional','lista_definitiva','fecha_examen','cambio_fecha_examen','resultado_examen','valoracion_meritos','propuesta_nombramiento','resolucion_final','plazo_finalizado','incidencia','otro')),
  titulo_evento text NOT NULL,
  fecha_oficial date,
  fecha_detectada timestamptz,
@@ -51,7 +53,7 @@ CREATE TABLE IF NOT EXISTS public.opportunity_events (
  canonical_url text,
  url_evento text,
  resumen text,
- estado_validacion text NOT NULL DEFAULT 'pendiente',
+ estado_validacion text NOT NULL DEFAULT 'pendiente' CHECK (estado_validacion IN ('pendiente','aprobado','corregir','rechazado')),
  publicado boolean NOT NULL DEFAULT false,
  aprobado_por text,
  aprobado_en timestamptz,
@@ -63,6 +65,17 @@ CREATE TABLE IF NOT EXISTS public.opportunity_events (
     NOT publicado OR (estado_validacion='aprobado' AND aprobado_en IS NOT NULL AND retirado_en IS NULL)
  )
 );
+CREATE OR REPLACE FUNCTION public.opportunity_events_touch_updated_at() RETURNS trigger
+LANGUAGE plpgsql AS $
+BEGIN
+ NEW.updated_at = now();
+ RETURN NEW;
+END;
+$;
+DROP TRIGGER IF EXISTS opportunity_events_touch_updated_at_trigger ON public.opportunity_events;
+CREATE TRIGGER opportunity_events_touch_updated_at_trigger
+ BEFORE UPDATE ON public.opportunity_events
+ FOR EACH ROW EXECUTE FUNCTION public.opportunity_events_touch_updated_at();
 CREATE INDEX IF NOT EXISTS opportunity_events_convocatoria_fecha_idx ON public.opportunity_events(convocatoria_id,fecha_oficial DESC);
 ALTER TABLE public.opportunity_events ENABLE ROW LEVEL SECURITY;
 -- Sólo lectura pública de eventos publicados, aprobados, no retirados y asociados a convocatoria publicada.
