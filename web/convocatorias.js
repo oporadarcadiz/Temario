@@ -52,8 +52,8 @@
     return panel;
   }
   function verifiedEvents(record){
-    const events=[{date:record.publishedOn,title:'Convocatoria publicada'},{date:record.boePublishedOn,title:'Publicación oficial'},...(Array.isArray(record.announcements)?record.announcements:[]).filter(x=>x.date&&x.title&&safeUrl(x.url))];
-    for(const [key,item] of Object.entries(record.milestones||{}))if(item?.publishedOn&&safeUrl(item.url))events.push({date:item.publishedOn,title:{lists:'Listas',exam:'Fecha de examen',key:'Plantilla',results:'Resultados'}[key]||key});
+    const events=[{date:record.publishedOn,title:'Convocatoria publicada'},{date:record.boePublishedOn,title:'Publicación oficial'},...(Array.isArray(record.announcements)?record.announcements:[]).filter(x=>x.date&&x.title&&safeUrl(x.url)&&x.approved!==false&&(!x.publicationStatus||['approved','published','publicada','validada'].includes(String(x.publicationStatus).toLowerCase())))];
+    for(const [key,item] of Object.entries(record.milestones||{}))if(item?.publishedOn&&safeUrl(item.url)&&item.approved!==false&&(!item.publicationStatus||['approved','published','publicada','validada'].includes(String(item.publicationStatus).toLowerCase())))events.push({date:item.publishedOn,title:{lists:'Listas',exam:'Fecha de examen',key:'Plantilla',results:'Resultados'}[key]||key});
     for(const item of Array.isArray(record.events)?record.events:[])if(item?.approved===true&&['approved','published'].includes(String(item.publicationStatus||'').toLowerCase())&&item.officialPublishedOn&&item.title&&safeUrl(item.url))events.push({date:item.officialPublishedOn,title:item.title,url:item.url});
     if(isArchived(record))events.push({date:record.closure.publishedOn,title:'Cierre documentado'});
     return events.filter(e=>/^\\d{4}-\\d{2}-\\d{2}$/.test(e.date)).sort((a,b)=>b.date.localeCompare(a.date));
@@ -65,7 +65,7 @@
     if(mode==='modified')return lastChange(b).date.localeCompare(lastChange(a).date)||a.id.localeCompare(b.id);
     if(mode==='deadline')return (a.applicationsEndOn||'9999-12-31').localeCompare(b.applicationsEndOn||'9999-12-31')||a.id.localeCompare(b.id);
     const x=lastChange(a),y=lastChange(b);
-    const xNew=Object.values(a.milestones||{}).filter(m=>m?.publishedOn&&safeUrl(m.url)).length+(a.announcements||[]).filter(e=>e.date&&safeUrl(e.url)).length+(isArchived(a)?1:0);
+    const xNew=Object.values(a.milestones||{}).filter(m=>m?.publishedOn&&safeUrl(m.url)&&m.approved!==false&&(!m.publicationStatus||['approved','published','publicada','validada'].includes(String(m.publicationStatus).toLowerCase()))).length+(a.announcements||[]).filter(e=>e.date&&safeUrl(e.url)&&e.approved!==false&&(!e.publicationStatus||['approved','published','publicada','validada'].includes(String(e.publicationStatus).toLowerCase()))).length+(isArchived(a)?1:0);
     const yNew=Object.values(b.milestones||{}).filter(m=>m?.publishedOn&&safeUrl(m.url)).length+(b.announcements||[]).filter(e=>e.date&&safeUrl(e.url)).length+(isArchived(b)?1:0);
     return y.date.localeCompare(x.date)||yNew-xNew||a.id.localeCompare(b.id);
   }
