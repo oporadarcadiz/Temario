@@ -28,14 +28,14 @@ ALTER TABLE public.opportunities
 CREATE UNIQUE INDEX IF NOT EXISTS opportunities_slug_unique_idx ON public.opportunities(slug) WHERE slug IS NOT NULL;
 -- El slug puede asignarse una vez, pero nunca renombrarse.
 CREATE OR REPLACE FUNCTION public.opportunities_immutable_slug() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 BEGIN
  IF OLD.slug IS NOT NULL AND NEW.slug IS DISTINCT FROM OLD.slug THEN
   RAISE EXCEPTION 'Slug permanente: no se permite modificarlo';
  END IF;
  RETURN NEW;
 END;
-$;
+$$;
 DROP TRIGGER IF EXISTS opportunities_immutable_slug_trigger ON public.opportunities;
 CREATE TRIGGER opportunities_immutable_slug_trigger BEFORE UPDATE ON public.opportunities
 FOR EACH ROW EXECUTE FUNCTION public.opportunities_immutable_slug();
@@ -66,12 +66,12 @@ CREATE TABLE IF NOT EXISTS public.opportunity_events (
  )
 );
 CREATE OR REPLACE FUNCTION public.opportunity_events_touch_updated_at() RETURNS trigger
-LANGUAGE plpgsql AS $
+LANGUAGE plpgsql AS $$
 BEGIN
  NEW.updated_at = now();
  RETURN NEW;
 END;
-$;
+$$;
 DROP TRIGGER IF EXISTS opportunity_events_touch_updated_at_trigger ON public.opportunity_events;
 CREATE TRIGGER opportunity_events_touch_updated_at_trigger
  BEFORE UPDATE ON public.opportunity_events
