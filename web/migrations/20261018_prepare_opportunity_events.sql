@@ -24,6 +24,19 @@ ALTER TABLE public.opportunities
  ADD COLUMN IF NOT EXISTS motivo_retirada text;
 -- No generar slug automáticamente a partir de nombres: asignación única e inmutable desde proceso editorial.
 CREATE UNIQUE INDEX IF NOT EXISTS opportunities_slug_unique_idx ON public.opportunities(slug) WHERE slug IS NOT NULL;
+-- El slug puede asignarse una vez, pero nunca renombrarse.
+CREATE OR REPLACE FUNCTION public.opportunities_immutable_slug() RETURNS trigger
+LANGUAGE plpgsql AS $
+BEGIN
+ IF OLD.slug IS NOT NULL AND NEW.slug IS DISTINCT FROM OLD.slug THEN
+  RAISE EXCEPTION 'Slug permanente: no se permite modificarlo';
+ END IF;
+ RETURN NEW;
+END;
+$;
+DROP TRIGGER IF EXISTS opportunities_immutable_slug_trigger ON public.opportunities;
+CREATE TRIGGER opportunities_immutable_slug_trigger BEFORE UPDATE ON public.opportunities
+FOR EACH ROW EXECUTE FUNCTION public.opportunities_immutable_slug();
 CREATE UNIQUE INDEX IF NOT EXISTS opportunities_dedupe_unique_idx ON public.opportunities(dedupe_key) WHERE dedupe_key IS NOT NULL;
 CREATE TABLE IF NOT EXISTS public.opportunity_events (
  evento_id text PRIMARY KEY,
