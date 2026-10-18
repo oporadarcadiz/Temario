@@ -23,7 +23,10 @@ const event=(override={})=>({id:'EVT-OPO-0001-AAA',approved:true,publicationStat
 test('evento pendiente no visible',()=>assert.equal(normalize({...base,events:[event({approved:false,publicationStatus:'pending',publicado:false})]}).events.length,0));
 test('evento aprobado y publicado visible',()=>assert.equal(normalize({...base,events:[event()]}).events.length,1));
 test('evento retirado no visible',()=>assert.equal(normalize({...base,events:[event({retirado_en:'2026-10-11T00:00:00Z'})]}).events.length,0));
-test('evento repetido se identifica mediante dedupe_key estable',()=>{const xs=[event(),event()];const key=e=>[base.id,e.type||'lista_provisional',e.officialPublishedOn,e.url].join('|');assert.equal(new Set(xs.map(key)).size,1)});
+test('evento repetido se descarta en adaptador',()=>{const result=normalize({...base,events:[event(),event()]});assert.equal(result.events.length,1)});
 test('fecha_ultima_consulta no debe convertirse en fecha oficial',()=>{const r=normalize({...base,publishedOn:'2026-09-01',fecha_ultima_consulta:'2026-10-18T12:00:00Z'});assert.equal(r.publishedOn,'2026-09-01');assert.equal(r.events.length,0)});
 test('lista y examen conservan convocatoria_id',()=>{const r=normalize({...base,events:[event({type:'lista_provisional'}),event({id:'EVT-OPO-0001-BBB',type:'fecha_examen'})]});assert.equal(r.id,base.id);assert.equal(r.events.length,2)});
 test('anuncios antiguos pendientes, rechazados y retirados se excluyen',()=>{const r=normalize({...base,announcements:[{title:'ok'},{title:'pendiente',publicationStatus:'pending'},{title:'rechazado',approved:false},{title:'retirado',retirado_en:'2026-10-11'}]});assert.equal(r.announcements.length,1)});
+
+test('evento nuevo sin publicado true no es visible',()=>assert.equal(normalize({...base,events:[event({publicado:undefined})]}).events.length,0));
+test('evento nuevo sin aprobación explícita no es visible',()=>assert.equal(normalize({...base,events:[event({approved:undefined})]}).events.length,0));
