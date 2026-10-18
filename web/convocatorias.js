@@ -81,9 +81,6 @@
     if(!isArchived(record)&&reviewAge(record)>7)content.append(addText('p','opportunity-stale','Revisión pendiente: confirma las novedades en el expediente oficial.'));
     const links=addText('div','opportunity-links','');links.append(officialLink('Ver convocatoria',record.url),officialLink('Consultar '+(record.officialBulletin||'BOE'),record.boeUrl));
     const follow=addText('button','opportunity-follow',saved.has(record.id)?'✦ Siguiendo':'✧ Seguir');follow.type='button';follow.setAttribute('aria-pressed',String(saved.has(record.id)));follow.setAttribute('aria-label',`${saved.has(record.id)?'Quitar de mis procesos':'Guardar'} ${record.title} de ${record.organism}`);follow.addEventListener('click',()=>toggleSaved(record.id));
-    const details=addText('button','opportunity-expand',expanded.has(record.id)?'Ocultar seguimiento':'Ver seguimiento');details.type='button';details.setAttribute('aria-expanded',String(expanded.has(record.id)));details.setAttribute('aria-controls',`tracking-${record.id}`);
-    const panel=trackingPanel(record,state);
-    details.addEventListener('click',()=>{const open=!expanded.has(record.id);open?expanded.add(record.id):expanded.delete(record.id);panel.hidden=!open;details.setAttribute('aria-expanded',String(open));details.textContent=open?'Ocultar seguimiento':'Ver seguimiento';});
     const detailLink=document.createElement('a');detailLink.href='/convocatoria.html?id='+encodeURIComponent(record.id);detailLink.textContent='Ver ficha →';links.append(detailLink,follow);
     const meta=addText('div','compact-meta',record.location+' · '+labels[record.processType]+(record.places!=null?' · '+record.places+' plazas':''));
     const status=addText('div','compact-state',isArchived(record)?'Archivada':state==='review'?'Plazo por verificar':stateLabels[state]||'Publicada');
