@@ -82,3 +82,26 @@ La PR **https://github.com/oporadarcadiz/Tarjetas-repaso/pull/1** contiene ahora
 - `juegos/centro-radar/tema-1/`: regreso al Centro de Juegos únicamente cuando se entra desde su menú; no modifica la ruta QR ni la navegación directa. Mismos colores de la web. Modo `completa` renombrado visualmente a `Completa la frase`, sin cambiar sus datos ni parámetros.
 
 **Importante:** Los enlaces de GitHub Pages siguen sin verificarse por HTTP; no se ha desplegado esta PR. El conector Firecrawl no tiene créditos actualmente. Web Chat deberá confirmar las URLs públicas al integrar la propuesta y comprobar el aspecto en móvil. La PR de Temario nº1 debe integrarse sin sobrescribir el trabajo de `preventa-tema1-seguridad`.
+
+## Cierre técnico de juegos · 19/10/2026 (solo propuestas, no publicación)
+
+**PR Temario**: la rama de propuesta incorpora mediante commit `587bd88e7b6ed500af12de647db8bfb403ff5a9e` como segundo progenitor el commit base de Web Chat `bc7a6cb17a05f6233524901f697024a8254996ca`, manteniendo sus archivos web intactos. El único archivo solapado era `tema-1/radar/index.html`: sobre el HTML de Web Chat se agregó una tarjeta «Abrir Centro de Juegos» que apunta a `../juegos/menu-memoria/`, y se ocultó el enlace general «Mis errores», sin borrar esa ruta histórica. PR no fusionada ni desplegada.
+
+**Correcciones verificadas con scripts del repositorio y simulación de DOM**
+- **Caza la trampa / Detecta el error**: conservar explicación, «Siguiente» manual, valorar duda acertada, guardar error, repetir ambas y descartarlas después de acertar.
+- **Fichas Radar**: «Acerté / Dudé / Fallé», explicación visible y avance manual. Solo diez fichas educativas habilitadas; las cuatro atribuidas a exámenes sin cotejo se mantienen en código, con botones de modos «real/ambos» deshabilitados.
+- **Memoriza vocabulario**: 13 tarjetas intactas; tras valorar queda la definición hasta «Siguiente». Prueba de 13, repetición de duda y limpieza al acertar.
+- **Traduce el jurídico**: girar, valorar, leer respuesta, botón siguiente, vuelta al menú a través de parámetro de retorno y respaldo Centro Radar.
+- **Artículo en imagen**: 8 imágenes JPG presentes; se probó especialmente la imagen de artículo 18.2, marcar fallo, leer explicación y repetir únicamente esa imagen.
+- **Candado 4-9-1-1**: eliminado salto automático tras último mecanismo; ahora «Ver resultados» manual. Prueba de cuatro mecanismos sin temporizadores y navegación posterior.
+- **Simulacro**: utiliza sus tres preguntas didácticas propias, muestra corrección de errores y permite repetir los fallos dentro del mismo juego; ya no enlaza al apartado general.
+- **Mapa constitucional y Completa la frase**: modo visual con 12 ejercicios e imágenes existentes; modo completar con 36 ejercicios, todos con respuesta esperada. Su motor aplica valoración y siguiente manual, sin cambiar el banco.
+- **Test Radar**: el banco mixto conserva 30 preguntas atribuidas a exámenes y 30 propias, pero la aplicación solo **muestra las 30 propias** hasta la aprobación expresa de Preguntas Chat. El modo real queda bloqueado; sin modificar `bank.js`. Cada modalidad ahora conserva y repasa sus errores por separado mediante identificadores específicos por modo, con lectura de registros antiguos compatibles.
+
+**Rutas y navegación**
+- Centro aprobado: `/tema-1/juegos/menu-memoria/`; 9 tarjetas, 2 por fila desde móviles habituales.
+- El acceso desde Radar Digital se ha añadido en la propuesta de Temario, sin modificar QR.
+- Los enlaces a GitHub Pages añaden `volver=<URL de menú>` cuando se accede desde nuestro menú. Las aplicaciones externas aceptan únicamente URL HTTPS con ruta `/tema-1/juegos/menu-memoria/` o `vocabulario-juridico.html`, así que el regreso no depende del `Referer` recortado por el navegador. Los accesos directos sin parámetro siguen disponibles.
+- Archivos JS compilados sin errores en los cambios; rutas 9+3 y recursos gráficos comprobados frente a árboles de GitHub. Vista previa HTML autónoma comprobada con Chromium a 320/390/430/768 px, sin desbordamientos, 9 tarjetas, y juego visual; NO equivale a desplegar el HTML de las PR ni a una prueba en un móvil físico.
+
+**Bloqueadores finales para usar en el libro**: fusionar solo después de revisar cambios y pruebas de integración, desplegar vista previa no pública o staging, confirmar HTTP y funcionamiento en Chrome Android/Safari iPhone sobre ambas apps, verificar retornos entre dominios, asegurar la aprobación de Preguntas Chat antes de habilitar preguntas reales. No se ha modificado producción, el libro, PDF, QR, banco, pagos ni convocatorias.
