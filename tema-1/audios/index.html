@@ -74,11 +74,12 @@ player.addEventListener('error',()=>{$('feedback').textContent='No se pudo repro
    con una URL firmada temporal por episodio. Sin respuesta autorizada no hay lista.
    Ejemplo de campos: {tema:1, episodio:1, version:'Largo', src:'URL temporal autorizada'}.
    Este método de presentación NO concede permisos a Storage. */
+function privateSignedUrl(src){try{const u=new URL(src);return u.protocol==='https:'&&u.hostname==='jtyjdrrxmuppulbekfai.supabase.co'&&u.pathname.startsWith('/storage/v1/object/sign/tema1-premium/')&&Boolean(u.searchParams.get('token'));}catch{return false;}}
 window.OpoRadarPodcasts=Object.freeze({cargar(autorizados){
   const seen=new Set();
   items=Array.isArray(autorizados)?autorizados.filter(x=>{
     if(!x||!Number.isInteger(x.tema)||x.tema<1||!Number.isInteger(x.episodio)||x.episodio<1||!['Largo','Corto'].includes(x.version)||typeof x.src!=='string')return false;
-    let u;try{u=new URL(x.src);}catch{return false;}if(u.protocol!=='https:')return false;
+    if(!privateSignedUrl(x.src))return false;
     const key=x.tema+':'+x.episodio+':'+x.version;if(seen.has(key))return false;seen.add(key);return true;
   }).sort((a,b)=>a.tema-b.tema||a.episodio-b.episodio||(a.version==='Largo'?-1:1)):[];
   render();
