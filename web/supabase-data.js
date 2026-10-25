@@ -7,7 +7,7 @@ window.OpoData={
   const approvedLegacy=legacyEvents.filter(e=>e?.approved===true&&e?.publicado===true&&['approved','published'].includes(String(e.publicationStatus||e.estado_validacion||'').toLowerCase())&&!e.retirado_en&&!e.retiredAt);
   const approvedDb=(Array.isArray(dbEvents)?dbEvents:[]).filter(e=>e?.convocatoria_id===id&&e?.publicado===true&&e?.estado_validacion==='aprobado'&&!e?.retirado_en).map(e=>({
    id:e.evento_id,opportunityId:e.convocatoria_id,type:e.tipo_evento,title:e.titulo_evento,
-   officialPublishedOn:e.fecha_oficial||String(e.created_at||'').slice(0,10),url:e.url_evento||e.canonical_url,
+   officialPublishedOn:e.fecha_oficial||null,url:e.url_evento||e.canonical_url,
    summary:e.resumen||'',approved:true,publicado:true,publicationStatus:'approved'
   }));
   const seen=new Set();
