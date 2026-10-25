@@ -29,7 +29,7 @@ footer{margin-top:40px;font-size:13px;border-top:1px solid #f6cb782b;padding-top
 </div></section>
 <div id="approvedVideos" hidden></div>
 <section id="viewer" aria-label="Reproductor de vídeo" hidden><h2 id="selectedVideo"></h2><video id="video" controls playsinline preload="none"></video><p id="videoStatus" role="status"></p></section>
-<p>Los vídeos breves se incorporarán a este tema cuando exista una versión aprobada y un enlace autorizado. No hay otros vídeos disponibles todavía.</p>
+<p id="videosPendingNote">Los vídeos breves se incorporarán a este tema cuando exista una versión aprobada y un enlace autorizado. No hay otros vídeos disponibles todavía.</p>
 <footer>Originales y revisiones en Google Drive. Los vídeos para compradores se servirán únicamente desde almacenamiento privado con acceso validado por Web Chat.</footer>
 <script>
 (function(){
@@ -43,7 +43,7 @@ window.OpoRadarVideos=Object.freeze({cargar(autorizados){
     let u;try{u=new URL(x.src);}catch{return false;}if(u.protocol!=='https:')return false;
     const key=x.tema+':'+x.titulo;if(seen.has(key))return false;seen.add(key);return true;
   }).sort((a,b)=>a.tema-b.tema||a.titulo.localeCompare(b.titulo,'es')):[];
-  $('approvedVideos').hidden=clips.length===0;
+  $('approvedVideos').hidden=clips.length===0;$('tema1').hidden=clips.some(x=>x.tema===1);$('videosPendingNote').hidden=clips.length>0;
   let topic=null,parent=null;
   clips.forEach(x=>{
     if(topic!==x.tema){topic=x.tema;parent=document.createElement('section');const h=document.createElement('h2');h.textContent=title(x);parent.append(h);$('approvedVideos').append(parent);}
@@ -52,7 +52,7 @@ window.OpoRadarVideos=Object.freeze({cargar(autorizados){
       const p=media.play();if(p&&typeof p.catch==='function')p.catch(()=>$('videoStatus').textContent='Pulsa reproducir en los controles del vídeo.');
     };parent.append(b);
   });
-},vaciar(){reset();$('approvedVideos').replaceChildren();$('approvedVideos').hidden=true;}});
+},vaciar(){reset();$('approvedVideos').replaceChildren();$('approvedVideos').hidden=true;$('tema1').hidden=false;$('videosPendingNote').hidden=false;}});
 /* Web Chat: cargar SOLO las versiones aprobadas tras validar compra en el servidor,
    recibiendo URLs temporales desde Storage privado. Esta página NO concede acceso. */
 })();
