@@ -6,7 +6,7 @@
  const statuses={published:'Convocatoria publicada',open:'Plazo abierto según última revisión',lists:'Listas publicadas',exam:'Examen anunciado'};
  const validDate=v=>/^\d{4}-\d{2}-\d{2}$/.test(v||'')&&!Number.isNaN(Date.parse(v+'T12:00:00Z'));
  const niceDate=v=>validDate(v)?new Intl.DateTimeFormat('es-ES',{day:'2-digit',month:'short',year:'numeric',timeZone:'Europe/Madrid'}).format(new Date(v+'T12:00:00Z')):'Sin fecha confirmada';
- const visibleEvent=e=>e?.approved!==false&&!e?.retirado_en&&!e?.retiredAt&&(!e?.publicationStatus||['published','approved','publicada','validada'].includes(String(e.publicationStatus).toLowerCase()));
+ const visibleEvent=e=>e?.approved===true&&!e?.retirado_en&&!e?.retiredAt&&(!e?.publicationStatus||['published','approved','publicada','validada'].includes(String(e.publicationStatus).toLowerCase()));
  const safeUrl=v=>{try{return new URL(v).protocol==='https:'}catch{return false}};
  const el=(tag,cls,value)=>{const x=document.createElement(tag);if(cls)x.className=cls;if(value!=null)x.textContent=value;return x};
  const official=(title,url)=>{const a=el('a','',title+' ↗');a.href=url;a.target='_blank';a.rel='noopener noreferrer';return a};
