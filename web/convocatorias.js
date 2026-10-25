@@ -54,7 +54,7 @@
   function verifiedEvents(record){
     const events=[{date:record.publishedOn,title:'Convocatoria publicada'},{date:record.boePublishedOn,title:'Publicación oficial'},...(Array.isArray(record.announcements)?record.announcements:[]).filter(x=>x.date&&x.title&&safeUrl(x.url)&&x.approved!==false&&(!x.publicationStatus||['approved','published','publicada','validada'].includes(String(x.publicationStatus).toLowerCase())))];
     for(const [key,item] of Object.entries(record.milestones||{}))if(item?.publishedOn&&safeUrl(item.url)&&item.approved!==false&&(!item.publicationStatus||['approved','published','publicada','validada'].includes(String(item.publicationStatus).toLowerCase())))events.push({date:item.publishedOn,title:{lists:'Listas',exam:'Fecha de examen',key:'Plantilla',results:'Resultados'}[key]||key});
-    for(const item of Array.isArray(record.events)?record.events:[])if(item?.approved===true&&['approved','published'].includes(String(item.publicationStatus||'').toLowerCase())&&item.officialPublishedOn&&item.title&&safeUrl(item.url))events.push({date:item.officialPublishedOn,title:item.title,url:item.url});
+    for(const item of Array.isArray(record.events)?record.events:[])if(item?.approved===true&&item.publicado===true&&!item.retirado_en&&['approved','published'].includes(String(item.publicationStatus||item.estado_validacion||'').toLowerCase())&&item.officialPublishedOn&&item.title&&safeUrl(item.url))events.push({date:item.officialPublishedOn,title:item.title,url:item.url});
     if(isArchived(record))events.push({date:record.closure.publishedOn,title:'Cierre documentado'});
     return events.filter(e=>/^\\d{4}-\\d{2}-\\d{2}$/.test(e.date)).sort((a,b)=>b.date.localeCompare(a.date));
   }
@@ -65,29 +65,23 @@
     if(mode==='modified')return lastChange(b).date.localeCompare(lastChange(a).date)||a.id.localeCompare(b.id);
     if(mode==='deadline')return (a.applicationsEndOn||'9999-12-31').localeCompare(b.applicationsEndOn||'9999-12-31')||a.id.localeCompare(b.id);
     const x=lastChange(a),y=lastChange(b);
-    const xNew=verifiedEvents(a).length;
-    const yNew=verifiedEvents(b).length;
-    return y.date.localeCompare(x.date)||yNew-xNew||a.id.localeCompare(b.id);
+    return y.date.localeCompare(x.date)||a.id.localeCompare(b.id);
   }
   function renderRow(record){
-    const article=document.createElement('article');article.className='opportunity-row';article.id=record.id;
-    const places=addText('div','opportunity-places','');places.append(addText('strong','',record.places==null?'Bolsa':record.places),addText('span','',record.places==null?'sin nº fijo':'plazas'));
-    const content=addText('div','opportunity-details','');content.append(addText('p','eyebrow',record.organism),addText('h3','',record.title));
-    const bases=officialLink(/\.pdf(?:[?#]|$)/i.test(record.url)?'↗ Abrir las bases de la convocatoria':'↗ Consultar bases y documentos oficiales',record.url);bases.className='opportunity-bases';content.append(bases,addText('p','opportunity-offer',`${labels[record.processType]} · ${record.turn} · ${record.offer}`));
+    const detail=record.slug?'/convocatorias/'+encodeURIComponent(record.slug):'/convocatoria.html?id='+encodeURIComponent(record.id);
+    const card=document.createElement('article');card.className='opportunity-row';card.id=record.id;
+    const link=document.createElement('a');link.className='opportunity-card-link';link.href=detail;link.setAttribute('aria-label','Ver convocatoria '+record.title+' de '+record.organism);
+    const head=addText('div','opportunity-card-head','');
+    head.append(addText('h3','',record.title||'Puesto sin especificar'),addText('p','opportunity-card-organism',record.organism||'Organismo no indicado'));
+    const reference=record.expediente_oficial||record.source_reference||record.reference||record.convocationNumber||record.id;
+    const count=record.places==null?'Plazas sin determinar':record.places+' '+(Number(record.places)===1?'plaza':'plazas');
+    const meta=addText('p','opportunity-card-reference','Ref. '+reference+' · '+count);
     const state=effectiveState(record);
-    content.append(addText('span','opportunity-state'+(!isArchived(record)&&state==='open'?' state-open':''),isArchived(record)?'Archivada · cierre verificado':state==='review'?'Estado pendiente de actualizar':stateLabels[state]||'Publicada'));
-    if(record.requirements)content.append(addText('p','opportunity-requirements',record.requirements));
-    content.append(addText('p','opportunity-period',`${record.officialBulletin||'BOE'}: ${dateLabel(record.boePublishedOn)}. ${record.period}`),addText('p','opportunity-review',`Revisado el ${dateLabel(record.reviewedOn)}.`));
-    if(!isArchived(record)&&reviewAge(record)>7)content.append(addText('p','opportunity-stale','Revisión pendiente: confirma las novedades en el expediente oficial.'));
-    const links=addText('div','opportunity-links','');links.append(officialLink('Ver convocatoria',record.url),officialLink('Consultar '+(record.officialBulletin||'BOE'),record.boeUrl));
-    const follow=addText('button','opportunity-follow',saved.has(record.id)?'✦ Siguiendo':'✧ Seguir');follow.type='button';follow.setAttribute('aria-pressed',String(saved.has(record.id)));follow.setAttribute('aria-label',`${saved.has(record.id)?'Quitar de mis procesos':'Guardar'} ${record.title} de ${record.organism}`);follow.addEventListener('click',()=>toggleSaved(record.id));
-    const detailLink=document.createElement('a');detailLink.href=(record.slug?'/convocatorias/'+encodeURIComponent(record.slug):'/convocatoria.html?id='+encodeURIComponent(record.id));detailLink.textContent='Ver ficha →';links.append(detailLink,follow);
-    const meta=addText('div','compact-meta',record.location+' · '+labels[record.processType]+(record.places!=null?' · '+record.places+' plazas':''));
-    const status=addText('div','compact-state',isArchived(record)?'Archivada':state==='review'?'Plazo por verificar':stateLabels[state]||'Publicada');
-    status.append(addText('small','', 'Publicado: '+dateLabel(record.publishedOn)),addText('small','',record.applicationsEndOn?'Fin de plazo: '+dateLabel(record.applicationsEndOn):'Fin de plazo: consultar bases'));
-    const change=lastChange(record),news=addText('div','compact-news',change.title);news.append(addText('small','',dateLabel(change.date)));
-    const title=content.querySelector('h3');if(title){const link=document.createElement('a');link.className='compact-title';link.href=(record.slug?'/convocatorias/'+encodeURIComponent(record.slug):'/convocatoria.html?id='+encodeURIComponent(record.id));link.textContent=record.title;title.replaceChildren(link);}
-    article.append(places,content,meta,status,news,links);article.addEventListener('click',event=>{if(event.target.closest('a,button'))return;location.href=(record.slug?'/convocatorias/'+encodeURIComponent(record.slug):'/convocatoria.html?id='+encodeURIComponent(record.id));});return article;
+    const status=addText('p','opportunity-card-status',isArchived(record)?'Archivada':state==='review'?'Estado pendiente de verificar':stateLabels[state]||'Convocatoria publicada');
+    link.append(head,meta,status);
+    const heart=addText('span','opportunity-card-heart','♡');heart.setAttribute('aria-hidden','true');heart.title='Favoritos próximamente';
+    card.append(link,heart);
+    return card;
   }
   function render(){
     if(!ready)return;
