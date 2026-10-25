@@ -38,10 +38,11 @@ footer{margin-top:40px;font-size:13px;border-top:1px solid #f6cb782b;padding-top
 const media=$('video');
 function reset(){media.pause();media.removeAttribute('src');media.load();$('viewer').hidden=true;}
 function title(x){return x.tema===1?'T1 — Constitución Española':'T'+x.tema+' — '+(x.temaTitulo||'Tema '+x.tema);}
+function privateSignedUrl(src){try{const u=new URL(src);return u.protocol==='https:'&&u.hostname==='jtyjdrrxmuppulbekfai.supabase.co'&&u.pathname.startsWith('/storage/v1/object/sign/tema1-premium/')&&Boolean(u.searchParams.get('token'));}catch{return false;}}
 window.OpoRadarVideos=Object.freeze({cargar(autorizados){
   reset();$('approvedVideos').replaceChildren();const seen=new Set();let clips=Array.isArray(autorizados)?autorizados.filter(x=>{
     if(!x||!Number.isInteger(x.tema)||x.tema<1||typeof x.titulo!=='string'||!x.titulo.trim()||typeof x.src!=='string')return false;
-    let u;try{u=new URL(x.src);}catch{return false;}if(u.protocol!=='https:')return false;
+    if(!privateSignedUrl(x.src))return false;
     const key=x.tema+':'+x.titulo;if(seen.has(key))return false;seen.add(key);return true;
   }).sort((a,b)=>a.tema-b.tema||a.titulo.localeCompare(b.titulo,'es')):[];
   $('approvedVideos').hidden=clips.length===0;$('tema1').hidden=clips.some(x=>x.tema===1);$('videosPendingNote').hidden=clips.length>0;
