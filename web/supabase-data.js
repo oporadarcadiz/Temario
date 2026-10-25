@@ -23,8 +23,8 @@ window.OpoData={
    reviewedOn:d.reviewedOn||String(record?.reviewed_at||record?.fecha_ultima_consulta||d.fecha_ultima_consulta||'').slice(0,10)||d.publishedOn||d.fecha_publicacion_inicial,
    publicationStatus:d.publicationStatus||record?.estado_validacion||d.estado_validacion,
    published:record?.published??d.publicada??true,events,
-   announcements:(Array.isArray(d.announcements)?d.announcements:[]).filter(e=>e?.approved!==false&&!e.retirado_en&&!e.retiredAt&&(!e.publicationStatus||['approved','published','publicada','validada'].includes(String(e.publicationStatus).toLowerCase()))),
-   milestones:Object.fromEntries(Object.entries(d.milestones||{}).filter(([,e])=>e&&e.approved!==false&&!e.retirado_en&&!e.retiredAt&&(!e.publicationStatus||['approved','published','publicada','validada'].includes(String(e.publicationStatus).toLowerCase()))))
+   announcements:(Array.isArray(d.announcements)?d.announcements:[]).filter(e=>e?.approved===true&&!e.retirado_en&&!e.retiredAt&&(!e.publicationStatus||['approved','published','publicada','validada'].includes(String(e.publicationStatus).toLowerCase()))),
+   milestones:Object.fromEntries(Object.entries(d.milestones||{}).filter(([,e])=>e&&e.approved===true&&!e.retirado_en&&!e.retiredAt&&(!e.publicationStatus||['approved','published','publicada','validada'].includes(String(e.publicationStatus).toLowerCase()))))
   };
  },
  async loadOpportunities(){
