@@ -15,7 +15,7 @@ h2{font-size:20px;margin:25px 0 12px}
 .episodes{margin:22px 0 0;padding:0;list-style:none;border-top:1px solid var(--line)}
 .episodes li{border-bottom:1px solid var(--line)}
 .episodes button{display:block;width:100%;border:0;background:none;color:var(--ink);text-align:left;padding:16px 8px;min-height:54px;font:inherit;font-size:16px;font-weight:600;line-height:1.5;cursor:pointer}
-.episodes button:hover,.episodes button[aria-current="true"]{color:var(--gold);background:#ffffff08}
+.episodes button:hover:not(:disabled),.episodes button[aria-current="true"]{color:var(--gold);background:#ffffff08}.episodes button:disabled{cursor:default;opacity:.72}
 .player{border-top:1px solid var(--line);margin-top:28px;padding-top:20px}
 .player strong{display:block;color:var(--gold);margin-bottom:12px}
 audio{display:block;width:100%;margin:8px 0 14px;accent-color:var(--gold)}
@@ -29,9 +29,9 @@ footer{border-top:1px solid var(--line);font-size:13px;color:var(--muted);margin
 </style></head><body><main>
 <a class="back" href="../juegos/menu-memoria/">← Centro de Juegos</a>
 <div class="eyebrow">OpoRadarCádiz · Biblioteca de audio</div><h1>🎧 Escucha los pódcast</h1>
-<p>Un único listado de episodios, ordenados por tema, número y versión. Solo aparecen archivos aprobados que tienes autorizados para escuchar.</p>
-<p id="empty" class="status" role="status">Tenemos dos pódcast de NotebookLM pendientes de clasificar y aprobar. Todavía no hay episodios autorizados para reproducir.</p>
-<ul id="episodes" class="episodes" aria-label="Episodios disponibles" hidden></ul>
+<p>Dos versiones definitivas del primer episodio del Tema 1, en un solo listado. Se activará la reproducción cuando Web Chat confirme el acceso de comprador.</p>
+<p id="empty" class="status" role="status">Los dos pódcast definitivos están preparados. La reproducción para compradores está pendiente de activación.</p>
+<ul id="episodes" class="episodes" aria-label="Episodios del Tema 1"><li><button type="button" disabled>▶ T1 · Ep. 1 — Largo</button></li><li><button type="button" disabled>▶ T1 · Ep. 1 — Corto</button></li></ul>
 <section id="player" class="player" aria-label="Reproductor de pódcast" hidden>
 <strong id="now">Selecciona un episodio</strong>
 <audio id="audio" controls preload="none" aria-label="Audio del episodio seleccionado"></audio>
@@ -45,6 +45,7 @@ footer{border-top:1px solid var(--line);font-size:13px;color:var(--muted);margin
 'use strict';
 const $=id=>document.getElementById(id);
 const player=$('audio');let items=[],index=-1;
+const prepared=[{tema:1,episodio:1,version:'Largo'},{tema:1,episodio:1,version:'Corto'}];
 function label(x){return 'T'+x.tema+' · Ep. '+x.episodio+' — '+x.version;}
 function clear(){player.pause();player.removeAttribute('src');player.load();index=-1;$('now').textContent='Selecciona un episodio';}
 function update(){
@@ -59,7 +60,8 @@ function choose(i,play){
   if(play){const task=player.play();if(task&&typeof task.catch==='function')task.catch(()=>{$('feedback').textContent='Pulsa reproducir en el control de audio.';});}
 }
 function render(){
-  clear();$('episodes').replaceChildren();$('empty').hidden=items.length>0;$('episodes').hidden=items.length===0;$('player').hidden=items.length===0;
+  clear();$('episodes').replaceChildren();$('empty').hidden=items.length>0;$('episodes').hidden=false;$('player').hidden=items.length===0;
+  if(items.length===0){for(const x of prepared){const li=document.createElement('li'),b=document.createElement('button');b.type='button';b.disabled=true;b.textContent='▶ '+label(x);li.append(b);$('episodes').append(li);}update();return;}
   for(let i=0;i<items.length;i++){const li=document.createElement('li'),b=document.createElement('button');b.type='button';b.textContent='▶ '+label(items[i]);b.onclick=()=>choose(i,true);li.append(b);$('episodes').append(li);}
   update();
 }
