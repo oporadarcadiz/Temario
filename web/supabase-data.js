@@ -17,7 +17,7 @@ window.OpoData={
    title:d.title||d.titulo||'',organism:d.organism||d.organization||d.organismo||'',
    location:d.location||record?.municipio||d.municipio||record?.ambito||d.ambito||record?.provincia||d.provincia||'',
    municipio:record?.municipio||d.municipio||null,
-   processType:d.processType||d.tipo_proceso,places:d.places??d.numero_plazas,state:d.state||d.estado_proceso,
+   processType:d.processType||d.tipo_proceso,places:(()=>{const v=d.places??d.numero_plazas;if(v==null||v==='')return null;const n=Number(v);return Number.isSafeInteger(n)&&n>=0?n:null;})(),state:d.state||d.estado_proceso,
    publishedOn:d.publishedOn||d.fecha_publicacion_inicial,boePublishedOn:d.boePublishedOn||d.fecha_publicacion_boletin||d.publishedOn||d.fecha_publicacion_inicial,applicationsStartOn:d.applicationsStartOn||record?.fecha_inicio_plazo||d.fecha_inicio_plazo,applicationsEndOn:d.applicationsEndOn||d.fecha_fin_plazo||record?.fecha_fin_plazo,
    url:d.url||record?.canonical_url||d.url_bases,boeUrl:d.boeUrl||d.url_bases||d.url||record?.canonical_url,
    reviewedOn:d.reviewedOn||String(record?.reviewed_at||record?.fecha_ultima_consulta||d.fecha_ultima_consulta||'').slice(0,10)||d.publishedOn||d.fecha_publicacion_inicial,
