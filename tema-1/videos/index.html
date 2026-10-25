@@ -15,6 +15,9 @@ p{color:var(--muted)}.list{border-top:1px solid #f6cb7845;margin-top:16px}
 .entry{padding:19px 0;border-bottom:1px solid #f6cb782b}
 .entry strong{display:block;font-size:17px;color:var(--ink)}.entry small{color:var(--gold);font-size:14px}
 footer{margin-top:40px;font-size:13px;border-top:1px solid #f6cb782b;padding-top:20px;color:var(--muted)}
+.approved-row{display:block;width:100%;padding:16px 4px;border:0;border-bottom:1px solid #f6cb782b;background:transparent;text-align:left;color:var(--ink);font:inherit;font-weight:600;cursor:pointer}
+.approved-row:hover,.approved-row:focus-visible{color:var(--gold)}video{width:100%;margin:12px 0;background:#061222;border-radius:12px}
+[hidden]{display:none!important}
 </style></head><body><main>
 <a class="back" href="../juegos/menu-memoria/">← Centro de Juegos</a>
 <div class="eyebrow">OpoRadarCádiz · Biblioteca por temas</div>
@@ -22,8 +25,36 @@ footer{margin-top:40px;font-size:13px;border-top:1px solid #f6cb782b;padding-top
 <p>Explicaciones visuales para cada tema del libro. Los vídeos completos se habilitarán únicamente cuando estén aprobados y el acceso del comprador esté verificado.</p>
 <section aria-labelledby="tema1"><h2 id="tema1">T1 — Constitución Española</h2>
 <div class="list" role="list">
-<div class="entry" role="listitem"><strong>Vídeo largo · páginas 1–6</strong><small>En revisión editorial · No disponible para reproducir</small></div>
+<div id="pendingVideo" class="entry" role="listitem"><strong>Vídeo largo · páginas 1–6</strong><small>En revisión editorial · No disponible para reproducir</small></div>
 </div></section>
+<div id="approvedVideos" hidden></div>
+<section id="viewer" aria-label="Reproductor de vídeo" hidden><h2 id="selectedVideo"></h2><video id="video" controls playsinline preload="none"></video><p id="videoStatus" role="status"></p></section>
 <p>Los vídeos breves se incorporarán a este tema cuando exista una versión aprobada y un enlace autorizado. No hay otros vídeos disponibles todavía.</p>
 <footer>Originales y revisiones en Google Drive. Los vídeos para compradores se servirán únicamente desde almacenamiento privado con acceso validado por Web Chat.</footer>
+<script>
+(function(){
+'use strict';const $=id=>document.getElementById(id);
+const media=$('video');
+function reset(){media.pause();media.removeAttribute('src');media.load();$('viewer').hidden=true;}
+function title(x){return x.tema===1?'T1 — Constitución Española':'T'+x.tema+' — '+(x.temaTitulo||'Tema '+x.tema);}
+window.OpoRadarVideos=Object.freeze({cargar(autorizados){
+  reset();$('approvedVideos').replaceChildren();const seen=new Set();let clips=Array.isArray(autorizados)?autorizados.filter(x=>{
+    if(!x||!Number.isInteger(x.tema)||x.tema<1||typeof x.titulo!=='string'||!x.titulo.trim()||typeof x.src!=='string')return false;
+    let u;try{u=new URL(x.src);}catch{return false;}if(u.protocol!=='https:')return false;
+    const key=x.tema+':'+x.titulo;if(seen.has(key))return false;seen.add(key);return true;
+  }).sort((a,b)=>a.tema-b.tema||a.titulo.localeCompare(b.titulo,'es')):[];
+  $('approvedVideos').hidden=clips.length===0;
+  let topic=null,parent=null;
+  clips.forEach(x=>{
+    if(topic!==x.tema){topic=x.tema;parent=document.createElement('section');const h=document.createElement('h2');h.textContent=title(x);parent.append(h);$('approvedVideos').append(parent);}
+    const b=document.createElement('button');b.type='button';b.className='approved-row';b.textContent='▶ '+x.titulo;b.onclick=()=>{
+      media.pause();media.src=x.src;media.load();$('viewer').hidden=false;$('selectedVideo').textContent=x.titulo;$('videoStatus').textContent='';
+      const p=media.play();if(p&&typeof p.catch==='function')p.catch(()=>$('videoStatus').textContent='Pulsa reproducir en los controles del vídeo.');
+    };parent.append(b);
+  });
+},vaciar(){reset();$('approvedVideos').replaceChildren();$('approvedVideos').hidden=true;}});
+/* Web Chat: cargar SOLO las versiones aprobadas tras validar compra en el servidor,
+   recibiendo URLs temporales desde Storage privado. Esta página NO concede acceso. */
+})();
+</script>
 </main></body></html>
