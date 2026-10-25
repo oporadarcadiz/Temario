@@ -56,7 +56,7 @@
     for(const [key,item] of Object.entries(record.milestones||{}))if(item?.publishedOn&&safeUrl(item.url)&&item.approved!==false&&(!item.publicationStatus||['approved','published','publicada','validada'].includes(String(item.publicationStatus).toLowerCase())))events.push({date:item.publishedOn,title:{lists:'Listas',exam:'Fecha de examen',key:'Plantilla',results:'Resultados'}[key]||key});
     for(const item of Array.isArray(record.events)?record.events:[])if(item?.approved===true&&item.publicado===true&&!item.retirado_en&&['approved','published'].includes(String(item.publicationStatus||item.estado_validacion||'').toLowerCase())&&item.officialPublishedOn&&item.title&&safeUrl(item.url))events.push({date:item.officialPublishedOn,title:item.title,url:item.url});
     if(isArchived(record))events.push({date:record.closure.publishedOn,title:'Cierre documentado'});
-    return events.filter(e=>/^\\d{4}-\\d{2}-\\d{2}$/.test(e.date)).sort((a,b)=>b.date.localeCompare(a.date));
+    return events.filter(e=>/^\d{4}-\d{2}-\d{2}$/.test(e.date)).sort((a,b)=>b.date.localeCompare(a.date));
   }
   function lastChange(record){return verifiedEvents(record)[0]||{date:record.publishedOn,title:'Convocatoria publicada'};}
   function sorting(a,b){
