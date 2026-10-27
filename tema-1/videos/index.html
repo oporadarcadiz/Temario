@@ -45,16 +45,16 @@ window.OpoRadarVideos=Object.freeze({cargar(autorizados){
     if(!privateSignedUrl(x.src))return false;
     const key=x.tema+':'+x.titulo;if(seen.has(key))return false;seen.add(key);return true;
   }).sort((a,b)=>a.tema-b.tema||a.titulo.localeCompare(b.titulo,'es')):[];
-  $('approvedVideos').hidden=clips.length===0;$('tema1').hidden=clips.some(x=>x.tema===1);$('videosPendingNote').hidden=clips.length>0;
+  $('approvedVideos').hidden=clips.length===0;const hasApprovedT1=clips.some(x=>x.tema===1);$('pendingVideo').hidden=hasApprovedT1;$('videosPendingNote').hidden=hasApprovedT1;
   let topic=null,parent=null;
   clips.forEach(x=>{
-    if(topic!==x.tema){topic=x.tema;parent=document.createElement('section');const h=document.createElement('h2');h.textContent=title(x);parent.append(h);$('approvedVideos').append(parent);}
+    if(topic!==x.tema){topic=x.tema;parent=document.createElement('section');if(x.tema!==1){const h=document.createElement('h2');h.textContent=title(x);parent.append(h);}$('approvedVideos').append(parent);}
     const b=document.createElement('button');b.type='button';b.className='approved-row';b.textContent='▶ '+x.titulo;b.onclick=()=>{
       media.pause();media.src=x.src;media.load();$('viewer').hidden=false;$('selectedVideo').textContent=x.titulo;$('videoStatus').textContent='';
       const p=media.play();if(p&&typeof p.catch==='function')p.catch(()=>$('videoStatus').textContent='Pulsa reproducir en los controles del vídeo.');
     };parent.append(b);
   });
-},vaciar(){reset();$('approvedVideos').replaceChildren();$('approvedVideos').hidden=true;$('tema1').hidden=false;$('videosPendingNote').hidden=false;}});
+},vaciar(){reset();$('approvedVideos').replaceChildren();$('approvedVideos').hidden=true;$('pendingVideo').hidden=false;$('videosPendingNote').hidden=false;}});
 /* Web Chat: cargar SOLO las versiones aprobadas tras validar compra en el servidor,
    recibiendo URLs temporales desde Storage privado. Esta página NO concede acceso. */
 })();
