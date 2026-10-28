@@ -16,7 +16,7 @@
   const today=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Madrid',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
   // A passed review date is unknown, never silently promoted to a later stage.
   function effectiveState(record,date=today()){return record.state==='open'&&record.reviewBefore&&date>=record.reviewBefore?'review':record.state;}
-  function isArchived(record){const c=record.closure;return !!(c&&['completed','cancelled','expired','replaced'].includes(c.reason)&&c.text?.trim()&&safeUrl(c.url)&&/^\d{4}-\d{2}-\d{2}$/.test(c.publishedOn)&&/^\d{4}-\d{2}-\d{2}$/.test(c.verifiedOn)&&c.publishedOn<=c.verifiedOn&&c.verifiedOn<=record.reviewedOn&&c.verifiedOn<=today());}
+  function isArchived(record){const c=record.closure;return !!(c&&c.approved===true&&c.publicado===true&&['completed','cancelled','expired','replaced'].includes(c.reason)&&c.text?.trim()&&safeUrl(c.url)&&/^\d{4}-\d{2}-\d{2}$/.test(c.publishedOn)&&/^\d{4}-\d{2}-\d{2}$/.test(c.verifiedOn)&&c.publishedOn<=c.verifiedOn&&c.verifiedOn<=record.reviewedOn&&c.verifiedOn<=today());}
   function selectedRecords(){return opportunities.filter(o=>isArchived(o)===archiveView);}
   function dateLabel(iso){return new Intl.DateTimeFormat('es-ES',{day:'numeric',month:'long',year:'numeric',timeZone:'Europe/Madrid'}).format(new Date(iso+'T12:00:00Z'));}
   function reviewAge(record,date=today()){return Math.floor((Date.parse(date+'T12:00:00Z')-Date.parse(record.reviewedOn+'T12:00:00Z'))/86400000);}
