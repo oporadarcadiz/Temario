@@ -19,7 +19,7 @@
   if(r.closure?.url&&r.closure?.publishedOn)all.push({date:r.closure.publishedOn,title:r.closure.text||'Resolución de cierre',url:r.closure.url,type:'closure',approved:visibleEvent(r.closure)});
   const seen=new Set();return all.filter(e=>e.approved&&validDate(e.date)&&safeUrl(e.url)&&e.title).filter(e=>{const k=e.id||[e.type,e.date,e.url].join('|');if(seen.has(k))return false;seen.add(k);return true}).sort((a,b)=>b.date.localeCompare(a.date));
  }
- function isArchived(r){const c=r.closure;return !!(c&&['completed','cancelled','expired','replaced'].includes(c.reason)&&validDate(c.publishedOn)&&validDate(c.verifiedOn)&&safeUrl(c.url)&&c.verifiedOn<=r.reviewedOn)}
+ function isArchived(r){const c=r.closure;const today=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Madrid',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());return !!(c&&c.approved===true&&c.publicado===true&&['completed','cancelled','expired','replaced'].includes(c.reason)&&c.text?.trim()&&validDate(c.publishedOn)&&validDate(c.verifiedOn)&&safeUrl(c.url)&&c.publishedOn<=c.verifiedOn&&c.verifiedOn<=r.reviewedOn&&c.verifiedOn<=today)}
  function show(r){
   message.hidden=true;mount.hidden=false;
   const state=r.state==='open'&&r.reviewBefore&&r.reviewBefore<=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Madrid',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())?'review':r.state;
