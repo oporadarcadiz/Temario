@@ -169,3 +169,41 @@ Se consultaron las metas **M-072/M-074/M-075** antes de trabajar. Se mantiene la
 **Pruebas de lógica (sin archivos comerciales):** 200 simulacros sobre fixture sintético 120 (60/60) → 200 selecciones de 40 IDs únicos, todos los intentos diferentes; el número de oficiales varía entre sorteos (sin cuota fija); bloquea banco ausente, incompleto o no verificado. Prueba de corrección 20 correctas + 10 incorrectas + 10 blancas → **5,00/10**, 40 diagnósticos y nuevo sorteo; las respuestas correctas permanecen vinculadas a las opciones tras el mezclado.
 
 **Pendiente y bloqueo:** Banco de Preguntas entregará el conjunto definitivo de 120 validado. **NO fusionar ni desplegar** los cambios de las dos PR hasta recibirlo, revisar integridad y efectuar prueba real en móvil/escritorio coordinada con Web Chat. No intervenir en Convocatorias ni la web prioritaria del 9 de noviembre. Meta propia a actualizar: **M-045**; **M-042** (banco) y demás metas ajenas solo se consultan.
+
+
+## Conciliación de 60 reales + 60 originales · Juegos Chat · 01/11/2026
+
+**Ámbito:** solo coordinación del Test Final Tema 1, sin modificar preguntas, claves, modo de juego, otros juegos ni QR. Se recupera el listado histórico cerrado el 19/10/2026 y se reconcilia **sin re-seleccionar** con la hoja `BANCO_PREGUNTAS` de `Preguntas y test - Subalterno y Conserje`: https://docs.google.com/spreadsheets/d/1ARWf5ux20DYs9BCoiitZNvFxha7OaL_6jv5PNt6OnLw/edit
+
+**Las 60 referencias históricas exactas (fila de BANCO_PREGUNTAS):** `20,214,215,216,217,224,225,226,228,232,233,234,236,237,241,242,243,245,247,249,250,252,255,256,257,258,261,262,313,322,323,324,325,326,327,328,392,393,403,412,413,414,415,416,417,472,473,552,555,597,651,654,668,670,675,691,692,696,700,711`. No inferir ID permanente del número de fila.
+
+**Identificadores compuestos del origen** `ingestion_id|numero_pregunta` (son únicos 60/60 y sirven para conciliación; Banco de Preguntas debe asignar o confirmar IDs estables definitivos):
+
+| ingestion_id | numero_pregunta original | Filas |
+| --- | --- | --- |
+| fuenlabrada_2_conserje_pmc_2024 | 1 | 20 |
+| sanlucar_conserje_relevo_2022 | 1,2,3,4,11,12,13,15,19,20,21,23,24,28,29,30,32,34,36,37,39,42,43,44,45,48,49,100 | 214–217,224–226,228,232–234,236–237,241–243,245,247,249–250,252,255–258,261–262,313 |
+| cadiz_12_subalternos_oep_2021_2022_2023_2025 | 1,2,3,4,5,6,7 | 322–328 |
+| fuenlabrada_20_conserje_2026 | 1,2,13 | 392,393,403 |
+| cabildo_grancanaria_5_subalterno_2026 | 1,2,3,4,5,6 | 412–417 |
+| barakaldo_1_subalterno_2026 | 1,2 | 472,473 |
+| alcobendas_2_subalterno_2026 | 1,4 | 552,555 |
+| fene_1_conserje_2026 | 1 | 597 |
+| santa_cruz_tenerife_subalterno_2026_modelo1 | 7,10,24,27,32,49 | 651,654,668,670,675,691 |
+| arganda_conserje_educacion_2026 | 1,5,9,R3 | 692,696,700,711 |
+
+**Resultado de la conciliación estructural:** 60/60 filas existentes y marcadas `VERIFICADA`; 60/60 claves registradas que apuntan a una alternativa poblada; 60/60 con organismo, año, URLs de examen y plantilla; 60/60 claves compuestas diferentes; **43/60 cuatro alternativas y 17/60 solo tres**, específicamente filas `20,392,393,403,412,413,414,415,416,417,552,555,597,692,696,700,711`. La fila 20 carece de hash de pregunta; conserva `ingestion_id` y número. **24/60 enlaces de examen y plantilla conducen a copias en Google Drive**, no directamente a páginas del organismo: la procedencia oficial debe mantenerse documentada y poder auditarse, no dar por certificado el destino solo por la existencia de URL.
+
+**Incidencias editoriales detectadas en comparación entre los 60 oficiales:**
+
+1. **Duplicado de enunciado equivalente:** filas **234 y 700** (art. 1.3, monarquía parlamentaria): misma pregunta sustancial con puntuación diferente, 4 opciones en 234 y 3 en 700. No contar ambos como ítems conceptualmente únicos sin resolución de Banco. **Ambos originales permanecen sin tocar**.
+2. **Incompatibilidad jurídica de clave/enunciado:** fila **552** pregunta por *forma política del Estado*, pero marca B = *Estado social y democrático de Derecho*. El art. 1.1 define al Estado en estos términos; **el art. 1.3 dice Monarquía parlamentaria** y ninguna de las tres opciones de la fila 552 ofrece esa respuesta. Revisar el cuadernillo y la plantilla en origen; no corregir silenciosamente.
+3. **Posibles solapamientos semánticos** que requieren decisión, NO duplicados acreditados: **215/597** (art. 35, derecho/deber al trabajo, segunda en gallego); **322/472** (valores no recogidos art. 1.1, alternativas diferentes); **651/668** (art. 11, nacionalidad y regulación por ley); **250/691** (disposiciones generales/adicionales). Los distractores y enfoques pueden justificar coexistencia; determinar caso a caso.
+4. **Encaje temático a revisar** (no inválidas por sí solas): filas **228** (LO 3/2007), **241** (LO 3/2018, protección de datos), **313** (Ley 31/1995, PRL): citan normas externas aunque relacionadas con derechos o mandatos constitucionales. Fila 597 está en gallego; conservar literal oficial y decidir tratamiento editorial sin traducir la fuente.
+5. **Formato de cuatro alternativas:** no inventar opción D ni atribuir a un examen oficial cuatro opciones si este contenía solo tres; Banco decidirá una solución editorial explícita antes de aceptar las 120.
+
+**Originales:** Banco Maestro https://docs.google.com/spreadsheets/d/1sLFGfYdvKszvZPBiGKDUnb1e6p6LwHsuWWzlBDRTP2Q/edit#gid=861105002 pestaña `TEST_FINAL_T1_ORIGINALES`, `CE-T1-ORG-001` a `CE-T1-ORG-060`, 60 IDs únicos; todas con 4 alternativas, clave `A/B/C/D` válida, explicación, referencia jurídica y etiqueta `COTEJADA_NORMA_BOE_2026_REVISION_EDITORIAL_PENDIENTE`. Las 60 **siguen pendientes de revisión editorial final**. Comprobación automática de enunciados: **sin coincidencias exactas entre las originales y las 60 reales** y sin similitudes léxicas altas en comparación básica; esto NO certifica ausencia de solapamiento semántico.
+
+**Normativa:** consulta del texto consolidado BOE-A-1978-31229, última actualización indicada por el BOE 20/05/2026: https://www.boe.es/buscar/act.php?id=BOE-A-1978-31229 ; cotejo puntual del error de 552 con art.1.1/1.3. Este control no equivale a auditoría jurídica exhaustiva de todas las plantillas oficiales ni a validación editorial definitiva.
+
+**Estado final:** `NO CONCILIADO PARA PUBLICAR`: se conserva la **selección histórica de 60 sin sustituciones** y las 60 originales sin cambios. Banco de Preguntas debe resolver duplicidad e incidencia 552, 17 registros de 3 alternativas, trazabilidad 24 URLs Drive, posibles solapamientos, revisión editorial, y dar aprobación expresa del lote de 120. No cargar al Test Final ni abrir el test antes de esa autorización. M-045 Juegos Chat = en curso; no modificar M-042 ni hojas de Banco Maestro desde este chat.
