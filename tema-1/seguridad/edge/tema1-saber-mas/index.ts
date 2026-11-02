@@ -100,13 +100,20 @@ Deno.serve(async (req: Request) => {
     return reply(403, { allowed: false, ready: false, error: "Compra no validada" }, origin);
   }
 
+  // Interruptor editorial de seguridad: incluso con JWT, compra y objeto cargado,
+  // NO firmar archivos hasta aprobación editorial y pruebas de retirada pública.
+  // Ausente o distinto de "true" => acceso cerrado por defecto.
+  if (Deno.env.get("TEMA1_SABER_MAS_CONTENT_READY") !== "true") {
+    return reply(503, { allowed: false, ready: false, error: "Contenido pendiente de aprobación" }, origin);
+  }
+
   // No existe ningún enlace público ni contenido premium en el repositorio.
   // La ausencia del archivo privado debe fallar CERRADA (sin URL).
   const { data: signed, error: storageError } = await admin.storage
     .from(BUCKET)
     .createSignedUrl(FILES[part], TTL_SECONDS);
   if (storageError || !signed?.signedUrl) {
-    return reply(503, { allowed: true, ready: false, error: "Documento pendiente de aprobación y carga" }, origin);
+    return reply(503, { allowed: false, ready: false, error: "Documento pendiente de aprobación y carga" }, origin);
   }
   return reply(200, {
     allowed: true,
