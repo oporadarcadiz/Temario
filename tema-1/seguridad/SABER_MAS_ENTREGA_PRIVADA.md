@@ -44,7 +44,7 @@ No subir nada hasta autorización editorial y comprobación de edición/alcance.
 | QR /tema-1/saber-mas/ y /tema-1/radar/ | rutas intactas; BOE y demos sin compra |
 | Dispositivo móvil/ordenador y cierre de sesión | probar navegadores reales, no solo DOM emulado |
 
-**Validación ejecutada en esta preparación:** lectura de vuelta desde GitHub; análisis estático V8 del módulo cliente (sintaxis correcta); 10 comprobaciones de invariantes: ausencia de enlaces directos, 3 botones, BOE y Radar libres, rutas estables, JWT, verificación Amazon, cierre por defecto, TTL y no despliegue. **No son pruebas de servidor, navegador real ni comprador real.**
+**Validación ejecutada en esta preparación:** lectura de vuelta desde GitHub; análisis estático V8 del módulo cliente (sintaxis correcta); 10 comprobaciones de invariantes: ausencia de enlaces directos, 3 botones, BOE y Radar libres, rutas estables, JWT, verificación Amazon, cierre por defecto, TTL y no despliegue. **Además, 15 casos de flujo de la Edge Function ejecutados con V8 y dependencias Deno/Supabase simuladas (15/15): sin token, JWT inválido, anónimo, sin permiso, caducado, revocado, sin solicitud, pendiente, rechazado, canal distinto de Amazon, PDF ausente, aprobado, parte inválida, CORS no permitido y método POST.** Son pruebas con mocks, NO HTTP real ni Supabase, navegador ni comprador real.
 
 ## Dependencias y límites
 
