@@ -6,10 +6,14 @@ async function check(){
   try{
     const {data:{user},error:authError}=await sb.auth.getUser();
     if(authError||!user){$("gateTitle").textContent="Acceso reservado a compradores";$("gateDesc").textContent="Identifícate con tu correo y solicita la activación de tu libro."; $("gateAction").hidden=false;return}
-    const {data:grant,error}=await sb.from("tema1_access").select("active,expires_at").eq("user_id",user.id).maybeSingle();
+    const {data:grant,error}=await sb.from("tema1_access").select("active,expires_at,source_claim_id").eq("user_id",user.id).maybeSingle();
     if(error){$("gateTitle").textContent="No podemos verificar tu acceso";$("gateDesc").textContent="Inténtalo de nuevo más tarde.";return}
     const ok=grant?.active===true&&(!grant.expires_at||Date.parse(grant.expires_at)>Date.now());
     if(!ok){$("gateTitle").textContent="Pendiente de activación";$("gateDesc").textContent="Tu compra todavía no está aprobada para los extras del Tema 1."; $("gateAction").hidden=false;return}
+    if(!grant.source_claim_id){$("gateTitle").textContent="Compra pendiente de verificación";$("gateDesc").textContent="Tu permiso debe estar asociado a un pedido físico de Amazon aprobado.";return}
+    const {data:claim,error:claimError}=await sb.from("tema1_order_claims").select("id,channel,status").eq("id",grant.source_claim_id).eq("user_id",user.id).maybeSingle();
+    if(claimError){$("gateTitle").textContent="No podemos verificar tu pedido";$("gateDesc").textContent="Inténtalo más tarde.";return}
+    if(claim?.channel!=="amazon"||claim?.status!=="verified"){$("gateTitle").textContent="Compra pendiente de verificación";$("gateDesc").textContent="Tu pedido de Amazon todavía no está aprobado para los extras.";return}
     $("gate").hidden=true;$("saberContent").hidden=false;
   }catch(_){$("gateTitle").textContent="Error temporal";$("gateDesc").textContent="No se ha podido comprobar tu permiso. Inténtalo más tarde."}
 }
