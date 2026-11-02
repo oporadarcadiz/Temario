@@ -28,25 +28,25 @@ window.OpoData={
   };
  },
  async loadOpportunities(){
-  const fallback=async(reason)=>{const response=await fetch('/assets/convocatorias.json',{cache:'no-store'});if(!response.ok)throw Error('No se han podido cargar las convocatorias.');const data=await response.json();return {...data,opportunities:(data.opportunities||[]).map(x=>this.normalize(x)).filter(x=>x.published!==false),source:'respaldo',notice:reason?'Conexión al radar no disponible. Se muestra una copia de respaldo que puede estar desactualizada.':''};};
+  const fallback=async(reason)=>{const response=await fetch('/assets/convocatorias.json',{cache:'no-store'});if(!response.ok)throw Error('No se han podido cargar las convocatorias.');const data=await response.json();return {...data,opportunities:(data.opportunities||[]).map(x=>this.normalize(x)).filter(x=>x.published!==false&&(x.publicationStatus==null||['aprobado','approved','published','publicada','validada'].includes(String(x.publicationStatus).toLowerCase()))),source:'respaldo',notice:reason?'Conexión al radar no disponible. Se muestra una copia de respaldo que puede estar desactualizada.':''};};
   try{
    try{await window.OpoAccountReady}catch{}
    const client=window.OpoSupabaseClient;let rows=[],eventRows=[];
    if(client){
-    const opportunities=await client.from('opportunities').select('id,slug,data,published,reviewed_at,municipio,provincia,ambito,canonical_url,fecha_inicio_plazo,fecha_ultima_consulta,estado_validacion').eq('published',true).order('reviewed_at',{ascending:false});
+    const opportunities=await client.from('opportunities').select('id,slug,data,published,reviewed_at,municipio,provincia,ambito,canonical_url,fecha_inicio_plazo,fecha_ultima_consulta,estado_validacion').eq('published',true).eq('estado_validacion','aprobado').order('reviewed_at',{ascending:false});
     if(opportunities.error)throw opportunities.error;rows=opportunities.data||[];
     const events=await client.from('opportunity_events').select('evento_id,convocatoria_id,tipo_evento,titulo_evento,fecha_oficial,url_evento,canonical_url,resumen,publicado,estado_validacion,retirado_en,created_at').eq('publicado',true).eq('estado_validacion','aprobado').is('retirado_en',null).order('fecha_oficial',{ascending:false});
     if(events.error)throw events.error;eventRows=events.data||[];
    }else{
     const base='https://jtyjdrrxmuppulbekfai.supabase.co/rest/v1/';const headers={apikey:'sb_publishable_-9m9ilEwGsM4tEBTVXS3FA_aRlVhNNc'};
     const [opportunities,events]=await Promise.all([
-     fetch(base+'opportunities?select=id,slug,data,published,reviewed_at,municipio,provincia,ambito,canonical_url,fecha_inicio_plazo,fecha_ultima_consulta,estado_validacion&published=eq.true&order=reviewed_at.desc',{headers,cache:'no-store',signal:AbortSignal.timeout(12000)}),
+     fetch(base+'opportunities?select=id,slug,data,published,reviewed_at,municipio,provincia,ambito,canonical_url,fecha_inicio_plazo,fecha_ultima_consulta,estado_validacion&published=eq.true&estado_validacion=eq.aprobado&order=reviewed_at.desc',{headers,cache:'no-store',signal:AbortSignal.timeout(12000)}),
      fetch(base+'opportunity_events?select=evento_id,convocatoria_id,tipo_evento,titulo_evento,fecha_oficial,url_evento,canonical_url,resumen,publicado,estado_validacion,retirado_en,created_at&publicado=eq.true&estado_validacion=eq.aprobado&retirado_en=is.null&order=fecha_oficial.desc',{headers,cache:'no-store',signal:AbortSignal.timeout(12000)})
     ]);
     if(!opportunities.ok||!events.ok)throw Error('HTTP '+opportunities.status+'/'+events.status);rows=await opportunities.json();eventRows=await events.json();
    }
    if(!Array.isArray(rows)||!Array.isArray(eventRows))throw Error('Respuesta de radar inválida');
-   const opportunities=rows.map(r=>this.normalize(r,eventRows)).filter(x=>x.published===true);
+   const opportunities=rows.filter(r=>r?.published===true&&r?.estado_validacion==='aprobado').map(r=>this.normalize(r,eventRows)).filter(x=>x.published===true);
    return {opportunities,source:'supabase',reviewedOn:String(rows[0]?.reviewed_at||rows[0]?.fecha_ultima_consulta||new Date().toISOString()).slice(0,10),notice:''};
   }catch{return fallback(true)}
  },
