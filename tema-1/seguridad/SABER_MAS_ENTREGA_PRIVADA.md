@@ -14,7 +14,7 @@ En esta rama:
 
 **No hay PDF cargado** en las tres rutas privadas de destino:
 `saber-mas/parte-1.pdf`, `saber-mas/parte-2.pdf`, `saber-mas/parte-3.pdf`.
-No subir nada hasta autorización editorial y comprobación de edición/alcance. Tampoco se han borrado copias públicas: no eliminar fuentes sin respaldo verificado.
+No subir nada hasta autorización editorial y comprobación de edición/alcance. **Las tres copias PDF se han eliminado únicamente de la rama de preparación** (commits 7729f69f, 2670628e, 44d1564c), y se ha verificado que siguen intactas en la rama principal: no hay retirada ni protección de producción todavía. No borrar fuentes maestras ni activar la retirada pública hasta verificar respaldos y aprobar el despliegue.
 
 ## Secuencia de puesta en marcha (requiere revisión y autorización separadas)
 
