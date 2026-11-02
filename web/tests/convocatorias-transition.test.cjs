@@ -48,3 +48,43 @@ test('evento de Supabase aprobado pero publicado=false no se muestra',()=>{
  const r=normalize({id:'OPO-2026-e54dcb70',published:true,data:{title:'Monitor/a'}},[{evento_id:'EVT-BOP-CADIZ-e54dcb70-348532',convocatoria_id:'OPO-2026-e54dcb70',publicado:false,estado_validacion:'aprobado',fecha_oficial:'2026-10-23',titulo_evento:'Bases',url_evento:'https://example.org/bases'}]);
  assert.equal(r.events.length,0);
 });
+
+
+test('carga Supabase solo expedientes aprobados y publicados, incluso si el backend devuelve filas extra',async()=>{
+ const queries=[];
+ const rows=[
+  {id:'OPO-APROBADO',published:true,estado_validacion:'aprobado',data:{title:'Aprobada',organism:'Organismo'}},
+  {id:'OPO-PENDIENTE',published:true,estado_validacion:'pendiente',data:{title:'Pendiente',organism:'Organismo'}},
+  {id:'OPO-OCULTO',published:false,estado_validacion:'aprobado',data:{title:'Oculta',organism:'Organismo'}}
+ ];
+ const previousClient=ctx.window.OpoSupabaseClient,previousReady=ctx.window.OpoAccountReady;
+ ctx.window.OpoAccountReady=Promise.resolve();
+ ctx.window.OpoSupabaseClient={from(table){const filters=[];queries.push({table,filters});return{
+  select(){return this},eq(k,v){filters.push([k,v]);return this},is(){return this},
+  order(){return Promise.resolve({data:table==='opportunities'?rows:[],error:null})}
+ }}};
+ try{
+  const result=await ctx.window.OpoData.loadOpportunities();
+  assert.equal(result.source,'supabase');
+  assert.deepEqual(result.opportunities.map(x=>x.id),['OPO-APROBADO']);
+  assert.ok(queries.some(x=>x.table==='opportunities'&&x.filters.some(([k,v])=>k==='estado_validacion'&&v==='aprobado')));
+  assert.ok(queries.some(x=>x.table==='opportunity_events'&&x.filters.some(([k,v])=>k==='publicado'&&v===true)));
+ }finally{ctx.window.OpoSupabaseClient=previousClient;ctx.window.OpoAccountReady=previousReady}
+});
+
+test('respaldo nunca muestra registros expresamente pendientes ni sin publicar',async()=>{
+ const previousClient=ctx.window.OpoSupabaseClient,previousFetch=ctx.fetch;
+ ctx.window.OpoSupabaseClient=undefined;
+ ctx.fetch=async url=>String(url).includes('/assets/convocatorias.json')?{
+  ok:true,json:async()=>({opportunities:[
+   {id:'F-ANTIGUO',title:'Legado'},
+   {id:'F-PENDIENTE',published:true,estado_validacion:'pendiente',title:'No aprobado'},
+   {id:'F-OCULTO',published:false,title:'No publicado'}
+  ]})
+ }:{ok:false,status:503};
+ try{
+  const result=await ctx.window.OpoData.loadOpportunities();
+  assert.equal(result.source,'respaldo');
+  assert.deepEqual(result.opportunities.map(x=>x.id),['F-ANTIGUO']);
+ }finally{ctx.fetch=previousFetch;ctx.window.OpoSupabaseClient=previousClient}
+});
