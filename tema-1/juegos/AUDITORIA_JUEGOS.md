@@ -86,3 +86,39 @@ Fuente pública directa: https://www.sanlucardebarrameda.es/sites/default/files/
 - **No entrega contenido de pago**: responde `content_ready:false`. Es únicamente una base de autorización preparada para integrar un banco privado.
 - **BLOQUEANTE DE VENTA COMO PREMIUM:** Los HTML y bancos de preguntas siguen públicos en GitHub/GitHub Pages/Netlify. Cualquier persona con el enlace puede acceder. No prometer exclusividad ni protección hasta trasladar preguntas y juegos fuera del repositorio público y probar autorización de extremo a extremo.
 - Las demostraciones actuales pueden seguir siendo públicas y accesibles para pruebas. Separar inequívocamente DEMO pública de paquete COMPLETO protegido cuando se complete la migración.
+
+
+## 02/11/2026 · Auditoría funcional de las nueve actividades (Juegos Chat)
+
+**Estado:** PR en borrador, sin fusión ni despliegue. Referencias de coordinación: M-045 y M-083 propias; consultadas M-074 y M-081. La revisión R3/R2 del libro no certifica las 120 preguntas ni derechos sobre ilustraciones. No se ha modificado el banco comercial, sus IDs, QR, plantillas de examen, configuración Supabase ni contenidos multimedia privados.
+
+### Matriz de pruebas realizadas sobre HTML/JS de las ramas de GitHub (entorno DOM simulado)
+
+| Entrada de los nueve juegos | Prueba realizada | Resultado |
+| --- | --- | --- |
+| Artículo en imagen | Arranque y 8 tarjetas con identificación/corrección y avance hasta final | 8/8, OK en simulación |
+| Mapa constitucional | Inicio en modo `visual` del Centro Radar con banco existente, imagen, opción correcta y resultado | OK, 12 imágenes mapeadas, prueba de 1 pregunta |
+| Fichas Radar | 10 fichas de práctica propia: girar, marcar acierto, siguiente, resumen; otras 4 fichas oficiales quedaron intactas | 10/10, resumen correcto |
+| Vocabulario jurídico | Tres enlaces de modalidades: Conceptos (8 parejas en 2 rondas), Memoriza vocabulario (13 tarjetas), Traduce el Jurídico (30 tarjetas); retorno desde GitHub Pages | 8/8 parejas + 13/13 + 30/30 en simulación; rutas presentes |
+| Candado 4-9-1-1 | Ajustar cuatro diales, descifrar código y acertar los cuatro mecanismos | OK, puntuación 880 |
+| Detecta el error | Elegir trampa correcta en una ronda de cinco desde las 35 disponibles y consultar resultados | 5/5, OK |
+| Completa la frase | Inicio en modo `completa` con banco existente, respuesta correcta, siguiente y resumen | OK, 36 ejercicios preparados, prueba de 1 |
+| Test Radar | Entrada sin redirección automática a test completo, 5 gratuitas existentes `free-20/free-224/free-413/free-473/free-651`, responder y terminar | 5/5, OK; sin 120 del banco final |
+| Simulacro | Mini-prueba de 3 preguntas; primera ronda con un error; repetir únicamente el fallo; calcular la nota de esa ronda | Primera ronda 67 %, repaso de 1 pregunta 100 %, OK |
+
+**Chequeos estructurales:** 9/9 tarjetas del menú y destinos presentes, dos accesos multimedia arriba; JS de los cinco juegos HTML de Temario compila; todos los identificadores estáticos consultados por sus scripts existen. Los archivos públicos externos del vocabulario y las imágenes requeridas por Mapa están en el árbol GitHub de Tarjetas-repaso. `viewport`, estilos responsive existentes y botones accesibles se revisaron a nivel de código, **NO con dispositivo físico, lector de pantalla o navegador real**. Estas pruebas de simulación no sustituyen QA visual ni de accesibilidad.
+
+### Correcciones de funcionamiento en las mismas ramas
+
+- **Temario PR #1** `tema-1/resources.js`: en `startMock()`, al repetir fallos, comparar contra `deck[i]` y utilizar `deck.length` para nota porcentual y contador. Antes se utilizaba `mock[i]`/`mock.length` aun con subconjunto. El contenido de las tres preguntas es idéntico antes/después.
+- **Temario PR #1** `tema-1/juegos/fichas-radar.html`: se cambió solo la **etiqueta de estado** de cuatro preguntas de procedencia de examen. Ya no dice `VERIFICADA`, porque M-081 mantiene revisión editorial final; los enunciados, claves y fuentes no cambiaron.
+- **Tarjetas-repaso PR #1** `juegos/centro-radar/tema-1/app.js`: plural correcto en resumen para una pregunta (`1 acierto`, `1 pregunta`) sin tocar cálculo ni elección; simulación de Mapa/Completa OK.
+- **Tarjetas-repaso PR #1** `juegos/tarjetas-radar/vocabulario-tema-1/index.html` y `juegos/centro-radar/traduce-juridico/app.js`: admitir regreso a `/Temario/tema-1/juegos/menu-memoria/vocabulario-juridico.html` y al destino web equivalente, con validación de host HTTPS permitido. Antes el retorno desde GitHub Pages no reconocía el prefijo `/Temario`. Sin cambios en tarjetas ni contenidos.
+
+### Separación gratis / privado — pendiente obligatorio para Web Chat
+
+- **NO ESTÁ CERTIFICADA:** páginas y bancos actuales siguen en repos públicos `Temario` y `Tarjetas-repaso`, incluyendo `juegos/centro-radar/tema-1/bank.js`, recursos de Fichas/Trampa/Imagen y rutas externas. Parte es material de entrenamiento anterior, **no afirmar que son las 120 preguntas finales**. El botón deshabilitado y los avisos de «premio» no impiden descargar código/datos públicos mediante URL directa. Además de las cinco preguntas gratuitas y el minisimulacro de tres, **no calificar todavía los otros juegos completos como privados**.
+- **Web Chat M-083:** conservar las 9 rutas y los dos QR permanentes, separar datasets DEMO autocontenidos de datasets de contenido reservado; servir exclusivamente lo premium desde servidor/Storage privado después de autenticar con OTP/JWT y comprobar `tema1_access` y canal Amazon validado **por petición**, impedir también URL directa a JS/HTML/JSON/media de pago. Revisar cachés y antiguas URLs, confirmar estados anon/usuario sin compra/pendiente/rechazado/activo/revocado, referencias duplicadas Amazon, dos ediciones del libro y sus derechos de acceso. `tema1-games-access` debe conservar `content_ready:false` hasta superar esas pruebas. **Sin aplicar SQL ni desplegar desde Juegos Chat.**
+- **Banco/Revisión Editorial M-081:** no entregar 120 al cliente público, no hacer cargo de pago; lote 60 oficiales y 60 originales todavía sin certificación global. El algoritmo de 40 no ha cambiado. Los medios premium Largo/Corto siguen desactivados; vídeo corto público se conserva.
+
+**Cierre de esta ronda:** pruebas del código realizadas y ajustes puntuales preparados; **pendiente QA navegador móvil/escritorio, auditoría jurídica de los ejercicios que se elijan como demo, autorización real de servidor y validación editorial**. No fusionar PR, no abrir ventas, no crear un nuevo juego o banco.
