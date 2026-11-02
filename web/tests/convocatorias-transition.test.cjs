@@ -66,7 +66,7 @@ test('carga Supabase solo expedientes aprobados y publicados, incluso si el back
  try{
   const result=await ctx.window.OpoData.loadOpportunities();
   assert.equal(result.source,'supabase');
-  assert.deepEqual(result.opportunities.map(x=>x.id),['OPO-APROBADO']);
+  assert.deepEqual(Array.from(result.opportunities,x=>x.id),['OPO-APROBADO']);
   assert.ok(queries.some(x=>x.table==='opportunities'&&x.filters.some(([k,v])=>k==='estado_validacion'&&v==='aprobado')));
   assert.ok(queries.some(x=>x.table==='opportunity_events'&&x.filters.some(([k,v])=>k==='publicado'&&v===true)));
  }finally{ctx.window.OpoSupabaseClient=previousClient;ctx.window.OpoAccountReady=previousReady}
@@ -85,6 +85,6 @@ test('respaldo nunca muestra registros expresamente pendientes ni sin publicar',
  try{
   const result=await ctx.window.OpoData.loadOpportunities();
   assert.equal(result.source,'respaldo');
-  assert.deepEqual(result.opportunities.map(x=>x.id),['F-ANTIGUO']);
+  assert.deepEqual(Array.from(result.opportunities,x=>x.id),['F-ANTIGUO']);
  }finally{ctx.fetch=previousFetch;ctx.window.OpoSupabaseClient=previousClient}
 });
