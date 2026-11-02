@@ -74,7 +74,12 @@ BEGIN
 END;
 $$;
 
--- Privilegios actuales: estas RPC solo deben poder ejecutarse por service_role/postgres.
--- Verificar antes y después mediante has_function_privilege('anon',...,'EXECUTE')
--- y has_function_privilege('authenticated',...,'EXECUTE'): ambos deben ser FALSE.
+-- Conserva la denegación a visitantes y clientes autenticados.
+REVOKE ALL ON FUNCTION public.tema1_approve_claim(uuid,text) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.tema1_approve_claim(uuid,text) TO service_role;
+REVOKE ALL ON FUNCTION public.tema1_canonizar_solicitud_amazon() FROM PUBLIC, anon, authenticated;
+
+-- Tras aplicar, verificar permisos: has_function_privilege('anon',...,'EXECUTE')
+-- y has_function_privilege('authenticated',...,'EXECUTE') deben devolver FALSE.
+-- NO aplicar esta migración sin revisar QA comprador, referencia y reversión.
 COMMIT;
