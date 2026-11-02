@@ -52,3 +52,19 @@ No subir nada hasta autorización editorial y comprobación de edición/alcance.
 - Las 120 preguntas del simulacro y los juegos premium siguen pendientes de certificación; `tema1-games-access` debe permanecer con `content_ready:false`.
 - No modificar libros, preguntas, QR, permisos de producción, funciones Edge desplegadas, RLS, cobros ni Netlify en esta fase.
 - No anunciar PDF/eBook/Kindle: **venta comercial prevista exclusivamente de libros físicos Amazon KDP**.
+
+
+## Auditoría de permisos Amazon y bloqueo editorial (02/11/2026, 21:00)
+
+**Consultas ejecutadas de solo lectura contra Supabase (sin migraciones, SQL de escritura ni despliegue):**
+
+- RLS actual: `tema1_access` permite `SELECT` únicamente del usuario autenticado propietario; `tema1_order_claims` permite `SELECT` de las propias solicitudes e `INSERT` solo con `user_id=auth.uid()`, `status=pending` y campos de revisión vacíos. No hay política de `UPDATE` público.
+- Las RPC `tema1_approve_claim` y `tema1_reject_claim` son `SECURITY DEFINER`; `anon` y `authenticated` **no tienen** permiso EXECUTE. La Edge `tema1-orders-admin` desplegada exige JWT y cuenta administrativa de correo confirmado. **Esto no equivale a validar pedidos automáticamente con Amazon**: el administrador debe contrastar la compra real antes de aprobarla.
+- La base actual admite canales `amazon` y `web`; la migración preparada `20261102_amazon_solo_acceso.sql` pretende bloquear nuevos pedidos no Amazon y restringir la RPC. **No está aplicada**. No inferir la edición comprada por el formato del número: falta decisión contractual ASIN/edición y un campo o contrato de alcance antes de conceder acceso a contenido exclusivo de otro libro.
+- La Edge `tema1-games-access` desplegada devuelve `content_ready:false` y no entrega juegos completos; su control actual solo consulta `tema1_access`, **no** vincula todavía el permiso a una solicitud Amazon verificada. El texto de respuesta que dice «compra validada» es prematuro. No activar entrega premium hasta endurecer ese contrato y certificar contenidos; no se ha modificado la función desplegada.
+
+**Mejora segura preparada solo en la rama:** la Edge inerte `tema-1/seguridad/edge/tema1-saber-mas/index.ts` añade `TEMA1_SABER_MAS_CONTENT_READY`. Si la variable de entorno no es exactamente `true`, responde HTTP 503 con `allowed:false, ready:false` **sin llamar a Storage para firmar**; incluso si el usuario está autorizado o alguien sube un PDF por error. Si el archivo falta, también responde `allowed:false`. Commit `24f90ff617f939c6b1bb7d0025b28027dfedde42`. Esta defensa adicional NO sustituye la revisión editorial, la retirada de copias públicas, el permiso Amazon ni las pruebas reales.
+
+**QA ejecutado en este turno:** 12/12 casos sobre el código de la Edge mediante transpilación superficial de TypeScript a JS y dependencias Deno/Supabase/HTTP simuladas en V8: sin JWT, JWT inválido, sin permiso, revocado, caducado, pedido pendiente, canal web, bandera editorial ausente (503 y **cero** firmas), bandera habilitada pero PDF ausente (503), comprador autorizado con bandera y PDF ficticio (200 y firma simulada), parte inválida (400) y método POST (405). **No son pruebas de HTTP, Supabase real, Deno real, comprador real ni navegador**. El estado de producción permanece sin cambios y los PDF de GitHub Pages siguen expuestos.
+
+**Siguiente trabajo seguro:** revisar la compatibilidad de la migración con los dos libros físicos y el mecanismo manual de prueba Amazon, preparar QA sin conceder accesos reales, y revisar con Revisión Editorial el contenido final y los derechos antes de cargar PDFs. Mantener `TEMA1_SABER_MAS_CONTENT_READY` sin activar y `tema1-games-access.content_ready=false`.
