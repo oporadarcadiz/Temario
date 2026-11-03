@@ -3,6 +3,10 @@
 -- backups, política de atención a compradores y pruebas con cuentas de ensayo.
 -- Afecta solo a las tablas y funciones existentes de acceso al Tema 1.
 -- No concede permisos, no activa juegos, no modifica QR ni altera el banco.
+-- BLOQUEO DE LANZAMIENTO: todavía no hay campo ASIN/edición ni contrato de alcance
+-- para los dos libros físicos. La RPC aún concede acceso genérico al Tema 1.
+-- NO APLICAR hasta resolver alcance por edición, verificación humana real,
+-- respaldo, pruebas con roles y autorización expresa.
 BEGIN;
 
 CREATE OR REPLACE FUNCTION public.tema1_canonizar_solicitud_amazon()
@@ -42,7 +46,7 @@ FOR EACH ROW
 EXECUTE FUNCTION public.tema1_canonizar_solicitud_amazon();
 
 CREATE OR REPLACE FUNCTION public.tema1_approve_claim(
-  p_claim_id uuid, p_review_note text DEFAULT 'Compra comprobada'
+  p_claim_id uuid, p_review_note text DEFAULT NULL
 )
 RETURNS boolean
 LANGUAGE plpgsql
@@ -60,8 +64,10 @@ BEGIN
   IF p.order_reference !~ '^[0-9]{3}-[0-9]{7}-[0-9]{7}$' THEN
     RAISE EXCEPTION 'Formato de referencia Amazon no verificado';
   END IF;
-  IF p_review_note IS NULL OR length(btrim(p_review_note)) < 8 THEN
-    RAISE EXCEPTION 'Documenta la verificación manual de la compra';
+  IF p_review_note IS NULL OR length(btrim(p_review_note)) < 8
+     OR length(btrim(p_review_note)) > 400
+     OR lower(btrim(p_review_note)) IN ('compra comprobada', 'compra verificada', 'pedido verificado') THEN
+    RAISE EXCEPTION 'Documenta una comprobación individual del pedido (8-400 caracteres; no vale nota genérica)';
   END IF;
   UPDATE public.tema1_order_claims
      SET status='verified',reviewed_at=now(),reviewer_note=p_review_note
