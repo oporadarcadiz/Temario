@@ -2,7 +2,19 @@
 import {createClient} from "https://esm.sh/@supabase/supabase-js@2";
 const sb=createClient("https://jtyjdrrxmuppulbekfai.supabase.co","sb_publishable_-9m9ilEwGsM4tEBTVXS3FA_aRlVhNNc",{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const $=id=>document.getElementById(id);
+let accessEpoch=0;
+function resetPrivateView(){
+  document.querySelectorAll("[data-signed-link]").forEach(link=>link.remove());
+  $("saberContent").hidden=true;
+  $("gate").hidden=false;
+  $("gateAction").hidden=true;
+  $("gateTitle").textContent="Acceso reservado a compradores";
+  $("gateDesc").textContent="Identifícate con tu correo y solicita la activación de tu libro.";
+  $("pdfStatus").textContent="La entrega privada requiere una sesión y un permiso vigentes.";
+}
 async function check(){
+  const epoch=accessEpoch;
+  resetPrivateView();
   try{
     const {data:{user},error:authError}=await sb.auth.getUser();
     if(authError||!user){$("gateTitle").textContent="Acceso reservado a compradores";$("gateDesc").textContent="Identifícate con tu correo y solicita la activación de tu libro."; $("gateAction").hidden=false;return}
@@ -14,6 +26,7 @@ async function check(){
     const {data:claim,error:claimError}=await sb.from("tema1_order_claims").select("id,channel,status").eq("id",grant.source_claim_id).eq("user_id",user.id).maybeSingle();
     if(claimError){$("gateTitle").textContent="No podemos verificar tu pedido";$("gateDesc").textContent="Inténtalo más tarde.";return}
     if(claim?.channel!=="amazon"||claim?.status!=="verified"){$("gateTitle").textContent="Compra pendiente de verificación";$("gateDesc").textContent="Tu pedido de Amazon todavía no está aprobado para los extras.";return}
+    if(epoch!==accessEpoch)return; // No reabrir contenido tras cerrar sesión durante la comprobación.
     $("gate").hidden=true;$("saberContent").hidden=false;
   }catch(_){$("gateTitle").textContent="Error temporal";$("gateDesc").textContent="No se ha podido comprobar tu permiso. Inténtalo más tarde."}
 }
@@ -26,6 +39,7 @@ for(const button of document.querySelectorAll("[data-premium-pdf]")){
   const status=$("pdfStatus");
   document.querySelectorAll("[data-signed-link]").forEach(link=>link.remove());
   button.disabled=true;
+  const epoch=accessEpoch;
   status.textContent="Comprobando tu permiso y la disponibilidad del documento…";
   try{
    const {data:{session},error}=await sb.auth.getSession();
@@ -37,6 +51,7 @@ for(const button of document.querySelectorAll("[data-premium-pdf]")){
    if(!response.ok)throw Error("not-ready");
    const result=await response.json();
    if(result?.allowed!==true||result?.ready!==true||!Number.isInteger(result.expires_in_seconds)||result.expires_in_seconds<1||result.expires_in_seconds>60)throw Error("not-ready");
+   if(epoch!==accessEpoch)throw Error("session-changed");
    const signed=new URL(result.url);
    if(signed.protocol!=="https:"||signed.host!==premiumHost||!signed.pathname.startsWith("/storage/v1/object/sign/tema1-premium/"))throw Error("invalid-url");
    const link=document.createElement("a");link.href=signed.href;
@@ -49,5 +64,9 @@ for(const button of document.querySelectorAll("[data-premium-pdf]")){
   finally{button.disabled=false}
  });
 }
+sb.auth.onAuthStateChange((event)=>{
+  if(event==="SIGNED_OUT"){accessEpoch++;resetPrivateView();}
+});
+window.addEventListener("pageshow",(event)=>{if(event.persisted)check();});
 check();
 </script></body></html>
