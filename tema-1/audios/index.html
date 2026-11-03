@@ -1,1 +1,90 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Audios · Tema 1 | OpoRadarCádiz</title><link rel="stylesheet" href="../resources.css"></head><body><main class="shell"><section class="card resource-card"><a class="back" href="../">← Tema 1</a><div class="brand"><span class="lighthouse"></span><span class="brand-name">OpoRadar<span>Cádiz</span></span></div><span class="kicker">CONTENIDO EXTRA · TEMA 1</span><h1>Audios</h1><p class="lead">Microaudios para repasar cada bloque del Tema 1 y un audio largo final. Esta página seguirá siendo la misma aunque se sustituyan los archivos o los reproductores.</p><div class="notice" role="status"><strong>En construcción. Vuelve pronto.</strong><p>Los audios del Tema 1 estarán disponibles aquí, sin cambiar la dirección de este QR.</p></div><div id="audio-list" class="grid"></div></section></main><script src="../resources.js"></script><script>mountList('audio-list',audios,'En construcción. Vuelve pronto.','Reproducir')</script></body></html>
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex"><meta name="theme-color" content="#08182d">
+<title>Escucha los pódcast · OpoRadarCádiz</title>
+<style>
+:root{--night:#08182d;--ink:#f3f3f0;--muted:#b4c1d0;--gold:#f6cb78;--line:#f6cb7835}
+*{box-sizing:border-box}body{background:var(--night);color:var(--ink);margin:0;font:16px/1.6 system-ui,-apple-system,'Segoe UI',sans-serif}
+main{max-width:720px;margin:0 auto;padding:clamp(18px,5vw,42px)}
+a{color:var(--gold)}a:focus-visible,button:focus-visible,input:focus-visible,audio:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.back{display:inline-block;margin-bottom:26px;font-weight:700;font-size:14px;text-decoration:none}
+.eyebrow{color:var(--gold);font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+h1{font:500 clamp(30px,6vw,43px)/1.2 Georgia,serif;margin:12px 0}
+p,.status{color:var(--muted)}.status{font-size:14px}
+h2{font-size:20px;margin:25px 0 12px}
+.episodes{margin:22px 0 0;padding:0;list-style:none;border-top:1px solid var(--line)}
+.episodes li{border-bottom:1px solid var(--line)}
+.episodes button{display:block;width:100%;border:0;background:none;color:var(--ink);text-align:left;padding:16px 8px;min-height:54px;font:inherit;font-size:16px;font-weight:600;line-height:1.5;cursor:pointer}
+.episodes button:hover:not(:disabled),.episodes button[aria-current="true"]{color:var(--gold);background:#ffffff08}.episodes button:disabled{cursor:default;opacity:.72}
+.player{border-top:1px solid var(--line);margin-top:28px;padding-top:20px}
+.player strong{display:block;color:var(--gold);margin-bottom:12px}
+audio{display:block;width:100%;margin:8px 0 14px;accent-color:var(--gold)}
+.controls{display:flex;gap:12px;flex-wrap:wrap;margin:12px 0}
+.controls button{flex:1;min-width:110px;border:1px solid #f6cb7866;border-radius:10px;background:#102039;color:var(--ink);padding:10px 12px;min-height:46px;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.controls button:disabled{opacity:.45;cursor:default}
+.auto{display:flex;gap:12px;align-items:center;font-size:14px;margin-top:18px;color:var(--ink)}
+.auto input{accent-color:var(--gold);width:19px;height:19px}
+footer{border-top:1px solid var(--line);font-size:13px;color:var(--muted);margin-top:35px;padding-top:20px}
+[hidden]{display:none!important}
+</style></head><body><main>
+<a class="back" href="../juegos/menu-memoria/">← Centro de Juegos</a>
+<div class="eyebrow">OpoRadarCádiz · Biblioteca de audio</div><h1>🎧 Escucha los pódcast</h1>
+<p>Parte 1 del Tema 1 · páginas 1 a 6. Las versiones Largo y Corto están terminadas según la confirmación de la usuaria. El pódcast largo corresponde al audio del vídeo largo y el corto al audio de repaso. La reproducción se activará cuando estén alojados en el almacenamiento privado y Web Chat valide el acceso del comprador.</p>
+<p id="empty" class="status" role="status">Pódcast Largo y Corto definitivos de la Parte 1 (páginas 1–6). Archivos definitivos identificados por su procedencia; pendiente subida segura y activación para compradores.</p>
+<ul id="episodes" class="episodes" aria-label="Episodios del Tema 1"><li><button type="button" disabled>▶ T1 · Ep. 1 — Largo</button></li><li><button type="button" disabled>▶ T1 · Ep. 1 — Corto</button></li></ul>
+<section id="player" class="player" aria-label="Reproductor de pódcast" hidden>
+<strong id="now">Selecciona un episodio</strong>
+<audio id="audio" controls preload="none" aria-label="Audio del episodio seleccionado"></audio>
+<div class="controls"><button id="prev" type="button" disabled>← Anterior</button><button id="next" type="button" disabled>Siguiente →</button></div>
+<label class="auto"><input id="autoplay" type="checkbox"> Continuar automáticamente con el siguiente audio</label>
+<p id="feedback" class="status" role="status" aria-live="polite"></p>
+</section>
+<footer>Los originales permanecen en Google Drive. Web Chat debe validar la compra antes de entregar desde Supabase Storage privado la URL temporal de cada audio. Esta página no contiene enlaces a archivos premium.</footer>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const player=$('audio');let items=[],index=-1;
+const prepared=[{tema:1,episodio:1,version:'Largo'},{tema:1,episodio:1,version:'Corto'}];
+function label(x){return 'T'+x.tema+' · Ep. '+x.episodio+' — '+x.version;}
+function clear(){player.pause();player.removeAttribute('src');player.load();index=-1;$('now').textContent='Selecciona un episodio';}
+function update(){
+  $('prev').disabled=index<=0;
+  $('next').disabled=index<0||index>=items.length-1;
+  [...$('episodes').querySelectorAll('button')].forEach((b,i)=>b.setAttribute('aria-current',String(i===index)));
+}
+function choose(i,play){
+  if(i<0||i>=items.length)return;
+  const x=items[i];if(index!==i){player.pause();player.src=x.src;player.load();index=i;}
+  $('now').textContent=label(x);$('feedback').textContent='';update();
+  if(play){const task=player.play();if(task&&typeof task.catch==='function')task.catch(()=>{$('feedback').textContent='Pulsa reproducir en el control de audio.';});}
+}
+function render(){
+  clear();$('episodes').replaceChildren();$('empty').hidden=items.length>0;$('episodes').hidden=false;$('player').hidden=items.length===0;
+  if(items.length===0){for(const x of prepared){const li=document.createElement('li'),b=document.createElement('button');b.type='button';b.disabled=true;b.textContent='▶ '+label(x);li.append(b);$('episodes').append(li);}update();return;}
+  for(let i=0;i<items.length;i++){const li=document.createElement('li'),b=document.createElement('button');b.type='button';b.textContent='▶ '+label(items[i]);b.onclick=()=>choose(i,true);li.append(b);$('episodes').append(li);}
+  update();
+}
+$('prev').onclick=()=>choose(index-1,true);
+$('next').onclick=()=>choose(index+1,true);
+player.addEventListener('ended',()=>{if($('autoplay').checked&&index+1<items.length)choose(index+1,true);});
+player.addEventListener('error',()=>{$('feedback').textContent='No se pudo reproducir este archivo. Revisa tu acceso.';});
+/* Punto de integración existente para Web Chat.
+   Su servidor debe validar la compra y entregar únicamente recursos aprobados,
+   con una URL firmada temporal por episodio. Sin respuesta autorizada no hay lista.
+   Ejemplo de campos: {tema:1, episodio:1, version:'Largo', src:'URL temporal autorizada'}.
+   Este método de presentación NO concede permisos a Storage. */
+function privateSignedUrl(src){try{const u=new URL(src);return u.protocol==='https:'&&u.hostname==='jtyjdrrxmuppulbekfai.supabase.co'&&u.pathname.startsWith('/storage/v1/object/sign/tema1-premium/')&&Boolean(u.searchParams.get('token'));}catch{return false;}}
+window.OpoRadarPodcasts=Object.freeze({cargar(autorizados){
+  const seen=new Set();
+  items=Array.isArray(autorizados)?autorizados.filter(x=>{
+    if(!x||!Number.isInteger(x.tema)||x.tema<1||!Number.isInteger(x.episodio)||x.episodio<1||!['Largo','Corto'].includes(x.version)||typeof x.src!=='string')return false;
+    if(!privateSignedUrl(x.src))return false;
+    const key=x.tema+':'+x.episodio+':'+x.version;if(seen.has(key))return false;seen.add(key);return true;
+  }).sort((a,b)=>a.tema-b.tema||a.episodio-b.episodio||(a.version==='Largo'?-1:1)):[];
+  render();
+},vaciar(){items=[];render();}});
+render();
+})();
+</script>
+</main></body></html>

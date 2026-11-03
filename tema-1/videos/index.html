@@ -1,3 +1,62 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vídeos · Tema 1 | OpoRadarCádiz</title><link rel="stylesheet" href="../resources.css"></head>
-<body><main class="shell"><section class="card resource-card"><a class="back" href="../">← Tema 1</a><div class="brand"><span class="lighthouse"></span><span class="brand-name">OpoRadar<span>Cádiz</span></span></div><span class="kicker">CONTENIDO EXTRA · TEMA 1</span><h1>Vídeos</h1><p class="lead">Vídeos breves por bloques y un vídeo completo final. Aquí se podrán incrustar posteriormente vídeos de YouTube sin cambiar esta URL estable.</p><div class="notice" role="status"><strong>En construcción. Vuelve pronto.</strong><p>Estamos preparando los vídeos del Tema 1. Cuando estén publicados aparecerán aquí, sin cambiar el QR.</p></div><div id="video-list" class="grid"></div></section></main><script src="../resources.js"></script><script>mountList('video-list',videos,'En construcción. Vuelve pronto.','Ver vídeo')</script></body></html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex"><meta name="theme-color" content="#08182d">
+<title>Estudia con vídeos · OpoRadarCádiz</title>
+<style>
+:root{--night:#08182d;--ink:#f3f3f0;--gold:#f6cb78;--muted:#b4c1d0}
+*{box-sizing:border-box}body{margin:0;background:var(--night);color:var(--ink);font:16px/1.6 system-ui,-apple-system,'Segoe UI',sans-serif}
+main{max-width:720px;margin:auto;padding:clamp(18px,5vw,42px)}
+a{color:var(--gold)}a:focus-visible{outline:3px solid var(--gold);outline-offset:4px}
+.back{display:inline-block;margin:0 0 26px;text-decoration:none;font-weight:700;font-size:14px}
+.eyebrow{color:var(--gold);font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+h1{font:500 clamp(30px,6vw,43px)/1.2 Georgia,serif;margin:14px 0}
+h2{font-size:20px;margin:30px 0 8px}
+p{color:var(--muted)}.list{border-top:1px solid #f6cb7845;margin-top:16px}
+.entry{padding:19px 0;border-bottom:1px solid #f6cb782b}
+.entry strong{display:block;font-size:17px;color:var(--ink)}.entry small{color:var(--gold);font-size:14px}
+footer{margin-top:40px;font-size:13px;border-top:1px solid #f6cb782b;padding-top:20px;color:var(--muted)}
+.approved-row{display:block;width:100%;padding:16px 4px;border:0;border-bottom:1px solid #f6cb782b;background:transparent;text-align:left;color:var(--ink);font:inherit;font-weight:600;cursor:pointer}
+.approved-row:hover,.approved-row:focus-visible{color:var(--gold)}video{width:100%;margin:12px 0;background:#061222;border-radius:12px}
+[hidden]{display:none!important}
+</style></head><body><main>
+<a class="back" href="../juegos/menu-memoria/">← Centro de Juegos</a>
+<div class="eyebrow">OpoRadarCádiz · Biblioteca por temas</div>
+<h1>🎬 Estudia con vídeos</h1>
+<p>Explicaciones visuales para cada tema del libro. Los vídeos completos se habilitarán únicamente cuando estén aprobados y el acceso del comprador esté verificado.</p>
+<section aria-labelledby="tema1"><h2 id="tema1">T1 — Constitución Española</h2>
+<div class="list" role="list">
+<div class="entry" role="listitem"><strong>Vídeo corto · El candado 4-9-1-1</strong><small>Reel de Instagram · 18 segundos · Disponible</small><video controls playsinline preload="metadata" aria-label="Vídeo corto 4-9-1-1"><source src="media/reel-4911-18s.mp4" type="video/mp4">Tu navegador no permite reproducir este vídeo.</video></div>
+<div id="pendingVideo" class="entry" role="listitem"><strong>Vídeo largo · páginas 1–6</strong><small>En revisión editorial · No disponible para reproducir</small></div>
+</div></section>
+<div id="approvedVideos" hidden></div>
+<section id="viewer" aria-label="Reproductor de vídeo" hidden><h2 id="selectedVideo"></h2><video id="video" controls playsinline preload="none"></video><p id="videoStatus" role="status"></p></section>
+<p id="videosPendingNote">Vídeo corto disponible. El vídeo largo de la Parte 1 (páginas 1–6) sigue en revisión.</p>
+<footer>Originales y revisiones en Google Drive. Los vídeos para compradores se servirán únicamente desde almacenamiento privado con acceso validado por Web Chat.</footer>
+<script>
+(function(){
+'use strict';const $=id=>document.getElementById(id);
+const media=$('video');
+function reset(){media.pause();media.removeAttribute('src');media.load();$('viewer').hidden=true;}
+function title(x){return x.tema===1?'T1 — Constitución Española':'T'+x.tema+' — '+(x.temaTitulo||'Tema '+x.tema);}
+function privateSignedUrl(src){try{const u=new URL(src);return u.protocol==='https:'&&u.hostname==='jtyjdrrxmuppulbekfai.supabase.co'&&u.pathname.startsWith('/storage/v1/object/sign/tema1-premium/')&&Boolean(u.searchParams.get('token'));}catch{return false;}}
+window.OpoRadarVideos=Object.freeze({cargar(autorizados){
+  reset();$('approvedVideos').replaceChildren();const seen=new Set();let clips=Array.isArray(autorizados)?autorizados.filter(x=>{
+    if(!x||!Number.isInteger(x.tema)||x.tema<1||typeof x.titulo!=='string'||!x.titulo.trim()||typeof x.src!=='string')return false;
+    if(!privateSignedUrl(x.src))return false;
+    const key=x.tema+':'+x.titulo;if(seen.has(key))return false;seen.add(key);return true;
+  }).sort((a,b)=>a.tema-b.tema||a.titulo.localeCompare(b.titulo,'es')):[];
+  $('approvedVideos').hidden=clips.length===0;const hasApprovedT1=clips.some(x=>x.tema===1);$('pendingVideo').hidden=hasApprovedT1;$('videosPendingNote').hidden=hasApprovedT1;
+  let topic=null,parent=null;
+  clips.forEach(x=>{
+    if(topic!==x.tema){topic=x.tema;parent=document.createElement('section');if(x.tema!==1){const h=document.createElement('h2');h.textContent=title(x);parent.append(h);}$('approvedVideos').append(parent);}
+    const b=document.createElement('button');b.type='button';b.className='approved-row';b.textContent='▶ '+x.titulo;b.onclick=()=>{
+      media.pause();media.src=x.src;media.load();$('viewer').hidden=false;$('selectedVideo').textContent=x.titulo;$('videoStatus').textContent='';
+      const p=media.play();if(p&&typeof p.catch==='function')p.catch(()=>$('videoStatus').textContent='Pulsa reproducir en los controles del vídeo.');
+    };parent.append(b);
+  });
+},vaciar(){reset();$('approvedVideos').replaceChildren();$('approvedVideos').hidden=true;$('pendingVideo').hidden=false;$('videosPendingNote').hidden=false;}});
+/* Web Chat: cargar SOLO las versiones aprobadas tras validar compra en el servidor,
+   recibiendo URLs temporales desde Storage privado. Esta página NO concede acceso. */
+})();
+</script>
+</main></body></html>
