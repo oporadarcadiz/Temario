@@ -122,3 +122,7 @@ Fuente pública directa: https://www.sanlucardebarrameda.es/sites/default/files/
 - **Banco/Revisión Editorial M-081:** no entregar 120 al cliente público, no hacer cargo de pago; lote 60 oficiales y 60 originales todavía sin certificación global. El algoritmo de 40 no ha cambiado. Los medios premium Largo/Corto siguen desactivados; vídeo corto público se conserva.
 
 **Cierre de esta ronda:** pruebas del código realizadas y ajustes puntuales preparados; **pendiente QA navegador móvil/escritorio, auditoría jurídica de los ejercicios que se elijan como demo, autorización real de servidor y validación editorial**. No fusionar PR, no abrir ventas, no crear un nuevo juego o banco.
+
+### 03/11/2026 13:00 — Corrección de regresión «Mis errores»
+
+En `tema-1/resources.js` se restauró la llamada a `recordFailure(q, ...)` en cada respuesta del minisimulacro y en «Dejar en blanco», también durante rondas de repaso. Se conserva el cálculo de resultados por `deck` y la mecánica de repetir únicamente pendientes. Commit `10103efbf3644b8ed8e779e63cb9978ea3cd0c8f`, archivo releído con SHA `0dea42c77a00eb5bf79d1f8e168081a40a67d977`; comprobación estructural de ambas llamadas PASS. **No se ha ejecutado aún una regresión DOM/navegador real de esta corrección**; pendiente comprobar que fallos/blancos se guardan, aciertos posteriores se retiran y el menú «Mis errores» permanece accesible. Sin fusión ni despliegue.
