@@ -108,7 +108,7 @@ Deno.serve(async (req: Request) => {
   }
   const { data: claim, error: claimError } = await admin
     .from("tema1_order_claims")
-    .select("id,user_id,channel,status")
+    .select("id,user_id,channel,status,product_edition,asin")
     .eq("id", grant.source_claim_id)
     .eq("user_id", user.id)
     .maybeSingle();
@@ -117,6 +117,22 @@ Deno.serve(async (req: Request) => {
   }
   if (claim?.channel !== "amazon" || claim?.status !== "verified") {
     return reply(403, { allowed: false, ready: false, error: "Compra no validada" }, origin);
+  }
+
+  // Esta migración AÚN NO existe: denegar por defecto hasta contar con
+  // edición/ASIN de Amazon comprobados y una matriz de recursos aprobada.
+  const expectedAsin = ({
+    tema1_individual: Deno.env.get("TEMA1_KDP_ASIN_INDIVIDUAL") ?? "",
+    general_10_temas: Deno.env.get("TEMA1_KDP_ASIN_GENERAL") ?? "",
+  } as Record<string,string>)[claim.product_edition] || "";
+  let approvedParts:unknown = null;
+  try {
+    const rules=JSON.parse(Deno.env.get("TEMA1_APPROVED_EDITION_SABER_MAS_SCOPES_JSON")||"{}");
+    approvedParts=rules[claim.product_edition];
+  } catch { approvedParts=null; }
+  if (!expectedAsin || claim.asin !== expectedAsin ||
+      !Array.isArray(approvedParts) || !approvedParts.includes(part)) {
+    return reply(403, { allowed: false, ready: false, error: "Edición o recurso sin autorización" }, origin);
   }
 
   // Interruptor editorial de seguridad: incluso con JWT, compra y objeto cargado,
