@@ -52,7 +52,8 @@ test('sesión premium por pestaña compartida entre acceso y Saber Más',()=>{
  assert.match(loginSource,/verifyOtp\(\{email:otpEmail,token,type:'email'\}\)/);
 });
 test('9 juegos: Test Final suspendido sin bloquear otros ocho',()=>{
- assert.equal(Object.keys(gameSource.match(/"[^"]+":"juegos\/tema-1\/[^"]+"/g)||{}).length,9);
+ assert.equal(Object.keys(gameSource.match(/"[^"]+":"juegos\/tema-1\/[^"]+"/g)||{}).length,8);
+ assert.match(gameSource,/"simulacro-final":null/);
  assert.match(gameSource,/TEMA1_GAME_READY_/);
  assert.match(gameSource,/simulacro-final/);
  assert.match(gameSource,/TEMA1_APPROVED_EDITION_GAME_SCOPES_JSON/);
