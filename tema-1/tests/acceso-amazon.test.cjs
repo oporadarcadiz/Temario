@@ -10,7 +10,7 @@ const html=fs.readFileSync(path.join(root,'acceso/index.html'),'utf8');
 const sql=fs.readFileSync(path.join(root,'seguridad/20261102_amazon_solo_acceso.sql'),'utf8');
 const script=html.match(/<script type="module">([\s\S]*?)<\/script>/)?.[1];
 if(!script)throw Error('Falta el script de acceso');
-const helpers=script.match(/const normalizeAmazonOrder=[^\n]+;\nconst validAmazonOrder=[^\n]+;/)?.[0];
+const helpers=script.match(/const normalizeAmazonOrder=[^\n]+;\s*const validAmazonOrder=[^\n]+;/)?.[0];
 if(!helpers)throw Error('Faltan los validadores de Amazon');
 const {normalizeAmazonOrder,validAmazonOrder}=vm.runInNewContext(helpers+'\n({normalizeAmazonOrder,validAmazonOrder})');
 
