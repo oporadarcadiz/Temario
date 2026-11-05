@@ -9,7 +9,7 @@
 <div id="message" class="status hidden" role="status" aria-live="polite"></div></main>
 <script type="module">
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2';
-const sb=createClient('https://jtyjdrrxmuppulbekfai.supabase.co',"sb_publishable_-9m9ilEwGsM4tEBTVXS3FA_aRlVhNNc",{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+const sb=createClient('https://jtyjdrrxmuppulbekfai.supabase.co',"sb_publishable_-9m9ilEwGsM4tEBTVXS3FA_aRlVhNNc",{auth:{storage:sessionStorage,storageKey:'oporadarcadiz-premium-session-v1',persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
 const $=id=>document.getElementById(id);const show=(id,on)=>$(id).classList.toggle('hidden',!on);
 const msg=text=>{show('message',!!text);$('message').textContent=text||''};
 let otpEmail='';
