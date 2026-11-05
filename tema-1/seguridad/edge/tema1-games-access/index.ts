@@ -11,7 +11,7 @@ const ORIGINS=new Set([
 ]);
 const BUCKET="tema1-premium";
 const TTL_SECONDS=60;
-const RESOURCES:Record<string,string>=Object.freeze({
+const RESOURCES:Record<string,string|null>=Object.freeze({
   "articulo-imagen":"juegos/tema-1/articulo-imagen-extra.json",
   "mapa-constitucional":"juegos/tema-1/mapa-constitucional-extra.json",
   "fichas-radar":"juegos/tema-1/fichas-radar-extra.json",
@@ -20,7 +20,7 @@ const RESOURCES:Record<string,string>=Object.freeze({
   "caza-trampa":"juegos/tema-1/caza-trampa-extra.json",
   "completa-frase":"juegos/tema-1/completa-frase-extra.json",
   "test-radar":"juegos/tema-1/test-radar-extra.json",
-  "simulacro-final":"juegos/tema-1/simulacro-final-40.json"
+  "simulacro-final":null // No contiene un lote fijo: futuro sorteo 40/120 en servidor
 });
 // Solo rutas de CONTENIDO ADICIONAL privado: el código del juego y sus demos
 // pueden seguir públicos, pero nunca las preguntas/soluciones reservadas.
@@ -109,7 +109,12 @@ Deno.serve(async req=>{
   if(!configuredApproval(slug,claim.product_edition,claim.asin))
     return reply(403,origin,{allowed:false,content_ready:false,error:"Recurso no autorizado para la edición"});
 
-  const {data:signed,error:storageError}=await admin.storage.from(BUCKET).createSignedUrl(RESOURCES[slug],TTL_SECONDS);
+  const privatePath=RESOURCES[slug];
+  // El simulacro NO es un archivo estático de 40 preguntas: requiere 40 aleatorias
+  // sin reemplazo tomadas del banco autorizado de 120, en el servidor.
+  // No desbloquearlo con una bandera hasta implementar y probar el sorteo.
+  if(!privatePath)return reply(503,origin,{allowed:false,content_ready:false,error:"Simulacro pendiente de certificación y sorteo seguro"});
+  const {data:signed,error:storageError}=await admin.storage.from(BUCKET).createSignedUrl(privatePath,TTL_SECONDS);
   if(storageError||!signed?.signedUrl)return reply(503,origin,{allowed:false,content_ready:false,error:"Contenido no disponible"});
   return reply(200,origin,{allowed:true,content_ready:true,resource:slug,url:signed.signedUrl,expires_in_seconds:TTL_SECONDS});
 });
