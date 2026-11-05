@@ -33,6 +33,22 @@ function reply(status: number, payload: Record<string, unknown>, origin: string)
   return new Response(JSON.stringify(payload), { status, headers });
 }
 
+// admin.auth.getUser(token) must validate the JWT before these claims are inspected.
+function recentOtpJwt(jwt: string, userId: string): boolean {
+  try {
+    const raw=jwt.split(".")[1]; if (!raw) return false;
+    const base=raw.replace(/-/g,"+").replace(/_/g,"/");
+    const bytes=Uint8Array.from(atob(base.padEnd(Math.ceil(base.length/4)*4,"=")),c=>c.charCodeAt(0));
+    const claims=JSON.parse(new TextDecoder().decode(bytes));
+    if (claims.sub!==userId || !claims.session_id || claims.role!=="authenticated") return false;
+    const now=Math.floor(Date.now()/1000), amr=Array.isArray(claims.amr)?claims.amr:[];
+    return amr.some((m:{method?:string; timestamp?:number})=>
+      m.method==="otp" && typeof m.timestamp==="number" &&
+      m.timestamp<=now+60 && now-m.timestamp<=8*3600
+    );
+  } catch { return false; }
+}
+
 Deno.serve(async (req: Request) => {
   const origin = req.headers.get("origin") ?? "";
   if (req.method === "OPTIONS") {
@@ -69,6 +85,9 @@ Deno.serve(async (req: Request) => {
   const { data: { user }, error: authError } = await admin.auth.getUser(token);
   if (authError || !user || user.is_anonymous) {
     return reply(401, { allowed: false, ready: false, error: "Sesión no válida" }, origin);
+  }
+  if (!recentOtpJwt(token,user.id)) {
+    return reply(401, { allowed: false, ready: false, error: "Se requiere un código OTP reciente" }, origin);
   }
 
   const { data: grant, error: grantError } = await admin
