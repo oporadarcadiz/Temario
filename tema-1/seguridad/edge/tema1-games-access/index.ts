@@ -51,6 +51,22 @@ function configuredApproval(slug:string,edition:string,asin:string){
     return Array.isArray(policy[edition])&&policy[edition].includes(slug);
   }catch{return false;}
 }
+// admin.auth.getUser(jwt) must succeed before inspecting these signed claims.
+function recentOtpJwt(jwt:string,userId:string):boolean{
+  try{
+    const base=jwt.split(".")[1];if(!base)return false;
+    const normalized=base.replace(/-/g,"+").replace(/_/g,"/");
+    const bytes=Uint8Array.from(atob(normalized.padEnd(Math.ceil(normalized.length/4)*4,"=")),c=>c.charCodeAt(0));
+    const claims=JSON.parse(new TextDecoder().decode(bytes));
+    if(claims.sub!==userId||!claims.session_id||claims.role!=="authenticated")return false;
+    const now=Math.floor(Date.now()/1000),amr=Array.isArray(claims.amr)?claims.amr:[];
+    return amr.some((m:{method?:string;timestamp?:number})=>
+      m.method==="otp" && typeof m.timestamp==="number" &&
+      m.timestamp<=now+60 && now-m.timestamp<=8*3600
+    );
+  }catch{return false;}
+}
+
 Deno.serve(async req=>{
   const origin=req.headers.get("origin")||"";
   if(req.method==="OPTIONS"){
@@ -73,6 +89,7 @@ Deno.serve(async req=>{
   const admin=createClient(url,serviceKey,{auth:{autoRefreshToken:false,persistSession:false}});
   const {data:{user},error:authError}=await admin.auth.getUser(jwt);
   if(authError||!user||user.is_anonymous)return reply(401,origin,{allowed:false,error:"Identidad inválida"});
+  if(!recentOtpJwt(jwt,user.id))return reply(401,origin,{allowed:false,content_ready:false,error:"Se requiere un código OTP reciente"});
 
   const {data:grant,error:grantError}=await admin.from("tema1_access")
     .select("active,expires_at,source_claim_id").eq("user_id",user.id).maybeSingle();
