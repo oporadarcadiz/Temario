@@ -9,7 +9,7 @@ test('catálogo: solo el Vídeo 1 consta finalizado y no publica URLs',()=>{
  assert.ok(context.catalog.audios.every(x=>x.state==='coming_soon'));
 });
 test('rutas de catálogo y Radar no crean enlaces de Storage desde el navegador',()=>{
- for(const file of ['videos/index.html','audios/index.html','radar/biblioteca/index.html']){
+ for(const file of ['videos/index.html','audios/index.html','radar/biblioteca/index.html','radar/reproductor/index.html']){
   const source=read(file);assert.doesNotMatch(source,/createSignedUrl|\.storage\.from\(|signedUrl/);
  }
  const radar=read('radar/index.html');assert.match(radar,/\.\.\/videos\//);assert.match(radar,/\.\.\/audios\//);
