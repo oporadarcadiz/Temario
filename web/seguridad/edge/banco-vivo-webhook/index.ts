@@ -69,7 +69,7 @@ Deno.serve(async(req:Request)=>{
  const admin=createClient(url,service,{auth:{autoRefreshToken:false,persistSession:false}});
  const {error}=await admin.rpc("banco_vivo_registrar_pago_test",{
   p_event_id:event.id,p_session_id:session.id,p_price_id:price,
-  p_user_id:session.client_reference_id,p_days:days
+  p_user_id:session.client_reference_id,p_days:days,p_event_type:event.type
  });
  if(error)return reply(503,{error:"No se pudo registrar el permiso; Stripe reintentará"});
  return reply(200,{received:true,test_mode:true});
