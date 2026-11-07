@@ -18,14 +18,21 @@ async function check(){
   try{
     const {data:{user},error:authError}=await sb.auth.getUser();
     if(authError||!user){$("gateTitle").textContent="Acceso reservado a compradores";$("gateDesc").textContent="Identifícate con tu correo y solicita la activación de tu libro."; $("gateAction").hidden=false;return}
-    const {data:grant,error}=await sb.from("tema1_access").select("active,expires_at,source_claim_id").eq("user_id",user.id).maybeSingle();
+    // M-048: varios permisos/ediciones por usuario; ningún botón contiene PDF.
+    // El servidor decide finalmente si esa edición autoriza cada parte.
+    const {data:grants,error}=await sb.from("tema1_access")
+      .select("active,expires_at,source_claim_id").eq("user_id",user.id);
     if(error){$("gateTitle").textContent="No podemos verificar tu acceso";$("gateDesc").textContent="Inténtalo de nuevo más tarde.";return}
-    const ok=grant?.active===true&&(!grant.expires_at||Date.parse(grant.expires_at)>Date.now());
-    if(!ok){$("gateTitle").textContent="Pendiente de activación";$("gateDesc").textContent="Tu compra todavía no está aprobada para los extras del Tema 1."; $("gateAction").hidden=false;return}
-    if(!grant.source_claim_id){$("gateTitle").textContent="Compra pendiente de verificación";$("gateDesc").textContent="Tu permiso debe estar asociado a un pedido físico de Amazon aprobado.";return}
-    const {data:claim,error:claimError}=await sb.from("tema1_order_claims").select("id,channel,status").eq("id",grant.source_claim_id).eq("user_id",user.id).maybeSingle();
+    const available=(grants||[]).filter(g=>g.active===true&&g.source_claim_id&&
+      (!g.expires_at||Date.parse(g.expires_at)>Date.now()));
+    if(!available.length){$("gateTitle").textContent="Pendiente de activación";$("gateDesc").textContent="Tu compra todavía no está aprobada para los extras del Tema 1."; $("gateAction").hidden=false;return}
+    const {data:claims,error:claimError}=await sb.from("tema1_order_claims")
+      .select("id,channel,status,product_edition,asin").eq("user_id",user.id);
     if(claimError){$("gateTitle").textContent="No podemos verificar tu pedido";$("gateDesc").textContent="Inténtalo más tarde.";return}
-    if(claim?.channel!=="amazon"||claim?.status!=="verified"){$("gateTitle").textContent="Compra pendiente de verificación";$("gateDesc").textContent="Tu pedido de Amazon todavía no está aprobado para los extras.";return}
+    const linked=available.some(g=>(claims||[]).some(c=>
+      c.id===g.source_claim_id&&c.channel==="amazon"&&c.status==="verified"&&
+      c.product_edition&&c.asin));
+    if(!linked){$("gateTitle").textContent="Compra pendiente de verificación";$("gateDesc").textContent="No hay un pedido físico de Amazon con edición y ASIN aprobados.";return}
     if(epoch!==accessEpoch)return; // No reabrir contenido tras cerrar sesión durante la comprobación.
     $("gate").hidden=true;$("saberContent").hidden=false;
   }catch(_){$("gateTitle").textContent="Error temporal";$("gateDesc").textContent="No se ha podido comprobar tu permiso. Inténtalo más tarde."}
@@ -66,6 +73,7 @@ for(const button of document.querySelectorAll("[data-premium-pdf]")){
 }
 sb.auth.onAuthStateChange((event)=>{
   if(event==="SIGNED_OUT"){accessEpoch++;resetPrivateView();}
+  if(event==="SIGNED_IN"){accessEpoch++;check();}
 });
 window.addEventListener("pageshow",(event)=>{if(event.persisted)check();});
 check();
