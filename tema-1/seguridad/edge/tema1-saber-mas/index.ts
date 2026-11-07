@@ -90,49 +90,58 @@ Deno.serve(async (req: Request) => {
     return reply(401, { allowed: false, ready: false, error: "Se requiere un código OTP reciente" }, origin);
   }
 
-  const { data: grant, error: grantError } = await admin
+  // Varias ediciones pueden pertenecer al mismo comprador. Nunca asumir
+  // un único grant por user_id: cada permiso apunta al pedido que lo originó.
+  const { data: grants, error: grantError } = await admin
     .from("tema1_access")
     .select("active,expires_at,source_claim_id")
-    .eq("user_id", user.id)
-    .maybeSingle();
+    .eq("user_id", user.id);
   if (grantError) {
     return reply(503, { allowed: false, ready: false, error: "No se pudo verificar el permiso" }, origin);
   }
-  if (!grant?.active || (grant.expires_at && !(Date.parse(grant.expires_at) > Date.now()))) {
-    return reply(403, { allowed: false, ready: false, error: "Acceso no autorizado" }, origin);
+  const activeClaims=(grants||[]).filter(g =>
+    g.active===true && g.source_claim_id &&
+    (!g.expires_at || Date.parse(g.expires_at)>Date.now())
+  );
+  if (!activeClaims.length) {
+    return reply(403, { allowed: false, ready: false, error: "Sin compra autorizada" }, origin);
   }
 
-  // Una concesión genérica sin pedido verificado NO basta para el libro físico.
-  if (!grant.source_claim_id) {
-    return reply(403, { allowed: false, ready: false, error: "Pedido sin verificar" }, origin);
-  }
-  const { data: claim, error: claimError } = await admin
-    .from("tema1_order_claims")
-    .select("id,user_id,channel,status,product_edition,asin")
-    .eq("id", grant.source_claim_id)
-    .eq("user_id", user.id)
-    .maybeSingle();
-  if (claimError) {
-    return reply(503, { allowed: false, ready: false, error: "No se pudo verificar el pedido" }, origin);
-  }
-  if (claim?.channel !== "amazon" || claim?.status !== "verified") {
-    return reply(403, { allowed: false, ready: false, error: "Compra no validada" }, origin);
-  }
-
-  // Esta migración AÚN NO existe: denegar por defecto hasta contar con
-  // edición/ASIN de Amazon comprobados y una matriz de recursos aprobada.
-  const expectedAsin = ({
-    tema1_individual: Deno.env.get("TEMA1_KDP_ASIN_INDIVIDUAL") ?? "",
-    general_10_temas: Deno.env.get("TEMA1_KDP_ASIN_GENERAL") ?? "",
-  } as Record<string,string>)[claim.product_edition] || "";
-  let approvedParts:unknown = null;
+  // La matriz de ediciones y el catálogo de ASIN proceden exclusivamente
+  // de configuración de servidor aprobada. Sin configuración: denegar.
+  const asins:Record<string,string>={
+    tema1_individual:Deno.env.get("TEMA1_KDP_ASIN_INDIVIDUAL")||"",
+    general_10_temas:Deno.env.get("TEMA1_KDP_ASIN_GENERAL")||""
+  };
+  let scope:Record<string,unknown>={};
   try {
-    const rules=JSON.parse(Deno.env.get("TEMA1_APPROVED_EDITION_SABER_MAS_SCOPES_JSON")||"{}");
-    approvedParts=rules[claim.product_edition];
-  } catch { approvedParts=null; }
-  if (!expectedAsin || claim.asin !== expectedAsin ||
-      !Array.isArray(approvedParts) || !approvedParts.includes(part)) {
-    return reply(403, { allowed: false, ready: false, error: "Edición o recurso sin autorización" }, origin);
+    const parsed=JSON.parse(Deno.env.get("TEMA1_APPROVED_EDITION_SABER_MAS_SCOPES_JSON")||"{}");
+    if(parsed&&typeof parsed==="object"&&!Array.isArray(parsed))scope=parsed;
+  }catch{return reply(503,{allowed:false,ready:false,error:"Alcances no configurados"},origin);}
+
+  let entitled=false;
+  for (const grant of activeClaims) {
+    const { data: claim, error: claimError } = await admin
+      .from("tema1_order_claims")
+      .select("id,user_id,channel,status,product_edition,asin")
+      .eq("id", grant.source_claim_id)
+      .eq("user_id", user.id)
+      .maybeSingle();
+    // Una tabla sin migrar o un error de permisos nunca permite entregar PDFs.
+    if (claimError) {
+      return reply(503,{allowed:false,ready:false,error:"Validación de edición no disponible"},origin);
+    }
+    if (!claim || claim.channel!=="amazon" || claim.status!=="verified") continue;
+    const edition=claim.product_edition;
+    if (edition!=="tema1_individual" && edition!=="general_10_temas") continue;
+    const allowedParts=scope[edition];
+    if (!asins[edition] || claim.asin!==asins[edition] ||
+        !Array.isArray(allowedParts) || !allowedParts.includes(part)) continue;
+    entitled=true;
+    break;
+  }
+  if (!entitled) {
+    return reply(403,{allowed:false,ready:false,error:"Edición o recurso no autorizado"},origin);
   }
 
   // Interruptor editorial de seguridad: incluso con JWT, compra y objeto cargado,
