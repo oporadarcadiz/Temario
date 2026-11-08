@@ -161,14 +161,22 @@ input:focus-visible,button:focus-visible,a:focus-visible,select:focus-visible{ou
 <label for="otp">Código de 6 cifras</label><input id="otp" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" minlength="6" maxlength="6" placeholder="000000" aria-describedby="otp-help">
 <button id="verify" type="button">Entrar</button>
 <p class="hint" id="otp-help">¿No ha llegado? Revisa Spam.</p></div></section>
-<section id="account" class="hidden"><h2>Activa tu acceso</h2><p class="intro">Envía tu número de pedido de Amazon. Revisaremos la compra antes de activar tus recursos.</p><p id="identity"></p><p id="state" class="status" aria-live="polite">Comprobando acceso…</p><div id="claim" class="hidden"><label for="order">Número de pedido de Amazon</label><input id="order" maxlength="19" inputmode="text" autocomplete="off" placeholder="123-1234567-1234567"><button id="submit" type="button">Enviar pedido para revisión</button><p class="hint">No compartas contraseñas ni datos bancarios.</p></div><button id="logout">Cerrar sesión</button></section>
+<section id="account" class="hidden"><h2>Formulario de activación</h2>
+<p class="intro">Introduce tu número de pedido de Amazon y solicita el acceso.</p>
+<p id="identity"></p><p id="state" class="status" aria-live="polite">Comprobando acceso…</p>
+<form id="claim" class="hidden">
+<label for="order">Número de pedido de Amazon</label>
+<input id="order" name="amazon_order" type="text" maxlength="19" inputmode="text" autocomplete="off" required pattern="[0-9]{3}-[0-9]{7}-[0-9]{7}" placeholder="123-1234567-1234567" aria-describedby="order-help">
+<p class="hint" id="order-help">Puedes encontrarlo en «Mis pedidos» de Amazon.</p>
+<button id="submit" type="submit">Enviar solicitud</button>
+<p class="hint">Revisaremos tu compra antes de activar el acceso.</p>
+</form>
+<button id="logout" type="button">Cerrar sesión</button></section>
 <section id="approved" class="hidden"><h2>Tu acceso está activo</h2><p>Tu compra está aprobada. Puedes abrir el Radar Digital.</p><a class="primary" href="../radar/">Entrar al Radar Digital →</a></section>
 <div class="separate" aria-label="Cómo activar el acceso">
 <h2>¿Cómo activar tu acceso?</h2>
-<p class="intro">Si has comprado el libro en Amazon, introduce tu número de pedido en el formulario o envíalo a <a href="mailto:oporadarcadiz@gmail.com">oporadarcadiz@gmail.com</a> desde el mismo correo con el que accedes.</p>
-<p class="intro">Comprobaremos la compra y te avisaremos por email cuando tu acceso esté activado.</p>
-<a class="primary" href="mailto:oporadarcadiz@gmail.com?subject=Solicitud%20de%20acceso%20al%20Tema%201%20de%20OpoRadarC%C3%A1diz&amp;body=Hola%2C%20he%20comprado%20el%20libro%20de%20OpoRadarC%C3%A1diz%20en%20Amazon.%0A%0AN%C3%BAmero%20de%20pedido%20de%20Amazon%3A%20%5Bescribir%20n%C3%BAmero%5D%0ACorreo%20con%20el%20que%20accedo%20a%20la%20web%3A%20%5Bescribir%20correo%5D%0A%0AGracias.">Enviar pedido por correo</a>
-<p class="hint">El número de pedido no activa el acceso automáticamente. No envíes códigos, contraseñas ni datos bancarios.</p>
+<p class="intro">Verifica tu correo con el código de 6 cifras. Después aparecerá aquí el formulario para introducir tu pedido de Amazon.</p>
+<p class="hint">Enviar la solicitud no activa el acceso automáticamente. Puedes consultar el estado en esta misma página.</p>
 <a href="../">Volver al Tema 1</a></div>
 <div id="message" class="status hidden" role="status" aria-live="polite"></div></main>
 <script type="module">
@@ -208,13 +216,31 @@ $('verify').onclick=async()=>{
  finally{$('verify').disabled=false}
 };
 $('logout').onclick=async()=>{otpEmail='';sessionStorage.removeItem(pendingKey);$('otp').value='';await sb.auth.signOut();await refresh()};
-$('submit').onclick=async()=>{const {data:{user}}=await sb.auth.getUser();if(!user){msg('Vuelve a entrar por email.');return}const order=normalizeAmazonOrder($('order').value);if(!validAmazonOrder(order)){msg('Comprueba el número de Amazon, por ejemplo 123-1234567-1234567.');return} $('submit').disabled=true;try{const {error}=await sb.from('tema1_order_claims').insert({user_id:user.id,channel:'amazon',order_reference:order});msg(error?'No se pudo registrar la solicitud. Puede que el pedido ya esté registrado.':'Solicitud registrada. Revisaremos tu compra antes de habilitar el Radar.');if(!error)await refresh()}catch{msg('No se ha podido conectar con Supabase.')}finally{$('submit').disabled=false}};
+$('claim').addEventListener('submit',async(event)=>{
+ event.preventDefault();
+ const {data:{user},error:authError}=await sb.auth.getUser();
+ if(authError||!user){msg('Verifica tu correo para enviar el pedido.');return}
+ const order=normalizeAmazonOrder($('order').value);
+ if(!validAmazonOrder(order)){msg('Comprueba el pedido de Amazon. Ejemplo: 123-1234567-1234567.');return}
+ $('submit').disabled=true;
+ msg('Registrando solicitud…');
+ try{
+  const {error}=await sb.from('tema1_order_claims').insert({user_id:user.id,channel:'amazon',order_reference:order});
+  if(error){msg('No se pudo registrar la solicitud. Comprueba si ya está registrada.');return}
+  $('order').value='';
+  await refresh();
+  msg('Solicitud enviada correctamente. Consulta su estado en esta página.');
+ }catch{msg('No se pudo conectar con Supabase. Inténtalo de nuevo.')}
+ finally{$('submit').disabled=false}
+});
 async function refresh(){try{const {data:{user},error}=await sb.auth.getUser();if(error||!user){show('login',true);show('account',false);show('approved',false);return}show('login',false);show('account',true);$('identity').textContent='Sesión iniciada con: '+user.email;
 const [{data:grant,error:accessError},{data:claims,error:claimError}]=await Promise.all([sb.from('tema1_access').select('active,expires_at').eq('user_id',user.id).maybeSingle(),sb.from('tema1_order_claims').select('channel,status,submitted_at').eq('user_id',user.id).order('submitted_at',{ascending:false}).limit(5)]);
 if(accessError||claimError){$('state').textContent='No ha sido posible consultar tus permisos. Inténtalo más tarde.';show('claim',false);show('approved',false);return}
 const active=grant?.active===true&&(!grant.expires_at||new Date(grant.expires_at)>new Date());
-show('approved',active);show('claim',!active);
-$('state').textContent=active?'Acceso aprobado y activo.':claims?.some(x=>x.status==='pending')?'Solicitud recibida, pendiente de verificación.':claims?.some(x=>x.status==='rejected')?'La última solicitud fue rechazada; revisa tu referencia de compra.':'Aún no hay un acceso aprobado para esta cuenta.';
+const pending=claims?.some(x=>x.channel==='amazon'&&x.status==='pending')===true;
+show('approved',active);
+show('claim',!active&&!pending);
+$('state').textContent=active?'Acceso aprobado y activo.':pending?'Solicitud de Amazon recibida: pendiente de revisión.':claims?.some(x=>x.status==='rejected')?'La última solicitud fue rechazada. Puedes enviar una referencia corregida.':'Aún no hay un acceso aprobado. Introduce tu pedido en el formulario.';
 }catch{msg('No se pudo completar la comprobación.')} }
 $('email').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('magic').click()}});
 $('otp').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('verify').click()}});
