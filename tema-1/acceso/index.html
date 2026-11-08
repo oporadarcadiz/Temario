@@ -47,7 +47,13 @@ input:focus-visible,button:focus-visible,a:focus-visible,select:focus-visible{ou
 <p class="hint" id="otp-help">¿No ha llegado? Revisa Spam.</p></div></section>
 <section id="account" class="hidden"><h2>Activa tu acceso</h2><p class="intro">Envía tu número de pedido de Amazon. Revisaremos la compra antes de activar tus recursos.</p><p id="identity"></p><p id="state" class="status" aria-live="polite">Comprobando acceso…</p><div id="claim" class="hidden"><label for="order">Número de pedido de Amazon</label><input id="order" maxlength="19" inputmode="text" autocomplete="off" placeholder="123-1234567-1234567"><button id="submit" type="button">Enviar pedido para revisión</button><p class="hint">No compartas contraseñas ni datos bancarios.</p></div><button id="logout">Cerrar sesión</button></section>
 <section id="approved" class="hidden"><h2>Tu acceso está activo</h2><p>Tu compra está aprobada. Puedes abrir el Radar Digital.</p><a class="primary" href="../radar/">Entrar al Radar Digital →</a></section>
-<div class="separate"><p class="hint">El número de pedido no activa el acceso automáticamente.</p><a href="../">Volver al Tema 1</a></div>
+<div class="separate" aria-label="Cómo activar el acceso">
+<h2>¿Cómo activar tu acceso?</h2>
+<p class="intro">Si has comprado el libro en Amazon, introduce tu número de pedido en el formulario o envíalo a <a href="mailto:oporadarcadiz@gmail.com">oporadarcadiz@gmail.com</a> desde el mismo correo con el que accedes.</p>
+<p class="intro">Comprobaremos la compra y te avisaremos por email cuando tu acceso esté activado.</p>
+<a class="primary" href="mailto:oporadarcadiz@gmail.com?subject=Solicitud%20de%20acceso%20al%20Tema%201%20de%20OpoRadarC%C3%A1diz&amp;body=Hola%2C%20he%20comprado%20el%20libro%20de%20OpoRadarC%C3%A1diz%20en%20Amazon.%0A%0AN%C3%BAmero%20de%20pedido%20de%20Amazon%3A%20%5Bescribir%20n%C3%BAmero%5D%0ACorreo%20con%20el%20que%20accedo%20a%20la%20web%3A%20%5Bescribir%20correo%5D%0A%0AGracias.">Enviar pedido por correo</a>
+<p class="hint">El número de pedido no activa el acceso automáticamente. No envíes códigos, contraseñas ni datos bancarios.</p>
+<a href="../">Volver al Tema 1</a></div>
 <div id="message" class="status hidden" role="status" aria-live="polite"></div></main>
 <script type="module">
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2';
