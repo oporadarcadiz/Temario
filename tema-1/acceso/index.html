@@ -174,7 +174,7 @@ input:focus-visible,button:focus-visible,a:focus-visible,select:focus-visible{ou
 </form>
 <button id="logout" type="button">Cambiar de correo</button>
 </section>
-<section id="approved" class="hidden"><h2>Acceso verificado</h2><p class="intro">Tu compra está aprobada.</p><a class="primary" href="../radar/">Entrar al material del Tema 1</a></section>
+<section id="approved" class="hidden"><h2>Acceso verificado</h2><p class="intro">Tu compra está aprobada. Accede a todos tus recursos desde un solo lugar.</p><a class="primary" href="../centro/">Entrar en Mi Centro de Estudio</a></section>
 <div class="separate" aria-label="Cómo activar el acceso">
 <h2>¿Cómo activar tu acceso?</h2>
 <p class="intro">Recuerda acceder con tu correo verificado y asociado a la compra.</p>
@@ -266,7 +266,7 @@ async function refresh(){
   );
   if(allowed){
    show('login',false);show('activation',false);show('approved',true);
-   location.replace('../radar/');
+   location.replace('../centro/');
    return;
   }
   if(!requestMode){
