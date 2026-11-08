@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1f33">
+<meta name="robots" content="noindex,nofollow">
+<title>Mi Centro de Estudio · Tema 1 | OpoRadarCádiz</title>
+<style>
+:root{--navy:#0b1f33;--gold:#e5b84b;--paper:#f7f3ea;--ink:#17212b;--muted:#5c6570;--line:#d9d5cc}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--navy);color:var(--ink);font:16px/1.55 Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif}
+main{max-width:1040px;margin:24px auto;padding:clamp(20px,4vw,38px);background:var(--paper);border:1px solid #e5b84b80;border-radius:23px;box-shadow:0 20px 58px #0003}
+.brand{text-align:center;letter-spacing:.13em;font-size:12px;color:#806017;font-weight:850}
+h1{text-align:center;color:var(--navy);font-size:clamp(28px,5vw,43px);line-height:1.13;margin:8px 0 10px}
+h1::after{content:"";display:block;width:72px;height:3px;margin:17px auto;background:var(--gold);border-radius:9px}
+h2{color:var(--navy);font-size:21px;margin:0 0 8px;line-height:1.2}
+p{color:var(--muted);margin:7px 0 12px}
+.subtitle{text-align:center;margin:0 auto 17px;max-width:58ch}
+.session{text-align:center;background:#fff8e6;border:1px solid #ecdbac;border-radius:10px;padding:10px 14px;font-size:13px;color:var(--navy);margin:20px auto}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.item{background:#fffdfa;border:1px solid var(--line);border-top:3px solid var(--gold);border-radius:17px;padding:22px;min-height:185px;display:flex;flex-direction:column;gap:5px}
+.item-icon{font-size:28px;line-height:1.2}
+.item p{flex-grow:1}
+.meta{font-size:11px;font-weight:850;letter-spacing:.06em;text-transform:uppercase;color:#705516}
+.meta.pending{color:#6b7780}
+button,.button{background:var(--navy);border:1px solid var(--navy);border-radius:11px;padding:11px 16px;color:#fff;font:inherit;font-weight:750;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;max-width:100%;align-self:start}
+button:hover,.button:hover{background:#203c59}
+button:disabled{opacity:.58;cursor:not-allowed}
+button.secondary{background:transparent;color:var(--navy);border-color:#a89665}
+a{color:#725519}
+a:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.status{padding:16px 19px;background:#fff8e5;border:1px solid #edd49d;border-radius:12px;margin:24px auto;max-width:660px;color:var(--navy);text-align:center}
+.notice{font-size:13px;color:#445365;min-height:1em}
+.media{display:block;width:100%;margin-top:13px;background:#101f30;border-radius:10px;max-height:340px}
+.media[hidden],[hidden]{display:none!important}
+footer{margin-top:24px;padding-top:20px;border-top:1px solid #d9cba6;display:flex;gap:15px;justify-content:center;flex-wrap:wrap;align-items:center}
+.caption{font-size:13px;text-align:center;margin:22px 0 0}
+@media(max-width:720px){main{margin:0;border:0;border-radius:0;min-height:100vh}.grid{grid-template-columns:1fr}.item{min-height:0;padding:19px}footer{flex-direction:column}}
+</style>
+</head>
+<body>
+<main>
+<div class="brand">OPORADARCÁDIZ · TEMA 1</div>
+<h1>Mi Centro de Estudio</h1>
+<p class="subtitle">Constitución Española · Todo tu material de apoyo en un mismo lugar</p>
+
+<div id="checking" class="status" role="status" aria-live="polite">Comprobando tu compra y tu permiso personal…</div>
+<div id="problem" class="status" role="alert" hidden>
+ <strong>No se ha podido comprobar tu permiso.</strong>
+ <p>Por seguridad, los recursos permanecen cerrados.</p>
+ <button id="retry" type="button">Reintentar</button>
+</div>
+
+<div id="private" hidden>
+ <p id="identity" class="session"></p>
+ <div class="grid">
+  <article class="item" id="saber-mas">
+    <div class="item-icon" aria-hidden="true">📚</div>
+    <div class="meta pending">Traslado privado pendiente</div>
+    <h2>Saber Más</h2>
+    <p>Lecturas complementarias del Tema 1, en tres partes. Las copias públicas se están retirando de la navegación antes de habilitar las protegidas.</p>
+    <button type="button" disabled>En preparación</button>
+  </article>
+
+  <article class="item" id="juegos">
+    <div class="item-icon" aria-hidden="true">🎮</div>
+    <div class="meta pending">Protección del contenido pendiente</div>
+    <h2>Centro de Juegos</h2>
+    <p>Actividades por niveles para reforzar el aprendizaje. Los juegos se habilitarán cuando sus archivos estén fuera de las rutas públicas.</p>
+    <button type="button" disabled>En preparación</button>
+  </article>
+
+  <article class="item" id="tarjetas">
+    <div class="item-icon" aria-hidden="true">🧠</div>
+    <div class="meta pending">En preparación</div>
+    <h2>Tarjetas de memoria</h2>
+    <p>Repasa conceptos, relaciones y preguntas frecuentes de la Constitución.</p>
+    <button type="button" disabled>En preparación</button>
+  </article>
+
+  <article class="item" id="videos">
+    <div class="item-icon" aria-hidden="true">🎬</div>
+    <div class="meta">Archivo privado disponible</div>
+    <h2>Vídeo de repaso</h2>
+    <p>Vídeo aprobado del Tema 1, entregado mediante enlace temporal solo después de comprobar tu compra.</p>
+    <button id="open-video" type="button">Abrir vídeo</button>
+    <p id="video-status" class="notice" role="status" aria-live="polite"></p>
+    <video id="player-video" class="media" controls playsinline preload="none" hidden></video>
+  </article>
+
+  <article class="item" id="audios">
+    <div class="item-icon" aria-hidden="true">🎧</div>
+    <div class="meta">Archivo privado disponible</div>
+    <h2>Audio y pódcast</h2>
+    <p>Pódcast corto del Tema 1 para repasar escuchando.</p>
+    <button id="open-podcast" type="button">Escuchar pódcast</button>
+    <p id="podcast-status" class="notice" role="status" aria-live="polite"></p>
+    <audio id="player-podcast" class="media" controls preload="none" hidden></audio>
+  </article>
+
+  <article class="item" id="test">
+    <div class="item-icon" aria-hidden="true">📝</div>
+    <div class="meta pending">Protección del contenido pendiente</div>
+    <h2>Test y simulacros</h2>
+    <p>Pruebas de autoevaluación. Se habilitarán cuando su contenido esté protegido y revisado.</p>
+    <button type="button" disabled>En preparación</button>
+  </article>
+ </div>
+ <p class="caption">Banco Vivo, si se ofrece, mantendrá su contratación y autorización independientes.</p>
+ <footer>
+  <a href="../">Volver al Tema 1</a>
+  <button id="logout" class="secondary" type="button">Cerrar sesión</button>
+ </footer>
+</div>
+</main>
+<script type="module">
+import {createClient} from "https://esm.sh/@supabase/supabase-js@2";
+const URL_BASE="https://jtyjdrrxmuppulbekfai.supabase.co";
+const PUBLISHABLE="sb_publishable_-9m9ilEwGsM4tEBTVXS3FA_aRlVhNNc";
+const sb=createClient(URL_BASE,PUBLISHABLE,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+const el=id=>document.getElementById(id);
+let checking=false;
+async function authorize(){
+ if(checking)return;
+ checking=true;
+ el("checking").hidden=false;
+ el("problem").hidden=true;
+ el("private").hidden=true;
+ try{
+  const {data:{user},error:userError}=await sb.auth.getUser();
+  if(userError||!user||!user.email_confirmed_at){
+   location.replace("../acceso/");return;
+  }
+  const {data:grant,error:grantError}=await sb.from("tema1_access")
+   .select("active,expires_at,source_claim_id").eq("user_id",user.id).maybeSingle();
+  if(grantError)throw new Error("permiso");
+  const isValid=grant?.active===true&&grant.source_claim_id
+   &&(!grant.expires_at||Date.parse(grant.expires_at)>Date.now());
+  if(!isValid){location.replace("../acceso/sin-acceso/");return;}
+  const {data:claim,error:claimError}=await sb.from("tema1_order_claims")
+   .select("id,channel,status").eq("id",grant.source_claim_id).eq("user_id",user.id)
+   .maybeSingle();
+  if(claimError)throw new Error("pedido");
+  if(!claim||claim.channel!=="amazon"||claim.status!=="verified"){
+   location.replace("../acceso/sin-acceso/");return;
+  }
+  el("identity").textContent="Acceso personal verificado: "+user.email;
+  el("private").hidden=false;
+  el("checking").hidden=true;
+ }catch(_){
+  el("checking").hidden=true;
+  el("problem").hidden=false;
+ }finally{checking=false}
+}
+async function openMedia(resource,buttonId,playerId,statusId){
+ const button=el(buttonId),media=el(playerId),status=el(statusId);
+ button.disabled=true;status.textContent="Comprobando permiso y preparando enlace privado…";
+ try{
+  const {data:{session},error}=await sb.auth.getSession();
+  if(error||!session?.access_token){location.replace("../acceso/");return}
+  const endpoint=URL_BASE+"/functions/v1/tema1-centro-recursos?resource="+encodeURIComponent(resource);
+  const response=await fetch(endpoint,{
+   method:"GET",
+   cache:"no-store",
+   headers:{"Authorization":"Bearer "+session.access_token,"apikey":PUBLISHABLE}
+  });
+  const data=await response.json();
+  if(!response.ok||!data.url)throw new Error(data.error||"Recurso no disponible");
+  const target=new URL(data.url);
+  if(target.origin!==URL_BASE||!target.pathname.startsWith("/storage/v1/object/sign/"))
+   throw new Error("Respuesta de enlace no válida");
+  media.src=target.href;
+  media.hidden=false;
+  media.load();
+  status.textContent="Recurso preparado. Pulsa reproducir.";
+ }catch(err){
+  status.textContent=err?.message||"No se pudo abrir el recurso. Inténtalo de nuevo.";
+  media.pause();media.removeAttribute("src");media.load();media.hidden=true;
+ }finally{button.disabled=false}
+}
+el("open-video").addEventListener("click",()=>openMedia("video-tema1","open-video","player-video","video-status"));
+el("open-podcast").addEventListener("click",()=>openMedia("podcast-corto","open-podcast","player-podcast","podcast-status"));
+el("retry").addEventListener("click",authorize);
+el("logout").addEventListener("click",async()=>{
+ for(const id of ["player-video","player-podcast"]){
+  const m=el(id);m.pause();m.removeAttribute("src");m.load();m.hidden=true;
+ }
+ await sb.auth.signOut();
+ location.replace("../acceso/");
+});
+sb.auth.onAuthStateChange((event)=>{if(event==="SIGNED_OUT"){el("private").hidden=true;location.replace("../acceso/")}});
+authorize();
+</script>
+</body>
+</html>
