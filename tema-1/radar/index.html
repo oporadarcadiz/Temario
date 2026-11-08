@@ -48,10 +48,15 @@ async function verify(){
   try{
     const {data:{user},error}=await client.auth.getUser();
     if(error||!user){locked("Acceso personal al Radar Digital","Identifícate por correo. Si compraste el libro, podrás solicitar la activación con tu referencia de pedido.",false);return;}
-    const {data:grant,error:accessError}=await client.from("tema1_access").select("active,expires_at").eq("user_id",user.id).maybeSingle();
-    if(accessError){locked("No se pudo verificar tu permiso","No podemos consultar tu cuenta ahora. Prueba de nuevo más tarde.",true);return;}
-    const allowed=grant?.active===true&&(!grant.expires_at||Date.parse(grant.expires_at)>Date.now());
-    if(!allowed){locked("Tu acceso está pendiente","Tu cuenta está identificada, pero todavía no tiene una compra aprobada para el Tema 1.",true);return;}
+    const [{data:grant,error:accessError},{data:claims,error:claimError}]=await Promise.all([
+      client.from("tema1_access").select("active,expires_at,source_claim_id").eq("user_id",user.id).maybeSingle(),
+      client.from("tema1_order_claims").select("id,channel,status").eq("user_id",user.id).eq("channel","amazon").eq("status","verified")
+    ]);
+    if(accessError||claimError){locked("No se pudo verificar tu permiso","No podemos consultar tu cuenta ahora. Prueba de nuevo más tarde.",true);return;}
+    const allowed=grant?.active===true&&grant.source_claim_id
+      &&(claims||[]).some(c=>c.id===grant.source_claim_id&&c.status==="verified"&&c.channel==="amazon")
+      &&(!grant.expires_at||Date.parse(grant.expires_at)>Date.now());
+    if(!allowed){window.location.replace("../acceso/sin-acceso/");return;}
     el("gate").hidden=true;el("radarContent").hidden=false;
   }catch(_){locked("Acceso temporalmente no disponible","No hemos podido comprobar tu autorización. Inténtalo más tarde.",false)}
   finally{running=false}
