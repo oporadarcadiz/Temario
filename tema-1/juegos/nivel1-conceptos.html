@@ -27,8 +27,11 @@ const stages=[{title:'Mapa constitucional',pairs:[['Preámbulo','Presenta los fi
 const $=id=>document.getElementById(id);let stage=0,points=0,hits=0,misses=0,streak=0,maxStreak=0,matched=new Set(),selected=null,locked=false,order=[];
 function shuf(items){const a=[...items];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function screen(name){for(const id of ['start','play','end'])$(id).hidden=id!==name}
-function start(){stage=0;points=0;hits=0;misses=0;streak=0;maxStreak=0;screen('play');draw()}
+function start(){stage=0;points=0;hits=0;misses=0;streak=0;maxStreak=0;screen('play');saveCheckpoint();draw()}
 function update(){ $('score').textContent=points;$('chain').textContent=streak;$('pairs').textContent=matched.size+'/4';$('bar').style.width=((stage*4+matched.size)/8*100)+'%'}
+let checkpoint={points:0,hits:0,misses:0,streak:0,maxStreak:0};
+function saveCheckpoint(){checkpoint={points,hits,misses,streak,maxStreak}}
+function restartMission(){({points,hits,misses,streak,maxStreak}=checkpoint);draw()}
 function draw(){matched=new Set();selected=null;locked=false;const s=stages[stage];$('next').hidden=true;$('feedback').hidden=true;$('mission').textContent='Misión '+(stage+1)+' de 2';$('missionTitle').textContent=s.title;
 for(const side of ['left','right'])$(side).replaceChildren();order=shuf(s.pairs.map((p,i)=>i));for(const i of shuf(s.pairs.map((p,i)=>i))){const b=document.createElement('button');b.className='pair';b.type='button';b.dataset.idx=i;b.dataset.side='left';b.textContent=s.pairs[i][0];b.onclick=()=>pick('left',i,b);$('left').append(b)}for(const i of order){const b=document.createElement('button');b.className='pair';b.type='button';b.dataset.idx=i;b.dataset.side='right';b.textContent=s.pairs[i][1];b.onclick=()=>pick('right',i,b);$('right').append(b)} update()}
 function pick(side,i,btn){if(locked||matched.has(i))return;const current=selected;if(current&&current.side===side){current.btn.classList.remove('selected');selected={side,i,btn};btn.classList.add('selected');return}
@@ -36,5 +39,5 @@ if(!current){selected={side,i,btn};btn.classList.add('selected');return}
 const correct=current.i===i;if(correct){hits++;streak++;maxStreak=Math.max(streak,maxStreak);points+=100+Math.min(4,streak-1)*20;matched.add(i);btn.classList.remove('selected');btn.classList.add('matched');current.btn.classList.remove('selected');current.btn.classList.add('matched');btn.disabled=true;current.btn.disabled=true;$('feedback').hidden=false;$('feedback').className='feedback';$('feedback').textContent='✓ Conexión correcta · +'+(100+Math.min(4,streak-1)*20)+' puntos';selected=null;update();if(matched.size===4){$('feedback').textContent='¡Misión completada! Todas las señales conectadas.';$('next').hidden=false;$('next').focus({preventScroll:true})}}
 else{misses++;streak=0;locked=true;btn.classList.add('wrong');current.btn.classList.add('wrong');$('feedback').hidden=false;$('feedback').className='feedback warn';$('feedback').textContent='Esa pareja no encaja. Prueba otra conexión.';const old=current;selected=null;update();setTimeout(()=>{btn.classList.remove('wrong');old.btn.classList.remove('wrong','selected');locked=false},470)}}
 function finished(){screen('end');$('finalScore').textContent=points;$('hits').textContent=hits;$('mistakes').textContent=misses;$('bestStreak').textContent=maxStreak;try{localStorage.setItem('oporadar-t1-conecta-best',Math.max(points,Number(localStorage.getItem('oporadar-t1-conecta-best')||0)).toString())}catch(e){}}
-$('startBtn').onclick=start;$('again').onclick=start;$('restart').onclick=draw;$('next').onclick=()=>{stage++;if(stage===2)finished();else draw()};
+$('startBtn').onclick=start;$('again').onclick=start;$('restart').onclick=restartMission;$('next').onclick=()=>{stage++;if(stage===2)finished();else{saveCheckpoint();draw()}};
 </script></body></html>
