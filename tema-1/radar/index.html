@@ -15,7 +15,7 @@ p{color:#53606c}
 a{display:inline-block;margin:20px 0 0;background:#0b1f33;color:#fff;border-radius:12px;padding:13px 20px;text-decoration:none;font-weight:800}
 a:focus-visible{outline:3px solid #e5b84b;outline-offset:3px}
 </style>
-<script>location.replace("../centro/"+(location.hash||""));</script>
+<script>const sections={"#escuchar":"#audios","#ver":"#videos","#fichas":"#tarjetas","#jugar":"#juegos","#entrenar":"#test"};location.replace("../centro/"+(sections[location.hash]||location.hash||""));</script>
 </head>
 <body><main>
 <div class="brand">OPORADARCÁDIZ · TEMA 1</div>
