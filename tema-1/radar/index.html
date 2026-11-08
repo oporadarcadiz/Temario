@@ -47,7 +47,7 @@ async function verify(){
   if(running)return;running=true;
   try{
     const {data:{user},error}=await client.auth.getUser();
-    if(error||!user){locked("Acceso personal al Radar Digital","Identifícate por correo. Si compraste el libro, podrás solicitar la activación con tu referencia de pedido.",false);return;}
+    if(error||!user||!user.email_confirmed_at){locked("Acceso personal al Radar Digital","Identifícate por correo. Si compraste el libro, podrás solicitar la activación con tu referencia de pedido.",false);return;}
     const [{data:grant,error:accessError},{data:claims,error:claimError}]=await Promise.all([
       client.from("tema1_access").select("active,expires_at,source_claim_id").eq("user_id",user.id).maybeSingle(),
       client.from("tema1_order_claims").select("id,channel,status").eq("user_id",user.id).eq("channel","amazon").eq("status","verified")
