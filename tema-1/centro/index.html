@@ -233,12 +233,19 @@ async function openGame(name){
   if(!response.ok||!data.url||data.mime!=="text/html")throw Error(data.error||"Juego en preparación");
   const target=new URL(data.url);
   if(target.origin!==URL_BASE||!target.pathname.startsWith("/storage/v1/object/sign/"))throw Error("Enlace no válido");
-  el("game-viewer").src=target.href;
+  // Storage entrega HTML como text/plain y aplica CSP sandbox.
+  // Leemos el archivo privado con CORS y lo ejecutamos en un iframe de origen opaco.
+  const source=await fetch(target.href,{method:"GET",mode:"cors",credentials:"omit",cache:"no-store"});
+  if(!source.ok)throw Error("No se pudo leer el juego privado");
+  const html=await source.text();
+  if(html.length>120000||!/^[\\s]*<!doctype html>/i.test(html))
+    throw Error("Formato de juego no válido");
+  el("game-viewer").srcdoc=html;
   el("game-title").textContent=GAMES[name];
   el("game-panel").hidden=false;
   status.textContent="Juego preparado. Empieza a jugar en el recuadro.";
  }catch(error){
-  el("game-viewer").removeAttribute("src");el("game-panel").hidden=true;
+  el("game-viewer").srcdoc="";el("game-panel").hidden=true;
   status.textContent=error?.message||"No se pudo iniciar este juego.";
  }finally{button.disabled=false}
 }
@@ -247,7 +254,7 @@ el("open-video").addEventListener("click",()=>openMedia("video-tema1","open-vide
 el("open-podcast").addEventListener("click",()=>openMedia("podcast-corto","open-podcast","player-podcast","podcast-status"));
 el("retry").addEventListener("click",authorize);
 el("logout").addEventListener("click",async()=>{
- el("game-viewer").removeAttribute("src");el("game-panel").hidden=true;
+ el("game-viewer").srcdoc="";el("game-panel").hidden=true;
  el("pdf-reader").removeAttribute("src");el("pdf-panel").hidden=true;el("pdf-link").removeAttribute("href");
  for(const id of ["player-video","player-podcast"]){
   const m=el(id);m.pause();m.removeAttribute("src");m.load();m.hidden=true;
