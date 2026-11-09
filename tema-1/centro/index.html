@@ -33,7 +33,7 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offse
 .status{padding:16px 19px;background:#fff8e5;border:1px solid #edd49d;border-radius:12px;margin:24px auto;max-width:660px;color:var(--navy);text-align:center}
 .notice{font-size:13px;color:#445365;min-height:1em}
 .media{display:block;width:100%;margin-top:13px;background:#101f30;border-radius:10px;max-height:340px}
-.pdf-actions{display:flex;flex-wrap:wrap;gap:9px}.pdf-actions button{flex:1 1 130px}#pdf-reader{width:100%;height:65vh;min-height:350px;border:1px solid var(--line);border-radius:10px;margin:10px 0}#pdf-panel{min-width:0}#pdf-link{display:block;margin-top:9px}.media[hidden],[hidden]{display:none!important}
+.pdf-actions{display:flex;flex-wrap:wrap;gap:9px}.pdf-actions button{flex:1 1 130px}#pdf-reader{width:100%;height:65vh;min-height:350px;border:1px solid var(--line);border-radius:10px;margin:10px 0}#pdf-panel{min-width:0}#pdf-link{display:block;margin-top:9px}#game-viewer{width:100%;height:72vh;min-height:460px;border:1px solid var(--line);border-radius:10px;margin:12px 0;background:white}#game-panel{min-width:0}.media[hidden],[hidden]{display:none!important}
 footer{margin-top:24px;padding-top:20px;border-top:1px solid #d9cba6;display:flex;gap:15px;justify-content:center;flex-wrap:wrap;align-items:center}
 .caption{font-size:13px;text-align:center;margin:22px 0 0}
 @media(max-width:720px){main{margin:0;border:0;border-radius:0;min-height:100vh}.grid{grid-template-columns:1fr}.item{min-height:0;padding:19px}footer{flex-direction:column}}
@@ -72,14 +72,22 @@ footer{margin-top:24px;padding-top:20px;border-top:1px solid #d9cba6;display:fle
 <a id="pdf-link" href="#" target="_blank" rel="noopener noreferrer" hidden>Abrir el PDF en otra pestaña</a>
 </div></article>
 <article class="item" id="juegos">
-    <div class="item-icon" aria-hidden="true">🎮</div>
-    <div class="meta pending">Protección del contenido pendiente</div>
-    <h2>Centro de Juegos</h2>
-    <p>Actividades por niveles para reforzar el aprendizaje. Los juegos se habilitarán cuando sus archivos estén fuera de las rutas públicas.</p>
-    <button type="button" disabled>En preparación</button>
-  </article>
-
-  <article class="item" id="tarjetas">
+ <div class="item-icon" aria-hidden="true">🎮</div>
+ <div class="meta">4 juegos privados disponibles</div>
+ <h2>Centro de Juegos</h2>
+ <p>Entrena el Tema 1 con cuatro juegos originales. Cada partida se abre después de comprobar tu compra.</p>
+ <div class="pdf-actions">
+  <button type="button" id="game-conecta">Conecta las señales</button>
+  <button type="button" id="game-caja">Caja fuerte</button>
+  <button type="button" id="game-trampa">Caza la trampa</button>
+  <button type="button" id="game-fichas">Fichas Radar</button>
+ </div>
+ <p id="game-status" class="notice" role="status" aria-live="polite">Elige un juego para empezar.</p>
+ <div id="game-panel" hidden><strong id="game-title"></strong>
+  <iframe id="game-viewer" title="Juego privado de OpoRadarCádiz" loading="lazy" referrerpolicy="no-referrer" sandbox="allow-scripts allow-forms allow-popups"></iframe>
+ </div>
+</article>
+<article class="item" id="tarjetas">
     <div class="item-icon" aria-hidden="true">🧠</div>
     <div class="meta pending">En preparación</div>
     <h2>Tarjetas de memoria</h2>
@@ -212,10 +220,34 @@ async function openDocument(n){
  }finally{btn.disabled=false}
 }
 for(const n of [1,2,3])el("pdf-"+n).addEventListener("click",()=>openDocument(n));
+const GAMES={conecta:"Conecta las señales",caja:"Caja fuerte",trampa:"Caza la trampa",fichas:"Fichas Radar"};
+async function openGame(name){
+ const button=el("game-"+name),status=el("game-status");
+ button.disabled=true;status.textContent="Comprobando tu compra y cargando el juego privado...";
+ try{
+  const {data:{session},error}=await sb.auth.getSession();
+  if(error||!session?.access_token){location.replace("../acceso/");return}
+  const endpoint=URL_BASE+"/functions/v1/tema1-centro-recursos?resource=juego-"+name;
+  const response=await fetch(endpoint,{method:"GET",cache:"no-store",headers:{"Authorization":"Bearer "+session.access_token,"apikey":PUBLISHABLE}});
+  const data=await response.json();
+  if(!response.ok||!data.url||data.mime!=="text/html")throw Error(data.error||"Juego en preparación");
+  const target=new URL(data.url);
+  if(target.origin!==URL_BASE||!target.pathname.startsWith("/storage/v1/object/sign/"))throw Error("Enlace no válido");
+  el("game-viewer").src=target.href;
+  el("game-title").textContent=GAMES[name];
+  el("game-panel").hidden=false;
+  status.textContent="Juego preparado. Empieza a jugar en el recuadro.";
+ }catch(error){
+  el("game-viewer").removeAttribute("src");el("game-panel").hidden=true;
+  status.textContent=error?.message||"No se pudo iniciar este juego.";
+ }finally{button.disabled=false}
+}
+for(const key of Object.keys(GAMES))el("game-"+key).addEventListener("click",()=>openGame(key));
 el("open-video").addEventListener("click",()=>openMedia("video-tema1","open-video","player-video","video-status"));
 el("open-podcast").addEventListener("click",()=>openMedia("podcast-corto","open-podcast","player-podcast","podcast-status"));
 el("retry").addEventListener("click",authorize);
 el("logout").addEventListener("click",async()=>{
+ el("game-viewer").removeAttribute("src");el("game-panel").hidden=true;
  el("pdf-reader").removeAttribute("src");el("pdf-panel").hidden=true;el("pdf-link").removeAttribute("href");
  for(const id of ["player-video","player-podcast"]){
   const m=el(id);m.pause();m.removeAttribute("src");m.load();m.hidden=true;
