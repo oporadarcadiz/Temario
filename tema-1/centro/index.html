@@ -238,7 +238,7 @@ async function openGame(name){
   const source=await fetch(target.href,{method:"GET",mode:"cors",credentials:"omit",cache:"no-store"});
   if(!source.ok)throw Error("No se pudo leer el juego privado");
   const html=await source.text();
-  if(html.length>120000||!/^[\\s]*<!doctype html>/i.test(html))
+  if(html.length>120000||!html.trimStart().toLowerCase().startsWith("<!doctype html"))
     throw Error("Formato de juego no válido");
   el("game-viewer").srcdoc=html;
   el("game-title").textContent=GAMES[name];
