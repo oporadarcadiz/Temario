@@ -1,0 +1,66 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b1f33"><title>Simulacros y repaso acumulativo | Aula OpoRadar</title>
+<style>:root{--navy:#0b1f33;--gold:#dfb342;--paper:#f8f5ee;--ink:#162d43;--muted:#4e6574}*{box-sizing:border-box}body{margin:0;background:var(--navy);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink)}main{max-width:960px;margin:25px auto;padding:clamp(20px,5vw,40px);border-radius:20px;background:var(--paper)}h1{font-size:clamp(2rem,5vw,3rem);margin:9px 0}.sub{color:#86631a;font-weight:800;letter-spacing:.07em}.desc{color:var(--muted)}section{border:1px solid #d9d4c7;background:white;padding:22px;border-radius:15px;margin-top:24px}label{font-weight:750;display:block;margin:11px 0 5px}button,select{font:inherit;min-height:44px;padding:10px 13px;border-radius:8px}button{border:0;background:var(--navy);color:white;font-weight:750;cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}select{border:1px solid #b3c0c9;background:white}.row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:13px 0}.info{background:#eef4f4;border-left:4px solid var(--gold);padding:15px;border-radius:10px}.status{color:#855c13;font-weight:760}.option{display:flex;align-items:flex-start;gap:12px;background:#f5f8fa;border:1px solid #dce7e9;border-radius:10px;padding:12px;cursor:pointer;margin-bottom:9px}.option input{margin-top:5px}.explanation{background:#e9f2ec;border-radius:10px;padding:13px}a{color:#14566b}button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}@media(max-width:760px){main{margin:0;border-radius:0;min-height:100vh}}</style></head><body><main>
+<a href="../centro/">← Volver al Aula del Tema 2</a>
+<p class="sub">AULA OPORADAR · ENTRENAMIENTO</p><h1 id="heading">Simulacros · Tema 2</h1>
+<p id="description" class="desc"></p>
+<div class="info"><strong>Bancos previstos:</strong> Tema 2 tendrá 60 preguntas de exámenes reales (20 de 2026 y 40 anteriores) y 60 originales. El acumulativo reunirá 120 preguntas del Tema 1 y 120 del Tema 2. Las respuestas y preguntas se servirán únicamente desde el sistema privado tras su revisión.</div>
+<section id="setup"><h2>Prepara tu examen</h2>
+<label for="amount">Número de preguntas</label>
+<select id="amount" disabled><option value="20">20 preguntas</option><option value="30">30 preguntas</option><option value="40">40 preguntas</option><option value="all">Todas las disponibles</option></select>
+<div class="row"><button id="start" disabled>Empezar simulacro al azar</button><button id="retry" disabled>Barajar de nuevo</button></div>
+<p id="status" role="status" aria-live="polite" class="status">Comprobando disponibilidad…</p>
+<p class="desc">El motor no repite preguntas en una misma sesión y corrige las respuestas únicamente después de contestar.</p>
+</section>
+<section id="question-section" hidden><p class="sub" id="counter"></p><h2 id="question"></h2>
+<form id="answers"><div id="choices"></div><button id="check" type="submit">Corregir respuesta</button></form>
+<p id="feedback" role="status" aria-live="polite"></p><div id="explanation" class="explanation" hidden></div>
+<div class="row"><button id="next" disabled>Siguiente pregunta</button></div>
+</section>
+<section id="results" hidden><h2>Resultado de la sesión</h2><p id="score"></p><button id="again">Nuevo simulacro aleatorio</button></section>
+</main>
+<script type="module">
+import {createClient} from "https://esm.sh/@supabase/supabase-js@2";
+const BASE="https://jtyjdrrxmuppulbekfai.supabase.co",KEY="sb_publishable_-9m9ilEwGsM4tEBTVXS3FA_aRlVhNNc";
+const sb=createClient(BASE,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+const el=id=>document.getElementById(id);
+const mode=new URLSearchParams(location.search).get("modo")==="acumulativo"?"acumulativo":"tema2";
+el("heading").textContent=mode==="tema2"?"Simulacros · Tema 2":"Repaso acumulativo · Temas 1 y 2";
+el("description").textContent=mode==="tema2"?"Banco objetivo: 120 preguntas del Tema 2, reales y originales de elaboración propia.":"Banco objetivo: 240 preguntas, 120 del Tema 1 y 120 del Tema 2, mezcladas sin repetir.";
+let bank=[],deck=[],cursor=0,correct=0,answered=false;
+const status=t=>el("status").textContent=t;
+function shuffle(items){const out=items.slice();for(let i=out.length-1;i>0;i--){let b=new Uint32Array(1);crypto.getRandomValues(b);let j=b[0]%(i+1);[out[i],out[j]]=[out[j],out[i]]}return out;}
+function render(){
+let q=deck[cursor];answered=false;
+el("question").textContent=q.enunciado;el("counter").textContent="Pregunta "+(cursor+1)+" de "+deck.length;
+el("feedback").textContent="";el("explanation").hidden=true;el("next").disabled=true;el("check").disabled=false;
+el("choices").replaceChildren();
+q.opciones.forEach((opt,i)=>{const label=document.createElement("label");label.className="option";const radio=document.createElement("input");radio.type="radio";radio.name="answer";radio.value=String(i);radio.required=true;label.append(radio,document.createTextNode(String.fromCharCode(65+i)+". "+opt));el("choices").append(label)});
+}
+function begin(){
+const n=el("amount").value==="all"?bank.length:Number(el("amount").value);
+if(!n||n>bank.length)return;
+deck=shuffle(bank).slice(0,n);cursor=0;correct=0;el("results").hidden=true;el("question-section").hidden=false;render();el("question-section").scrollIntoView({behavior:"smooth"});}
+el("start").onclick=begin;el("retry").onclick=begin;el("again").onclick=begin;
+el("answers").onsubmit=ev=>{ev.preventDefault();if(answered)return;const picked=el("answers").querySelector('input[name="answer"]:checked');if(!picked)return;
+const q=deck[cursor],ok=Number(picked.value)===q.correct_index;if(ok)correct++;
+answered=true;el("feedback").textContent=ok?"¡Correcto!":"No es correcta. La opción válida es "+String.fromCharCode(65+q.correct_index)+".";
+el("answers").querySelectorAll("input").forEach(v=>v.disabled=true);
+el("explanation").textContent=q.explicacion||"Revisa el apartado correspondiente del temario.";el("explanation").hidden=false;
+el("check").disabled=true;el("next").disabled=false;el("next").textContent=cursor===deck.length-1?"Ver resultado":"Siguiente pregunta";
+};
+el("next").onclick=()=>{if(!answered)return;if(cursor+1<deck.length){cursor++;render()}else{el("question-section").hidden=true;el("results").hidden=false;el("score").textContent="Has acertado "+correct+" de "+deck.length+" preguntas ("+Math.round(correct/deck.length*100)+" %)."}};
+async function load(){
+try{const {data:{session}}=await sb.auth.getSession();if(!session?.access_token){status("Para entrar a un examen, inicia sesión con código OTP en el Aula del Tema 2.");return}
+const url=BASE+"/functions/v1/oporadar-simulacros?modo="+encodeURIComponent(mode);
+const r=await fetch(url,{headers:{"Authorization":"Bearer "+session.access_token,"apikey":KEY,"Accept":"application/json"},cache:"no-store"});
+if(r.status===401||r.status===403){status("Tu cuenta no dispone de autorización activa para este simulacro.");return}
+if(!r.ok){status("Los bancos revisados todavía no se han habilitado. El simulador está preparado.");return}
+const payload=await r.json();
+bank=(Array.isArray(payload?.preguntas)?payload.preguntas:[]).filter(q=>q&&typeof q.enunciado==="string"&&Array.isArray(q.opciones)&&q.opciones.length===4&&Number.isInteger(q.correct_index)&&q.correct_index>=0&&q.correct_index<=3);
+const ids=bank.map(q=>q.id);if(new Set(ids).size!==ids.length){status("Se han detectado identificadores duplicados. El banco no se mostrará.");bank=[];return}
+if(bank.length){el("amount").disabled=false;el("start").disabled=false;el("retry").disabled=false;for(const op of el("amount").options)op.disabled=op.value!=="all"&&Number(op.value)>bank.length;
+el("amount").value=bank.length>=20?"20":"all";status(bank.length+" preguntas aprobadas disponibles para este modo.");}
+else status("No hay preguntas aprobadas disponibles para este modo.");}
+catch(_){status("El banco todavía no está preparado para su consulta. No se cargarán preguntas provisionales.");}}
+load();
+</script></body></html>
