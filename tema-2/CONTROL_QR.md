@@ -1,33 +1,35 @@
-# OpoRadarCádiz · Tema 2 · Control de páginas y QR
+# OpoRadarCádiz — Contrato de QR único por tema
 
-**Estado:** páginas HTML y enlaces preparados en rama; **NO publicados**, **NO verificados por HTTP en producción**, **NO generar/imprimir QR finales hasta comprobar el destino público**.
+**Decisión vigente:** exactamente **un Centro de Juegos y un único QR por cada tema**. Todos los juegos, test, ejercicios, vídeos, pódcasts, Saber más y futuras ampliaciones se incorporarán dentro del centro de su tema, sin nuevos QR ni portadas independientes.
 
-## Dos destinos estables reservados
+## Direcciones canónicas (rutas inmutables)
 
-- **Centro de Juegos (QR de entrada del libro):** ruta `/tema-2/radar/`, archivo `tema-2/radar/index.html`.
-- **Extras del Tema 2 (QR de material complementario):** ruta `/tema-2/extras/`, archivo `tema-2/extras/index.html`.
-- **Tema 1 (QR existente, INALTERADO):** `/tema-1/radar/`.
+| Libro | Única URL de QR del Centro de Juegos |
+| --- | --- |
+| Tema 1 | `/tema-1/radar/` |
+| Tema 2 | `/tema-2/radar/` |
 
-Se conocen referencias históricas al subdominio `web-oporadarcadiz.netlify.app`, pero antes de maquetar el QR impreso **Web Chat debe confirmar cuál es el dominio de producción actual** y obtener HTTP 200 con TLS válido, redirecciones correctas y página real sin autenticación para ambas rutas. No usar URLs de una rama GitHub como destino de impresión. Las direcciones relativas están preparadas para mantener estables los QR cuando se añadan los juegos.
+**Importante:** son rutas, no URLs finales completas. Antes de convertirlas en QR impresos, Web Chat debe confirmar el dominio definitivo, HTTPS válido y respuestas HTTP 200 en producción. El Tema 1 conserva su URL ya existente; no se cambia ni se reimprime su QR.
 
-## Archivos en rama existente de Juegos Chat
+## Cómo están preparadas las páginas
 
-- `tema-2/radar/index.html`: portada visual del Centro de Juegos Tema 2 con nueve modalidades previstas, **todas marcadas «En preparación» y no clicables**, navegación a Tema 1, Extras y Estudiar; diseño adaptable a móvil.
-- `tema-2/extras/index.html`: destino estable del QR para vídeo, pódcast y Saber más. Son tres fichas **sin medios, PDF ni enlaces privados** hasta revisión editorial y despliegue seguro.
-- `tema-1/radar/index.html` y `tema-1/juegos/menu-memoria/index.html`: enlaces al Tema 2 añadidos sin cambiar los nueve juegos, el QR ni los destinos existentes.
-- `netlify.toml`: conserva compilación desde `web/`, copia `tema-1` y `tema-2`, y excluye PDF en ambos directorios. Se reutiliza la protección de copia PDF de la rama Web `preventa-tema1-seguridad`. **No desplegar sin comprobar que la configuración de producción real coincide y supera la seguridad.**
+- `tema-1/radar/index.html`: sigue siendo el único punto de entrada canónico del Tema 1. Contiene navegación hacia sus actividades y recursos, y un enlace al Centro Tema 2. Las rutas internas antiguas siguen vigentes.
+- `tema-2/radar/index.html`: contiene **9 actividades** inicialmente rotuladas «En preparación» y **la sección `#recursos`** con vídeo, pódcasts y Saber más (tres fichas pendientes). Todo en la misma página con adaptación móvil, acceso de vuelta al Tema 1 y sin juegos premium liberados.
+- `tema-2/extras/index.html`: se conserva **solo como redirección técnica de compatibilidad** hacia `../radar/#recursos`. No es un segundo centro, no se anuncia y **NO se crea un QR para /tema-2/extras/**.
+- `tema-1/juegos/menu-memoria/index.html`: submenú/actividad histórica del Tema 1 conservado para evitar enlaces rotos. **No usarlo como QR principal**.
+- `netlify.toml` en la rama Juegos: copia `tema-1` y `tema-2` en el build y conserva la exclusión de PDF en ambos. No reemplazar la seguridad en `preventa-tema1-seguridad`.
 
-**No se ha creado ningún banco ni ninguna pregunta Tema 2.** Revisión Editorial sigue pendiente de certificar su temario. Ni etiquetas de preguntas oficiales, ni ventas, ni contenido premium se anuncian como disponibles.
+## Límites editoriales y de seguridad
 
-## Pruebas de código (no sustituyen navegación real)
+- Tema 2: no hay preguntas ni juegos completos certificados para activar. Las nueve fichas son marcadores visuales no clicables; no hay datos premium ni archivos multimedia.
+- Tema 1: banco 120 pendiente de certificación editorial para el Test Final. El código de juegos ya existente en repos públicos **NO** se considera protegido por ocultar botones. Las rutas premium solo se habilitarán tras protección comprobada en servidor con autenticación y permisos por edición.
+- Ningún cambio en QR originales, pedidos Amazon, Supabase, ventas, contratos, PDFs originales, PR de otros equipos o producción.
 
-Verificación posterior a los commits con relectura GitHub: **12/12 controles estáticos PASS**: ambas páginas nuevas, nueve tarjetas de juegos, sin scripts ni ficheros privados, sin material extra, CSS responsive, QR Tema 1 conservado, enlaces T1/T2 cruzados, nueve accesos T1 conservados, copia de Tema 1 y 2 a salida Netlify, exclusión de PDF de ambos, rutas internas resueltas a archivos previstos. **No se ha ejecutado build Netlify, navegador físico ni pruebas HTTP 200 de la rama en sitio web.**
+## Pruebas y acción para Web Chat
 
-## Bloqueo para Web Chat antes de entregar QR al libro
+1. Comprobar la única ruta canónica de cada tema después de integrar selectivamente las páginas en la rama segura, conservando rutas anteriores, sin fusionar indiscriminadamente PR.
+2. Verificar desde móvil y ordenador: `/tema-1/radar/` y `/tema-2/radar/`, regreso entre ambos, secciones, ausencia de contenido premium público, HTTP 200 y HTTPS.
+3. Confirmar que un acceso legado a `/tema-2/extras/` lleva a la sección `/tema-2/radar/#recursos`, nunca lo entregar como QR nuevo.
+4. Dar a PDF Chat **solo dos URLs completas finales** (una por tema), una vez verificada producción y autorizada publicación.
 
-1. Revisar la PR existente de Juegos Chat `propuesta-menu-memoria-visual` frente a `preventa-tema1-seguridad`, asegurando que los cambios de seguridad existentes no se revierten.
-2. Integrar **únicamente las dos páginas estáticas de Tema 2 y su navegación segura** cuando se autorice, sin fusionar contenido del Tema 1 aún bloqueado por razones editoriales/de seguridad.
-3. Desplegar solo tras aprobación y comprobar `https://DOMINIO_CONFIRMADO/tema-2/radar/` y `/tema-2/extras/`, sin mostrar materiales no aprobados.
-4. Verificar en móvil y ordenador la navegación de entrada y regreso, HTTP 200, certificado HTTPS, y que los QR existentes de Tema 1 mantienen sus destinos. Solo entonces entregar las **dos URLs completas y exactas** a PDF Chat para generar y verificar códigos QR de portada y cierre del Tema 2.
-
-No modificar original del libro ni los QR ya impresos. No hay coste, fusión ni publicación realizada por Juegos Chat.
+**Estado:** páginas modificadas en PR de Juegos Chat, sin fusión ni despliegue. QR del Tema 2 **NO listo para imprimir** hasta verificación del dominio y de la ruta pública.
