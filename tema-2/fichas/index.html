@@ -1,0 +1,64 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b1f33"><title>Fichas Radar · Tema 2 | OpoRadarCádiz</title>
+<style>:root{--navy:#0b1f33;--gold:#dfb342;--paper:#f8f5ee;--ink:#162d43;--muted:#4e6574}
+*{box-sizing:border-box}body{margin:0;background:var(--navy);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink)}main{max-width:930px;margin:26px auto;padding:clamp(18px,5vw,38px);background:var(--paper);border-radius:20px;min-height:80vh}a{color:#155e73}h1{font-size:clamp(2rem,5vw,3rem);margin:.2rem 0}h2{font-size:1.2rem}.strap{color:#876815;font-weight:800;letter-spacing:.08em}.small,.hint{color:var(--muted);font-size:.91rem}.panel{padding:20px;border:1px solid #d8d3c5;background:#fff;border-radius:16px;margin:20px 0}label{font-weight:700}select,button{font:inherit;min-height:45px;border-radius:9px;padding:10px 15px}select{border:1px solid #aebac0;background:#fff}button{cursor:pointer;border:0;background:var(--navy);color:#fff;font-weight:750}button:disabled{opacity:.45;cursor:not-allowed}.outline{background:#fff;color:var(--navy);border:1px solid var(--navy)}.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}.flip{width:100%;min-height:270px;background:#fff;border:2px solid var(--gold);color:var(--navy);padding:25px;border-radius:18px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:clamp(1.25rem,3vw,1.75rem);line-height:1.35;overflow-wrap:anywhere}.flip:focus-visible,button:focus-visible,select:focus-visible{outline:3px solid var(--gold);outline-offset:3px}.overline{color:#906d13;font-weight:850;font-size:.8rem;text-transform:uppercase}.progress{height:9px;border-radius:9px;background:#e1e6e9;overflow:hidden}.progress div{height:100%;background:#b88c1b;width:0}.status{min-height:1.5em;font-weight:700;color:#755516}@media(max-width:760px){main{margin:0;border-radius:0}.actions button{flex:1}}</style>
+</head><body><main>
+<a href="../centro/">← Volver a Aula OpoRadar · Tema 2</a><p class="strap">TEMA 2 · IGUALDAD Y NO DISCRIMINACIÓN</p><h1>Fichas Radar</h1><p>Un término, una explicación. Elige 20, 30, 40 o todas las fichas disponibles. Cada sesión cambia el orden y no repite tarjetas.</p>
+<section class="panel" aria-labelledby="setup-title"><h2 id="setup-title">Prepara tu sesión</h2>
+<label for="amount">Número de fichas</label> <select id="amount" disabled><option value="20">20 fichas</option><option value="30">30 fichas</option><option value="40">40 fichas</option><option value="all">Todas las fichas disponibles</option></select>
+<div class="actions"><button id="start" disabled>Empezar sesión aleatoria</button><button id="new" class="outline" disabled>Barajar de nuevo</button></div>
+<p id="status" role="status" aria-live="polite" class="status">Comprobando recursos disponibles…</p>
+<p class="hint">Fuente de contenido: Saber Más · Tema 2, únicamente tras su aprobación editorial. Acceso a fichas mediante servicio privado y permiso de tema.</p></section>
+<section id="session" hidden>
+<div class="actions" style="justify-content:space-between"><strong id="count">Ficha 1 de 20</strong><span class="hint" id="category"></span></div>
+<div class="progress" aria-hidden="true"><div id="bar"></div></div>
+<button type="button" class="flip" id="card" aria-label="Pulsar para mostrar explicación"><span id="card-text"></span></button>
+<p class="hint" id="source"></p>
+<div class="actions"><button id="prev" class="outline">Anterior</button><button id="turn" class="outline">Ver explicación</button><button id="next">Siguiente</button></div>
+<p class="hint">También puedes usar las flechas del teclado y la barra espaciadora para girar la ficha.</p>
+</section>
+</main>
+<script type="module">
+import {createClient} from "https://esm.sh/@supabase/supabase-js@2";
+const URL="https://jtyjdrrxmuppulbekfai.supabase.co",KEY="sb_publishable_-9m9ilEwGsM4tEBTVXS3FA_aRlVhNNc";
+const sb=createClient(URL,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+const el=id=>document.getElementById(id);
+let cards=[],session=[],position=0,flipped=false;
+const setStatus=x=>{el("status").textContent=x};
+function secureShuffle(source){const a=source.slice();for(let i=a.length-1;i>0;i--){const buf=new Uint32Array(1);crypto.getRandomValues(buf);const j=buf[0]%(i+1);[a[i],a[j]]=[a[j],a[i]]}return a}
+function showCard(){
+const f=session[position];if(!f)return;
+el("count").textContent="Ficha "+(position+1)+" de "+session.length;
+el("category").textContent=f.bloque||"Tema 2";
+el("bar").style.width=((position+1)/session.length*100)+"%";
+el("card-text").textContent=flipped?f.explicacion:f.termino;
+el("card").setAttribute("aria-label",flipped?"Volver al término":"Ver explicación");
+el("turn").textContent=flipped?"Ver término":"Ver explicación";
+el("prev").disabled=position===0;el("next").textContent=position===session.length-1?"Terminar":"Siguiente";
+el("source").textContent=flipped&&f.referencia?"Referencia: "+f.referencia:"Pulsa la ficha para girarla.";
+}
+function begin(){
+const value=el("amount").value;const count=value==="all"?cards.length:Number(value);
+if(!Number.isInteger(count)||count<1||count>cards.length){setStatus("No hay suficientes fichas aprobadas para esa opción.");return}
+session=secureShuffle(cards).slice(0,count);position=0;flipped=false;el("session").hidden=false;el("session").scrollIntoView({behavior:"smooth"});showCard();setStatus("Sesión aleatoria preparada sin repeticiones.");
+}
+function turn(){flipped=!flipped;showCard()}
+el("start").onclick=begin;el("new").onclick=begin;el("card").onclick=turn;el("turn").onclick=turn;
+el("prev").onclick=()=>{if(position>0){position--;flipped=false;showCard()}};
+el("next").onclick=()=>{if(position<session.length-1){position++;flipped=false;showCard()}else{el("session").hidden=true;setStatus("Sesión terminada. Puedes barajar otra vez.")}};
+document.addEventListener("keydown",ev=>{if(el("session").hidden||["SELECT","INPUT","BUTTON"].includes(document.activeElement?.tagName))return;if(ev.key==="ArrowRight"){el("next").click()}if(ev.key==="ArrowLeft"){el("prev").click()}if(ev.key===" "){ev.preventDefault();turn()}});
+async function load(){
+try{
+const {data:{session:auth}}=await sb.auth.getSession();
+if(!auth?.access_token){setStatus("Para consultar las fichas debes iniciar sesión con el código OTP en el aula.");return}
+const r=await fetch(URL+"/functions/v1/tema2-fichas",{headers:{"Authorization":"Bearer "+auth.access_token,"apikey":KEY,"Accept":"application/json"},cache:"no-store"});
+if(r.status===401||r.status===403){setStatus("Tu identidad está verificada, pero no tienes un permiso activo para estas fichas.");return}
+if(!r.ok){setStatus("El banco de fichas todavía no está habilitado para su consulta.");return}
+const data=await r.json();
+if(!Array.isArray(data?.fichas))throw Error("formato");
+cards=data.fichas.filter(f=>typeof f?.termino==="string"&&typeof f?.explicacion==="string"&&f.termino.trim()&&f.explicacion.trim()).map(f=>({termino:f.termino,explicacion:f.explicacion,bloque:String(f.bloque||""),referencia:String(f.referencia||"")}));
+for(const op of el("amount").options){const n=Number(op.value);op.disabled=op.value!=="all"&&n>cards.length}
+if(cards.length){el("amount").disabled=false;el("start").disabled=false;el("new").disabled=false;el("amount").value=cards.length>=20?"20":"all";setStatus(cards.length+" fichas aprobadas disponibles. Elige cuántas quieres practicar.");}
+else{setStatus("Las fichas aún no están aprobadas para publicación. La mecánica de juego está preparada.");}
+}catch(_){setStatus("Las fichas todavía no se pueden consultar. No se mostrará contenido provisional.");}}
+load();
+</script></body></html>
