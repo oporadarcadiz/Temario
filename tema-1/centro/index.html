@@ -105,6 +105,16 @@ footer{margin-top:24px;padding-top:20px;border-top:1px solid #d9cba6;display:fle
     <video id="player-video" class="media" controls playsinline preload="none" hidden></video>
   </article>
 
+  <article class="item" id="video-13-18">
+    <div class="item-icon" aria-hidden="true">🎬</div>
+    <div class="meta">Nuevo · Vídeo privado disponible</div>
+    <h2>Vídeo · Derechos fundamentales (págs. 13–18)</h2>
+    <p>Repasa los artículos 10 al 38 con esquemas animados, preguntas resueltas y la locución completa de OpoRadarCádiz.</p>
+    <button id="open-video-13-18" type="button">Ver vídeo · Páginas 13–18</button>
+    <p id="video-13-18-status" class="notice" role="status" aria-live="polite"></p>
+    <video id="player-video-13-18" class="media" controls playsinline preload="none" hidden></video>
+  </article>
+
   <article class="item" id="audios">
     <div class="item-icon" aria-hidden="true">🎧</div>
     <div class="meta">Archivo privado disponible</div>
@@ -251,12 +261,13 @@ async function openGame(name){
 }
 for(const key of Object.keys(GAMES))el("game-"+key).addEventListener("click",()=>openGame(key));
 el("open-video").addEventListener("click",()=>openMedia("video-tema1","open-video","player-video","video-status"));
+el("open-video-13-18").addEventListener("click",()=>openMedia("video-p13-18","open-video-13-18","player-video-13-18","video-13-18-status"));
 el("open-podcast").addEventListener("click",()=>openMedia("podcast-corto","open-podcast","player-podcast","podcast-status"));
 el("retry").addEventListener("click",authorize);
 el("logout").addEventListener("click",async()=>{
  el("game-viewer").srcdoc="";el("game-panel").hidden=true;
  el("pdf-reader").removeAttribute("src");el("pdf-panel").hidden=true;el("pdf-link").removeAttribute("href");
- for(const id of ["player-video","player-podcast"]){
+ for(const id of ["player-video","player-video-13-18","player-podcast"]){
   const m=el(id);m.pause();m.removeAttribute("src");m.load();m.hidden=true;
  }
  await sb.auth.signOut();
