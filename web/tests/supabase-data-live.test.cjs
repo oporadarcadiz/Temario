@@ -1,0 +1,14 @@
+'use strict';
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const vm=require('node:vm');
+const ctx={window:{},URL,Date,fetch:async()=>{throw Error('offline')},AbortSignal};
+vm.runInNewContext(fs.readFileSync(path.join(__dirname,'..','supabase-data.js'),'utf8'),ctx);
+const normalize=(r,e=[])=>ctx.window.OpoData.normalize(r,e);
+const base={id:'OPO-TEST',slug:'prueba-opo-test',published:true,reviewed_at:'2026-10-24T07:30:00Z',data:{id:'OPO-TEST',title:'Auxiliar',organism:'Ayuntamiento',url:'https://example.org/bases',publishedOn:'2026-10-24'}};
+test('conserva el identificador estable y el slug',()=>{const r=normalize(base);assert.equal(r.id,'OPO-TEST');assert.equal(r.slug,'prueba-opo-test')});
+test('publica únicamente eventos aprobados, publicados y no retirados',()=>{const good={evento_id:'EVT-1',convocatoria_id:'OPO-TEST',tipo_evento:'convocatoria',titulo_evento:'Convocatoria',fecha_oficial:'2026-10-24',url_evento:'https://example.org/anuncio',estado_validacion:'aprobado',publicado:true,retirado_en:null};const events=[good,{...good,evento_id:'EVT-2',estado_validacion:'pendiente'},{...good,evento_id:'EVT-3',publicado:false},{...good,evento_id:'EVT-4',retirado_en:'2026-10-24T08:00:00Z'}];const r=normalize(base,events);assert.deepEqual(Array.from(r.events,x=>x.id),['EVT-1'])});
+test('no mezcla eventos de otra convocatoria',()=>{const r=normalize(base,[{evento_id:'EVT-X',convocatoria_id:'OTRA',estado_validacion:'aprobado',publicado:true}]);assert.equal(r.events.length,0)});
+test('acepta organization como alias de organismo',()=>assert.equal(normalize({...base,data:{...base.data,organism:undefined,organization:'Diputación'}}).organism,'Diputación'));

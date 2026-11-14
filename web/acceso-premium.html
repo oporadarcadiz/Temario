@@ -1,0 +1,26 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#08182d">
+<meta name="robots" content="noindex,nofollow"><title>Acceso prémium por código · OpoRadarCádiz</title>
+<link rel="stylesheet" href="/styles.css"><link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<style>.premium-form{max-width:680px;margin:32px auto 65px;padding:clamp(22px,4vw,40px);border-radius:22px;background:#faf9f5;color:#173047}.premium-form label{display:block;margin:15px 0 8px;font-weight:800}.premium-form input{display:block;width:100%;font:inherit;border:1px solid #9cabb7;border-radius:12px;padding:12px;max-width:430px}.premium-form button{padding:12px 17px;border:0;border-radius:10px;background:#0b1f33;color:white;font:800 1rem system-ui;margin:10px 0;cursor:pointer}.premium-form button:disabled{opacity:.55;cursor:wait}.premium-form [hidden]{display:none!important}.premium-message{margin-top:13px;background:#e9f0f5;padding:12px;border-radius:10px}.premium-form a{color:#145887}.premium-form p{line-height:1.5}a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid #d9ad40;outline-offset:2px}</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="/premium-access.js" defer></script><script src="/premium-page.js" defer></script></head>
+<body><a class="skip" href="#contenido">Ir al contenido</a>
+<header class="masthead"><a class="wordmark" href="/">Opo<b>Radar</b><small>CADIZ</small></a><nav aria-label="Principal"><a href="/convocatorias.html">Convocatorias</a><a href="/estudiar.html">Estudiar</a><a href="/planes.html">Planes</a></nav></header>
+<main id="contenido" class="wrap"><section class="premium-form">
+<p class="eyebrow">ACCESO DIGITAL PROTEGIDO</p><h1>Entra con un código de seis cifras</h1>
+<p>Para iniciar una sesión prémium, identifica tu correo y escribe el código temporal que recibirás. El código acredita tu identidad, no una compra.</p>
+<form id="premium-email-form"><label for="premium-email">Correo electrónico</label>
+<input id="premium-email" type="email" autocomplete="email" maxlength="254" required placeholder="nombre@correo.com">
+<button type="submit" id="premium-send">Enviar código</button></form>
+<form id="premium-code-form" hidden><label for="premium-code">Código de seis cifras</label>
+<input id="premium-code" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" minlength="6" maxlength="6" required placeholder="000000">
+<button type="submit" id="premium-verify">Verificar y entrar</button>
+<p>Si caduca, solicita un código nuevo. Nunca compartas este código.</p></form>
+<section id="premium-session" hidden aria-live="polite"><h2>Sesión iniciada</h2><p id="premium-identity"></p>
+<p id="premium-right"></p><button type="button" id="premium-logout">Cerrar sesión prémium</button></section>
+<p id="premium-message" class="premium-message" role="status" aria-live="polite">Comprobando estado de acceso…</p>
+<p>Los permisos de <strong>Banco Vivo</strong> se conceden solo tras confirmación de pago de Stripe en el servidor. Los recursos del <strong>libro físico de Amazon</strong> se autorizan por compra verificada y edición; no se intercambian derechos.</p>
+<p>Por ahora la contratación y los recursos completos permanecen bloqueados hasta superar las pruebas de seguridad.</p>
+<p><a href="/banco-vivo.html">Ver Banco Vivo</a> · <a href="/tema1-venta.html">Ver libro físico</a> · <a href="/privacidad.html">Privacidad</a></p>
+</section></main></body></html>
