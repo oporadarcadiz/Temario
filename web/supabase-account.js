@@ -63,3 +63,10 @@ document.addEventListener('DOMContentLoaded',()=>{
   for(const [href,label,kind] of [['/convocatorias.html','Ver convocatorias','gold'],['/cuenta.html#avisos','Configurar mis avisos','outline']]){const link=document.createElement('a');link.href=href;link.className='button '+kind;link.textContent=label;actions.append(link);}
   copy.append(eyebrow,title,description);section.append(copy,actions);if(footer)footer.before(section);else main.after(section);
 });
+
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('footer p').forEach(paragraph=>{
+    if(paragraph.textContent.trim()!=='Tu rumbo. Tu ritmo.')return;
+    paragraph.replaceChildren('Tu rumbo.',document.createElement('br'),'Tu ritmo.');
+  });
+});
