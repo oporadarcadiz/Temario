@@ -53,3 +53,13 @@ document.addEventListener('DOMContentLoaded',()=>{
   if(location.pathname.startsWith('/tema-1/'))link.setAttribute('aria-current','page');
   nav.append(link);
 });
+
+document.addEventListener('DOMContentLoaded',()=>{
+  if(!/^\/(?:index\.html)?$/.test(location.pathname)||document.getElementById('free-radar-cta'))return;
+  const main=document.querySelector('main'),footer=document.querySelector('footer');if(!main)return;
+  const section=document.createElement('aside');section.id='free-radar-cta';section.className='free-radar-cta wrap';
+  const copy=document.createElement('div'),eyebrow=document.createElement('p'),title=document.createElement('h2'),description=document.createElement('p'),actions=document.createElement('div');
+  eyebrow.className='eyebrow';eyebrow.textContent='RADAR GRATUITO';title.textContent='Que no se te escape una novedad.';description.textContent='Guarda las convocatorias que te interesan y elige si quieres recibir un resumen semanal o avisos de cambios verificados.';
+  for(const [href,label,kind] of [['/convocatorias.html','Ver convocatorias','gold'],['/cuenta.html#avisos','Configurar mis avisos','outline']]){const link=document.createElement('a');link.href=href;link.className='button '+kind;link.textContent=label;actions.append(link);}
+  copy.append(eyebrow,title,description);section.append(copy,actions);if(footer)footer.before(section);else main.after(section);
+});
