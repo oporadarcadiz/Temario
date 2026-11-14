@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const config=window.OPO_SUPABASE||{},keys=['oporadar:radar:saved:v1','oporadar:study-tools:v1','oporadar:profile:v1',...['aux','sub','auxiliar','subalterno'].flatMap(r=>['progress','history','session'].map(k=>`oporadar:${r}:${k}:v1`))];
+  const config=window.OPO_SUPABASE||{},keys=['oporadar:radar:saved:v1','oporadar:study-tools:v1','oporadar:profile:v1','oporadar:notifications:v1',...['aux','sub','auxiliar','subalterno'].flatMap(r=>['progress','history','session'].map(k=>`oporadar:${r}:${k}:v1`))];
   const nativeSet=Storage.prototype.setItem,nativeRemove=Storage.prototype.removeItem,ownerKey='oporadar:account-owner:v1';
   let client=null,user=null,loading=true,applyingRemote=false,timer;
   const status=t=>document.querySelectorAll('[data-cloud-status],#account-status').forEach(e=>e.textContent=t);

@@ -124,7 +124,7 @@
     return card;
   }
   function newsletterCard(){
-    const section=document.createElement('aside');section.className='weekly-newsletter';section.innerHTML='<div><p class="eyebrow">BOLETÍN GRATUITO</p><h2>Novedades de la semana, cada lunes.</h2><p>Recibirás una selección de convocatorias y anuncios oficiales publicados durante la semana.</p></div><div><a class="button gold" href="/cuenta.html">Suscríbete al boletín semanal</a><p class="weekly-note">Disponible al activar el sistema de correo y el consentimiento de suscripción.</p></div>';
+    const section=document.createElement('aside');section.className='weekly-newsletter';section.innerHTML='<div><p class="eyebrow">BOLETÍN GRATUITO</p><h2>Novedades de la semana, cada lunes.</h2><p>Elige en tu cuenta si quieres recibir un resumen de convocatorias y anuncios oficiales verificados.</p></div><div><a class="button gold" href="/cuenta.html#avisos">Configurar mis avisos</a><p class="weekly-note">Puedes cambiar o retirar tu consentimiento cuando quieras. Los envíos se activarán al conectar el servicio de correo.</p></div>';
     return section;
   }
   function render(){
