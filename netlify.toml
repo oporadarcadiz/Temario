@@ -1,2 +1,26 @@
 [build]
-  publish = "web"
+  # Solo publicamos las páginas HTML de acceso; no copiamos PDFs, bancos ni juegos completos.
+  publish = ".netlify-dist"
+  command = '''
+set -eu
+rm -rf .netlify-dist
+mkdir -p .netlify-dist
+cp -R web/. .netlify-dist/
+for page in \
+  tema-1/index.html \
+  tema-1/radar/index.html \
+  tema-1/centro/index.html \
+  tema-1/acceso/index.html \
+  tema-1/acceso/sin-acceso/index.html \
+  tema-1/saber-mas/index.html \
+  tema-1/videos/index.html \
+  tema-1/audios/index.html \
+  tema-1/juegos/nivel3-test.html \
+  tema-1/juegos/test-60-reales.html \
+  tema-1/juegos/test-60.html
+do
+  mkdir -p ".netlify-dist/$(dirname "$page")"
+  cp "$page" ".netlify-dist/$page"
+done
+test -z "$(find .netlify-dist/tema-1 -type f ! -iname '*.html' -print -quit)"
+'''
