@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1f33"><meta name="robots" content="noindex">
+<title>60 preguntas reales de examen · Igualdad y no discriminación | OpoRadarCádiz</title>
+<meta name="description" content="Test de 60 preguntas reales de examen del Tema 2. Acceso de compradores verificados.">
+<style>
+:root{--navy:#0b1f33;--gold:#e5b84b;--paper:#f8f7f3;--ink:#183249;--muted:#526474;--line:#d7e0e4;--good:#195e42;--bad:#9a2d32}
+*{box-sizing:border-box}html{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}body{margin:0;color:var(--ink);background:var(--navy);font-size:16px;line-height:1.55}button{font:inherit}a{color:#145887}
+a:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+header{color:#fff;max-width:1020px;margin:auto;padding:28px 22px 34px}.brand{color:white;text-decoration:none;font-weight:900;font-size:18px}.brand b{color:var(--gold)}.eyebrow{font-size:12px;color:var(--gold);font-weight:800;letter-spacing:.13em;text-transform:uppercase}h1{font-size:clamp(30px,5vw,52px);line-height:1.1;margin:8px 0}header p:last-child{max-width:690px;color:#dbe4ec;margin-bottom:0}
+main{background:var(--paper);border-radius:22px 22px 0 0;min-height:68vh;padding:32px 18px 70px}.wrap{max-width:850px;margin:auto}.panel{background:#fff;border:1px solid var(--line);border-radius:20px;padding:clamp(18px,4vw,36px);margin-bottom:18px}.meta{display:flex;gap:12px;justify-content:space-between;flex-wrap:wrap;font-size:13px;font-weight:800;color:#526474}
+#question{font-size:clamp(19px,3.2vw,26px);line-height:1.34;margin:20px 0}.choices{display:grid;gap:10px;margin:20px 0}.choice{width:100%;border-radius:12px;border:2px solid #d6e0e5;background:#fff;padding:14px;text-align:left;cursor:pointer;color:var(--ink)}.choice:hover:not(:disabled){border-color:#ab8123;background:#fff9e9}.choice.selected{border-color:#b48b2c;background:#fff8de}.choice.correct{border-color:var(--good);background:#ebf7f0}.choice.wrong{border-color:var(--bad);background:#fff0f0}.choice:disabled{cursor:default;opacity:1}
+.actions{display:flex;flex-wrap:wrap;gap:10px}.action{padding:12px 18px;border-radius:11px;border:0;background:var(--navy);color:#fff;font-weight:800;cursor:pointer}.action.primary{background:#c9941a;color:#171f2b}.action.secondary{background:#e9edf1;color:var(--ink)}.action:disabled{opacity:.5;cursor:not-allowed}
+#feedback{border-left:4px solid var(--gold);padding:12px 16px;background:#f6f4ee;border-radius:5px;margin:18px 0 8px}.note{font-size:14px;color:var(--muted)}.error{color:#a42c30}.success{color:var(--good)}
+.pill{font-size:12px;border:1px solid #d5deeb;padding:4px 9px;border-radius:99px;font-weight:800;color:#23466a}.hide{display:none!important}footer{padding:24px 18px;color:#c7d7e4;text-align:center;font-size:13px}
+@media(max-width:440px){.actions{flex-direction:column}.action{width:100%}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+</head><body>
+<header><a class="brand" href="../centro/">Opo<b>RadarCádiz</b></a><p class="eyebrow">Centro de Juegos · Tema 2 · Igualdad y no discriminación</p>
+<h1>60 preguntas reales de examen</h1><p>Práctica autocorregible con preguntas de exámenes públicos, con respuestas cotejadas con documentación o legislación y una solución de cotejo editorial identificada. Se respeta el número de alternativas de cada fuente. El contenido completo está reservado a compradores cuya adquisición del libro haya sido verificada.</p></header>
+<main><div class="wrap"><section id="access" class="panel" aria-live="polite"><h2>Acceso al test</h2><p id="state">Comprobando sesión y permiso de compra…</p><p class="note" id="loginhint">Si todavía no tienes acceso, puedes entrar en «Mi cuenta» para identificarte o consultar la demostración gratuita.</p>
+<div class="actions"><a href="/cuenta.html" id="account-link">Mi cuenta</a><a href="/estudiar.html#practica">Probar muestras gratuitas</a><a href="../centro/">Volver al Centro de Juegos</a></div></section>
+<section id="setup" class="panel hide"><h2>Elige tu práctica</h2><p>El banco contiene 60 preguntas seleccionadas de exámenes oficiales, con tres o cuatro alternativas según el examen y su respuesta cotejada. En cada intento se mezcla el orden y no se repite ninguna pregunta.</p><div class="actions"><button class="action primary" id="all" type="button">Test completo · 60</button><button class="action" id="quick" type="button">Práctica rápida · 20</button></div></section>
+<section id="play" class="panel hide" aria-live="polite"><div class="meta"><span id="progress"></span><span id="block" class="pill"></span></div><h2 id="question" tabindex="-1"></h2><div class="choices" id="choices" role="group" aria-label="Alternativas de respuesta"></div>
+<div class="actions"><button class="action primary" id="check" type="button" disabled>Comprobar</button><button class="action" id="next" type="button">Dejar en blanco</button></div>
+<div id="feedback" class="hide" role="status"></div><p class="note" id="legal"></p></section>
+<section id="result" class="panel hide" aria-live="polite"><h2>Resultado del test</h2><p id="score"></p><p class="note">Las respuestas en blanco no restan puntos. El resultado es orientativo, no una calificación oficial de oposición.</p><div class="actions"><button class="action primary" type="button" id="again">Nueva práctica</button><a href="../centro/">Centro de Juegos</a></div></section>
+</div></main><footer>OpoRadarCádiz · Igualdad y no discriminación · Referencias jurídicas oficiales: BOE y BOJA</footer>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const show=(id,yes)=>$(id).classList.toggle('hide',!yes);
+const state=(message,bad=false)=>{ $('state').textContent=message; $('state').classList.toggle('error',bad); };
+const bank=[];let questions=[],current=0,answered=false,choice=null,correct=0,wrong=0,blank=0,selectedMode=60;
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const pathPrefix='/';
+async function init(){
+ $('account-link').href=pathPrefix+'tema-2/acceso/';
+ if(location.hostname==='oporadarcadiz.github.io'){
+  state('Abre este test en la web principal de OpoRadarCádiz para utilizar el acceso seguro.');
+  const l=document.createElement('a');l.href='https://web-oporadarcadiz.netlify.app/tema-2/juegos/test-60-reales.html';l.textContent='Abrir el test en la web principal';$('access').append(l);return;
+ }
+ if(!window.supabase){state('No se pudo cargar el servicio de identificación.',true);return;}
+ const loaded=await new Promise(resolve=>{const s=document.createElement('script');s.src=pathPrefix+'supabase-config.js';s.onload=()=>resolve(true);s.onerror=()=>resolve(false);document.head.append(s)});
+ const config=window.OPO_SUPABASE||{};
+ if(!loaded||!config.url||!config.anonKey){state('La identificación de compradores todavía no está configurada.',true);return}
+ const client=window.supabase.createClient(config.url,config.anonKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+ const session=await client.auth.getSession();
+ if(session.error||!session.data.session?.access_token){state('Inicia sesión en Mi cuenta y regresa para comprobar tu compra.');return}
+ const token=session.data.session.access_token;
+ try{
+  const res=await fetch(config.url+'/functions/v1/tema2-test-60-reales',{method:'GET',headers:{'authorization':'Bearer '+token,'apikey':config.anonKey},cache:'no-store'});
+  const data=await res.json();
+  if(!res.ok||!data.questions){state(data.error||'No se ha podido obtener el test protegido.',true);return}
+  if(data.count!==60||data.questions.length!==60){state('El banco todavía no contiene 60 preguntas verificadas.',true);return}
+  const seen=new Set();
+  for(const x of data.questions){
+   if(!x.id||seen.has(x.id)||!Array.isArray(x.alternatives)||(x.alternatives.length<3||x.alternatives.length>4)||!Number.isInteger(x.correct_index)||x.correct_index<0||(x.correct_index>3||x.correct_index>=x.alternatives.length))throw Error('Integridad del test pendiente');
+   seen.add(x.id);
+  }
+  bank.push(...data.questions);state('Acceso verificado. Tienes 60 preguntas disponibles.');show('setup',true);
+ }catch(e){state(e.message||'No se pudo conectar al servicio de preguntas.',true);}
+}
+function start(n){
+ selectedMode=n;questions=shuffle(bank.slice()).slice(0,n);current=0;correct=0;wrong=0;blank=0;
+ show('setup',false);show('result',false);show('play',true);render();
+}
+function render(){
+ answered=false;choice=null;const q=questions[current];
+ $('progress').textContent='Pregunta '+(current+1)+' de '+questions.length;
+ $('block').textContent=q.organism;$('question').textContent=q.question_text;
+ $('choices').replaceChildren();
+ q.alternatives.forEach((option,i)=>{const b=document.createElement('button');b.type='button';b.className='choice';b.textContent='ABCD'[i]+'. '+option;
+ b.addEventListener('click',()=>{if(answered)return;choice=i;for(const node of $('choices').children)node.classList.remove('selected');b.classList.add('selected');$('check').disabled=false;});$('choices').append(b)});
+ $('legal').replaceChildren();const detail=document.createElement('span');detail.textContent='Procedencia: '+q.organism+(q.exam_year?' · '+q.exam_year:'')+'. ';$('legal').append(detail);for(const entry of [['Cuadernillo',q.source_url],['Plantilla',q.official_key_url],['Normativa',q.legal_reference_url]]){if(entry[1]&&/^https:\/\//i.test(entry[1])){const a=document.createElement('a');a.href=entry[1];a.target='_blank';a.rel='noopener noreferrer';a.textContent=entry[0];$('legal').append(a,document.createTextNode(' · '));}}
+ $('feedback').replaceChildren();show('feedback',false);$('check').disabled=true;$('check').classList.remove('hide');$('next').textContent='Dejar en blanco';
+ $('question').focus();
+}
+function check(answer){
+ if(answered)return;answered=true;const q=questions[current];
+ if(answer===null)blank++;else if(answer===q.correct_index)correct++;else wrong++;
+ const buttons=[...$('choices').children];buttons.forEach((b,i)=>{b.disabled=true;if(i===q.correct_index)b.classList.add('correct');else if(i===answer)b.classList.add('wrong');});
+ $('feedback').textContent=(answer===null?'Sin responder. ':answer===q.correct_index?'¡Correcta! ':'Respuesta incorrecta. ')+
+ 'Solución: '+ 'ABCD'[q.correct_index]+'. '+q.alternatives[q.correct_index]+'. '+(q.answer_provenance==='COTEJO_EDITORIAL_BOE'?'La respuesta se cotejó con el BOE, no con una plantilla del tribunal.':'La respuesta está cotejada con la documentación de su examen.')';
+ show('feedback',true);$('check').classList.add('hide');$('next').textContent=current+1===questions.length?'Ver resultado':'Siguiente pregunta';
+}
+function next(){if(!answered){check(null);return}current++;if(current>=questions.length){finish();return}render()}
+function finish(){
+ show('play',false);show('result',true);$('score').textContent='Aciertos: '+correct+' · Fallos: '+wrong+' · En blanco: '+blank+' · Nota orientativa: '+(10*correct/questions.length).toFixed(2).replace('.',',')+'/10.';
+}
+$('all').addEventListener('click',()=>start(60));
+$('quick').addEventListener('click',()=>start(20));
+$('again').addEventListener('click',()=>{show('result',false);show('setup',true)});
+$('check').addEventListener('click',()=>check(choice));
+$('next').addEventListener('click',next);
+window.addEventListener('DOMContentLoaded',()=>{init().catch(()=>state('No se pudo completar la comprobación de acceso.',true))});
+})();
+</script></body></html>
