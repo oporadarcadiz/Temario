@@ -1,0 +1,307 @@
+<!doctype html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b1f33"><title>Acceso personal · Tema 2 | OpoRadarCádiz</title>
+<style>
+:root{
+  --navy:#0b1f33;
+  --gold:#e5b84b;
+  --paper:#f7f3ea;
+  --ink:#17212b;
+  --muted:#5c6570;
+  --line:#d9d5cc;
+  --white:#ffffff;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  min-height:100dvh;
+  padding:clamp(18px,4vw,48px) 14px;
+  background:var(--navy);
+  color:var(--ink);
+  font:16px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+}
+main{
+  max-width:690px;
+  margin:auto;
+  padding:clamp(22px,5vw,43px);
+  background:var(--paper);
+  border:1px solid rgba(229,184,75,.45);
+  border-radius:24px;
+  box-shadow:0 20px 60px rgba(0,0,0,.26);
+}
+.brand{
+  margin-bottom:14px;
+  color:#816116;
+  font-size:12px;
+  font-weight:850;
+  text-align:center;
+  text-transform:uppercase;
+  letter-spacing:.13em;
+}
+h1,h2{
+  color:var(--navy);
+  text-align:center;
+  line-height:1.2;
+}
+h1{
+  margin:0 0 16px;
+  font-size:clamp(29px,5vw,42px);
+  letter-spacing:-.035em;
+}
+h1::after{
+  content:"";
+  display:block;
+  width:64px;
+  height:3px;
+  margin:14px auto 0;
+  border-radius:3px;
+  background:var(--gold);
+}
+h2{margin:12px 0 17px;font-size:clamp(19px,3.2vw,23px)}
+p{margin:10px 0 18px;color:var(--muted)}
+.intro{text-align:center;max-width:52ch;margin:0 auto 22px}
+label{display:block;font-weight:700;margin:14px 0 7px;color:var(--navy)}
+input,select{
+  width:100%;
+  min-height:49px;
+  padding:13px 14px;
+  border:1.5px solid #c9c5ba;
+  border-radius:12px;
+  background:var(--white);
+  color:var(--ink);
+  font:inherit;
+}
+input:focus,select:focus{outline:2px solid var(--gold);outline-offset:2px;border-color:#a17a1f}
+button,a.primary{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:48px;
+  margin-top:13px;
+  padding:13px 19px;
+  border:1px solid var(--navy);
+  border-radius:12px;
+  background:var(--navy);
+  color:var(--white);
+  font:inherit;
+  font-weight:800;
+  text-decoration:none;
+  cursor:pointer;
+  box-shadow:0 3px 0 var(--gold);
+}
+button:hover,a.primary:hover{background:#1b3855}
+button:disabled{opacity:.65;cursor:wait}
+#magic,#verify{width:100%}
+#otp{
+  letter-spacing:.24em;
+  text-align:center;
+  font-size:24px;
+  font-weight:750;
+  font-variant-numeric:tabular-nums;
+}
+.step{
+  margin:16px 0;
+  padding:20px;
+  border:1px solid var(--line);
+  border-top:3px solid var(--gold);
+  border-radius:16px;
+  background:#fffdfa;
+}
+.step-count{display:block;text-align:center;font-size:12px;font-weight:850;letter-spacing:.1em;color:#816116;text-transform:uppercase}
+.step+.step{margin-top:20px}
+.small{font-size:13px}
+.hint{text-align:center;font-size:13px}
+.info{
+  margin:20px 0;
+  padding:13px 16px;
+  border-left:4px solid var(--gold);
+  border-radius:10px;
+  background:#fff4d9;
+  color:var(--navy);
+}
+.status{
+  margin-top:16px;
+  padding:13px 15px;
+  border:1px solid #e9d9b2;
+  border-radius:10px;
+  background:#fff8e9;
+  color:var(--navy);
+}
+.hidden{display:none!important}
+.separate{
+  margin-top:27px;
+  padding-top:22px;
+  border-top:2px solid var(--gold);
+  text-align:center;
+}
+.separate .small{text-align:center}
+.separate>a{display:inline-flex;margin-top:12px}
+a{color:#745715;text-underline-offset:3px}
+a:hover{text-decoration-thickness:2px}
+input:focus-visible,button:focus-visible,a:focus-visible,select:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.compact{padding:15px 18px;margin:10px 0}
+.compact h2{margin:2px 0 10px;font-size:18px}
+.compact label{margin:4px 0 7px}
+.compact button{margin-top:9px}
+.compact .hint{margin:8px 0 0}
+.compact+.compact{margin-top:10px}
+@media(max-width:480px){
+  body{padding:10px 10px 16px;font-size:15px;line-height:1.45}
+  main{border-radius:18px;padding:17px 16px 21px}
+  .brand{margin-bottom:6px;font-size:11px;letter-spacing:.09em}
+  h1{font-size:27px;margin-bottom:8px}
+  h1::after{width:40px;height:2px;margin:8px auto 0}
+  .intro{margin-bottom:12px}
+  .step{padding:13px}
+  #login .step.compact{margin:0;padding:13px 14px}
+  #login .compact h2{margin:0 0 8px;font-size:17px}
+  #login .compact label{margin:0 0 5px;font-size:14px}
+  #login input{min-height:46px;padding:11px 12px}
+  #login button{width:100%;min-height:46px;margin-top:10px;padding:10px 14px}
+  #otp{letter-spacing:.16em}
+  #login .compact+.compact{margin-top:12px}
+  #message{margin:12px 0}
+  .separate{margin-top:22px;padding-top:16px}
+  .separate>a.primary{width:100%}
+}
+</style>
+</head><body><main><div class="brand">OPORADARCÁDIZ · TEMA 2</div><h1>Tu espacio de estudio</h1><p class="intro">Escribe tu correo y recibe un código.</p>
+
+<section id="login" aria-label="Iniciar sesión">
+<div class="step compact"><h2>Tu correo</h2>
+<label for="email">Correo electrónico</label><input id="email" type="email" autocomplete="email" placeholder="tu@correo.com" maxlength="254" required>
+<button id="magic" type="button">Recibir código</button>
+</div>
+<div class="step compact hidden" id="otpBox"><h2>Tu código</h2>
+<label for="otp">Código de 6 cifras</label><input id="otp" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" minlength="6" maxlength="6" placeholder="000000" aria-describedby="otp-help">
+<button id="verify" type="button">Entrar</button>
+<p class="hint" id="otp-help">¿No ha llegado? Revisa Spam.</p></div></section>
+<section id="activation" class="hidden" aria-label="Verificar compra de Amazon">
+<h2 id="activacion">Solicitar verificación de tu compra</h2>
+<p class="intro">Indica tu número de pedido de Amazon. Revisaremos la compra antes de conceder acceso al material.</p>
+<p id="identity" class="hint"></p>
+<p id="state" class="status" role="status" aria-live="polite">Comprobando solicitud…</p>
+<form id="claim" class="hidden">
+<label for="order">Número de pedido de Amazon</label>
+<input id="order" name="amazon_order" type="text" maxlength="19" inputmode="text" autocomplete="off" required pattern="[0-9]{3}-[0-9]{7}-[0-9]{7}" placeholder="123-1234567-1234567" aria-describedby="order-help">
+<p class="hint" id="order-help">Encuéntralo en «Mis pedidos» de Amazon.</p>
+<button id="submit" type="submit">Solicitar verificación</button>
+</form>
+<button id="logout" type="button">Cambiar de correo</button>
+</section>
+<section id="approved" class="hidden"><h2>Acceso verificado</h2><p class="intro">Tu compra está aprobada. Accede a todos tus recursos desde un solo lugar.</p><a class="primary" href="../centro/">Entrar en Mi Centro de Estudio</a></section>
+<div id="message" class="status hidden" role="status" aria-live="polite"></div>
+<div class="separate" aria-label="Cómo activar el acceso">
+<h2>¿Cómo activar tu acceso?</h2>
+<p class="intro">Recuerda acceder con tu correo verificado y asociado a la compra.</p>
+<p class="intro">Puedes <a href="./?solicitar=1#activacion">solicitar aquí la verificación de tu compra</a>.</p>
+<a href="../">Volver al Tema 2</a>
+</div></main>
+<script type="module">
+import {createClient} from 'https://esm.sh/@supabase/supabase-js@2';
+const sb=createClient('https://jtyjdrrxmuppulbekfai.supabase.co',"sb_publishable_-9m9ilEwGsM4tEBTVXS3FA_aRlVhNNc",{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+const $=id=>document.getElementById(id);const show=(id,on)=>$(id).classList.toggle('hidden',!on);
+const msg=text=>{show('message',!!text);$('message').textContent=text||''};
+const normalizeAmazonOrder=value=>{const x=String(value||'').normalize('NFKC').replace(/[\u2010-\u2015\u2212]/g,'-').replace(/\s+/g,'');return /^\d{17}$/.test(x)?x.replace(/^(\d{3})(\d{7})(\d{7})$/,'$1-$2-$3'):x;};
+const validAmazonOrder=value=>/^\d{3}-\d{7}-\d{7}$/.test(value);
+const pendingKey='oporadarcadiz-tema2-pending-otp-email';
+let otpEmail=sessionStorage.getItem(pendingKey)||'';
+if(otpEmail){$('email').value=otpEmail;show('otpBox',true)}
+$('magic').onclick=async()=>{
+ const email=$('email').value.trim();
+ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){msg('Introduce un correo válido.');return}
+ $('magic').disabled=true;msg('Solicitando código…');
+ try{
+  const {error}=await sb.auth.signInWithOtp({email});
+  if(error){msg('No se pudo enviar el código. Inténtalo después.');return}
+  otpEmail=email;sessionStorage.setItem(pendingKey,email);
+  show('otpBox',true);$('otp').focus();msg('Código enviado. Escríbelo en «Tu código».');
+ }catch{msg('No se pudo conectar con el servicio de acceso.')}
+ finally{$('magic').disabled=false}
+};
+$('verify').onclick=async()=>{
+ const token=$('otp').value.trim(),loginEmail=$('email').value.trim();
+ if(!otpEmail||loginEmail.toLowerCase()!==otpEmail.toLowerCase()||!/^[0-9]{6}$/.test(token)){
+  msg('Introduce las seis cifras del correo.');return
+ }
+ $('verify').disabled=true;
+ try{
+  const {error}=await sb.auth.verifyOtp({email:otpEmail,token,type:'email'});
+  if(error){msg('Código incorrecto, caducado o ya utilizado. Solicita uno nuevo si es necesario.');return}
+  $('otp').value='';otpEmail='';sessionStorage.removeItem(pendingKey);
+  msg('Identidad verificada.');await refresh();
+ }catch{msg('No se pudo verificar el código.')}
+ finally{$('verify').disabled=false}
+};
+$('logout').onclick=async()=>{otpEmail='';sessionStorage.removeItem(pendingKey);$('otp').value='';show('otpBox',false);await sb.auth.signOut();await refresh()};
+$('claim').addEventListener('submit',async(event)=>{
+ event.preventDefault();
+ const {data:{user},error:authError}=await sb.auth.getUser();
+ if(authError||!user){msg('Verifica tu correo para enviar el pedido.');return}
+ const order=normalizeAmazonOrder($('order').value);
+ if(!validAmazonOrder(order)){msg('Comprueba el pedido de Amazon. Ejemplo: 123-1234567-1234567.');return}
+ $('submit').disabled=true;
+ msg('Registrando solicitud…');
+ try{
+  const {error}=await sb.from('tema2_order_claims').insert({user_id:user.id,channel:'amazon',order_reference:order});
+  if(error){msg('No se pudo registrar la solicitud. Comprueba si ya está registrada.');return}
+  $('order').value='';
+  await refresh();
+  msg('Solicitud enviada correctamente. Consulta su estado en esta página.');
+ }catch{msg('No se pudo conectar con Supabase. Inténtalo de nuevo.')}
+ finally{$('submit').disabled=false}
+});
+const requestMode=new URLSearchParams(location.search).get('solicitar')==='1';
+let checking=false;
+async function refresh(){
+ if(checking)return;
+ checking=true;
+ try{
+  const {data:{user},error:loginError}=await sb.auth.getUser();
+  if(loginError||!user||!user.email_confirmed_at){
+   show('login',true);show('activation',false);show('approved',false);return;
+  }
+  // La confirmación del email NO equivale a la comprobación de compra.
+  // El acceso exige un permiso activo unido a una solicitud Amazon VERIFICADA.
+  const [{data:grants,error:accessError},{data:claims,error:claimError}]=await Promise.all([
+   sb.from('tema2_access').select('active,expires_at,source_claim_id').eq('user_id',user.id),
+   sb.from('tema2_order_claims').select('id,channel,status,submitted_at').eq('user_id',user.id)
+    .order('submitted_at',{ascending:false}).limit(100)
+  ]);
+  if(accessError||claimError){
+   show('login',false);show('activation',false);show('approved',false);
+   msg('No podemos comprobar tu permiso ahora. Inténtalo más tarde.');
+   return;
+  }
+  const verifiedClaims=new Set((claims||[])
+    .filter(c=>c.channel==='amazon'&&c.status==='verified').map(c=>c.id));
+  const allowed=(grants||[]).some(g=>
+   g.active===true&&g.source_claim_id&&verifiedClaims.has(g.source_claim_id)
+   &&(!g.expires_at||Date.parse(g.expires_at)>Date.now())
+  );
+  if(allowed){
+   show('login',false);show('activation',false);show('approved',true);
+   location.replace('../centro/');
+   return;
+  }
+  if(!requestMode){
+   // Usuario identificado sin compra comprobada: no mostrar el material.
+   location.replace('./sin-acceso/');
+   return;
+  }
+  show('login',false);show('activation',true);show('approved',false);
+  $('identity').textContent='Correo verificado: '+user.email;
+  const pending=(claims||[]).some(c=>c.channel==='amazon'&&c.status==='pending');
+  show('claim',!pending);
+  $('state').textContent=pending
+    ?'Solicitud recibida. Tu compra está pendiente de revisión.'
+    :claims?.some(c=>c.channel==='amazon'&&c.status==='rejected')
+    ?'La solicitud anterior fue rechazada. Puedes presentar el pedido correcto.'
+    :'Introduce tu pedido para solicitar la comprobación de compra.';
+ }catch(_){
+  show('login',false);show('activation',false);show('approved',false);
+  msg('No se ha podido comprobar tu acceso. Inténtalo más tarde.');
+ }finally{checking=false}
+}
+$('email').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('magic').click()}});
+$('otp').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('verify').click()}});
+sb.auth.onAuthStateChange(()=>{setTimeout(refresh,0)});refresh();
+</script></body></html>
