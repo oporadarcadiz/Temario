@@ -83,7 +83,7 @@ function check(answer){
  if(answer===null)blank++;else if(answer===q.correct_index)correct++;else wrong++;
  const buttons=[...$('choices').children];buttons.forEach((b,i)=>{b.disabled=true;if(i===q.correct_index)b.classList.add('correct');else if(i===answer)b.classList.add('wrong');});
  $('feedback').textContent=(answer===null?'Sin responder. ':answer===q.correct_index?'¡Correcta! ':'Respuesta incorrecta. ')+
- 'Solución: '+ 'ABCD'[q.correct_index]+'. '+q.alternatives[q.correct_index]+'. '+(q.answer_provenance==='COTEJO_EDITORIAL_BOE'?'La respuesta se cotejó con el BOE, no con una plantilla del tribunal.':'La respuesta está cotejada con la documentación de su examen.')';
+ 'Solución: '+ 'ABCD'[q.correct_index]+'. '+q.alternatives[q.correct_index]+'. '+(q.answer_provenance==='COTEJO_EDITORIAL_BOE'?'La respuesta se cotejó con el BOE, no con una plantilla del tribunal.':'La respuesta está cotejada con la documentación de su examen.');
  show('feedback',true);$('check').classList.add('hide');$('next').textContent=current+1===questions.length?'Ver resultado':'Siguiente pregunta';
 }
 function next(){if(!answered){check(null);return}current++;if(current>=questions.length){finish();return}render()}
