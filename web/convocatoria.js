@@ -7,7 +7,7 @@
  const savedKey='oporadar:radar:saved:v1';
  const validDate=v=>/^\d{4}-\d{2}-\d{2}$/.test(v||'')&&!Number.isNaN(Date.parse(v+'T12:00:00Z'));
  const saved=()=>{try{return new Set(JSON.parse(localStorage.getItem(savedKey)||'[]'))}catch{return new Set()}};
- const save=list=>{try{localStorage.setItem(savedKey,JSON.stringify([...list]))}catch{}};
+ const save=async list=>{try{localStorage.setItem(savedKey,JSON.stringify([...list]));await window.OpoAccount?.save?.();return true;}catch{return false}};
  const niceDate=v=>validDate(v)?new Intl.DateTimeFormat('es-ES',{day:'2-digit',month:'short',year:'numeric',timeZone:'Europe/Madrid'}).format(new Date(v+'T12:00:00Z')):'Sin fecha confirmada';
  const visibleEvent=e=>e?.approved===true&&e?.publicado===true&&!e?.retirado_en&&!e?.retiredAt&&(!e?.publicationStatus||['published','approved','publicada','validada'].includes(String(e.publicationStatus).toLowerCase()));
  const safeUrl=v=>{try{return new URL(v).protocol==='https:'}catch{return false}};
@@ -27,7 +27,7 @@
   const block=el('section','detail-block detail-follow');const list=saved();const button=document.createElement('button');button.type='button';
   const render=following=>{button.textContent=following?'♥ Siguiendo':'♡ Seguir esta convocatoria';button.setAttribute('aria-pressed',String(following));};render(list.has(r.id));
   const note=el('p','detail-notice','Guarda esta convocatoria para seguir sus novedades oficiales. Los avisos por correo se activarán cuando conectemos el servicio de suscripciones.');
-  button.addEventListener('click',async()=>{await window.OpoAccountReady;const account=window.OpoAccount?.get?.();if(!account){location.href='/cuenta.html';return}list.add(r.id);save(list);render(true);note.textContent='Te has inscrito correctamente en el seguimiento. No dejes de consultar manualmente el expediente oficial. Los avisos por correo se activarán al conectar el servicio de suscripciones.';});
+  button.addEventListener('click',async()=>{await window.OpoAccountReady;const account=window.OpoAccount?.get?.();if(!account){location.href='/cuenta.html';return}const following=list.has(r.id);if(following)list.delete(r.id);else list.add(r.id);const persisted=await save(list);render(!following);note.textContent=persisted?(following?'Has dejado de seguir esta convocatoria. Puedes volver a marcar el corazón cuando quieras.':'Te has inscrito correctamente. Cuando actives los avisos por correo, recibirás novedades verificadas. No dejes de consultar manualmente el expediente oficial.'): 'La convocatoria se ha guardado en este navegador. Reintenta la sincronización desde Mi cuenta.';});
   block.append(el('h2','','Sigue esta convocatoria'),el('p','detail-muted','Marca el corazón para tenerla localizada.'),button,note);return block;
  }
  function show(r){
