@@ -90,6 +90,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     if(title){title.replaceChildren('Tu cuenta');title.classList.add('account-title');}
   }
   if(location.pathname==='/convocatorias'||location.pathname==='/convocatorias.html'){
+    document.body.classList.add('radar-page');
     const intro=document.querySelector('.page-intro'),title=intro?.querySelector('h1'),description=intro?.querySelector('h1 + p');
     if(title){const emphasis=document.createElement('em');emphasis.textContent='en seguimiento';title.replaceChildren('Convocatorias ',emphasis);}
     if(description)description.textContent='Filtra las convocatorias y consulta siempre el expediente oficial.';
