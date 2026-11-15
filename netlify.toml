@@ -24,3 +24,12 @@ do
 done
 test -z "$(find .netlify-dist/tema-1 -type f ! -iname '*.html' -print -quit)"
 '''
+
+[functions]
+  directory = "netlify/functions"
+
+[functions."weekly-bulletin"]
+  schedule = "0 7 * * 1"
+
+[functions."followed-updates"]
+  schedule = "0 7 * * *"
