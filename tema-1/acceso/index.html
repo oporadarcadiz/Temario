@@ -250,6 +250,12 @@ $('claim').addEventListener('submit',async(event)=>{
  finally{$('submit').disabled=false}
 });
 const requestMode=new URLSearchParams(location.search).get('solicitar')==='1';
+if(requestMode){
+ document.querySelector('h1').textContent='Solicita la verificación';
+ document.querySelector('main > .intro').textContent='Paso 1 de 2: escribe el correo con el que hiciste la compra. Tras confirmar el código aparecerá el formulario para enviar tu número de pedido.';
+ $('magic').textContent='Continuar con mi correo';
+ document.querySelector('.separate').hidden=true;
+}
 let checking=false;
 async function refresh(){
  if(checking)return;
