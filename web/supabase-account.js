@@ -70,3 +70,28 @@ document.addEventListener('DOMContentLoaded',()=>{
     paragraph.replaceChildren('Tu rumbo.',document.createElement('br'),'Tu ritmo.');
   });
 });
+
+document.addEventListener('DOMContentLoaded',()=>{
+  const header=document.querySelector('.masthead'),nav=header?.querySelector('nav');
+  if(nav){
+    const current=location.pathname;
+    const links=[
+      ['/convocatorias.html','Convocatorias',current==='/convocatorias'||current==='/convocatorias.html'||current==='/convocatoria.html'],
+      ['/tema1-venta.html','Temarios',current==='/tema1-venta'||current==='/tema1-venta.html'],
+      ['/estudiar.html#repaso','Planificador',current==='/estudiar'||current==='/estudiar.html']
+    ];
+    nav.replaceChildren(...links.map(([href,label,active])=>{const link=document.createElement('a');link.href=href;link.textContent=label;if(active)link.setAttribute('aria-current','page');return link;}));
+    let account=header.querySelector('.nav-action');
+    if(!account){account=document.createElement('a');account.className='nav-action';header.append(account);}
+    account.href='/cuenta.html';account.classList.add('account-nav-action');account.replaceChildren('Mi cuenta');
+  }
+  if(location.pathname==='/cuenta'||location.pathname==='/cuenta.html'){
+    const title=document.querySelector('.account-page h1');
+    if(title){title.replaceChildren('Tu cuenta');title.classList.add('account-title');}
+  }
+  if(location.pathname==='/convocatorias'||location.pathname==='/convocatorias.html'){
+    const intro=document.querySelector('.page-intro'),title=intro?.querySelector('h1'),description=intro?.querySelector('h1 + p');
+    if(title){const emphasis=document.createElement('em');emphasis.textContent='en seguimiento';title.replaceChildren('Convocatorias ',emphasis);}
+    if(description)description.textContent='Filtra las convocatorias y consulta siempre el expediente oficial.';
+  }
+});
