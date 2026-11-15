@@ -142,7 +142,7 @@
     visible.slice(0,pageSize).forEach(record=>results.append(renderRow(record)));if(more){more.hidden=visible.length<=pageSize;more.textContent='Cargar más convocatorias ('+Math.max(0,visible.length-pageSize)+' restantes)';}
   }
   document.querySelectorAll('[data-phase]').forEach(button=>button.addEventListener('click',()=>{if(!ready)return;phase=button.dataset.phase;render();if(button.classList.contains('stage-select'))document.getElementById('convocatorias').scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});}));
-  savedFilter.disabled=false;savedFilter.removeAttribute('aria-disabled');savedFilter.firstChild.nodeValue='♡ Mis convocatorias ';
+  savedFilter.disabled=false;savedFilter.removeAttribute('aria-disabled');savedFilter.title='Ver mis convocatorias seguidas';savedFilter.setAttribute('aria-label','Ver mis convocatorias seguidas');savedFilter.firstChild.nodeValue='♡ Mis convocatorias ';
   savedFilter.addEventListener('click',async()=>{await window.OpoAccountReady;if(!window.OpoAccount?.get?.()){location.href='/cuenta.html';return;}onlySaved=!onlySaved;render();});
   archiveControls.forEach(button=>button.addEventListener('click',()=>{archiveView=button.dataset.archive==='archived';render();}));
   Object.values(fields).filter(Boolean).forEach(el=>el.addEventListener('input',()=>{pageSize=25;render();}));document.getElementById('opportunity-more')?.addEventListener('click',()=>{pageSize+=25;render();});
