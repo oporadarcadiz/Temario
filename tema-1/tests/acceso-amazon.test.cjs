@@ -28,12 +28,13 @@ test('rechaza referencias con formatos inesperados',()=>{
   assert.equal(validAmazonOrder(normalizeAmazonOrder(value)),false);
 });
 test('evita reenvíos mientras haya una solicitud pendiente',()=>{
- assert.match(script,/show\('claim',!active&&!pending\)/);
+ assert.match(script,/show\('claim',Boolean\(selected\)&&!pending&&!hasSelectedGrant\)/);
 });
 test('la identidad OTP no es una concesión de compra',()=>{
  assert.match(script,/signInWithOtp/);
  assert.match(script,/from\('tema1_access'\)/);
- assert.match(script,/grant\?\.active===true/);
+ assert.match(script,/g\.active===true&&g\.source_claim_id/);
+ assert.match(script,/c\.channel==='amazon'&&c\.status==='verified'&&c\.asin&&c\.product_edition/);
 });
 test('el servidor bloqueará canales distintos de Amazon al aplicar la migración',()=>{
  assert.match(sql,/NEW.channel IS DISTINCT FROM 'amazon'/);

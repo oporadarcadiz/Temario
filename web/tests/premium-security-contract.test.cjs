@@ -67,7 +67,7 @@ test('derechos de Amazon y Banco Vivo no se cruzan',()=>{
  const sql=read('web/seguridad/BORRADOR_SQL_BANCO_VIVO_NO_APLICAR.sql');
  assert.match(sql,/e\.route='banco-vivo'/);
  assert.match(sql,/auth\.jwt\(\)/);
- assert.match(sql,/method->>'method'='otp'/);
+ assert.match(sql,/m->>'method'='otp'/);
 });
 test('sin publicar archivos exclusivos ni activar funciones Edge',()=>{
  const client=read('web/premium-access.js');

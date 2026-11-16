@@ -49,7 +49,7 @@ if find "$OUT" -type f | grep -Ei '/(banco-vivo|acceso-premium|seguridad|tests|m
   echo "ERROR: ruta reservada en salida pública" >&2
   exit 1
 fi
-if grep -E 'href="/banco-vivo.html"' "$OUT/index.html" "$OUT/estudiar.html" "$OUT/planes.html"; then
+if grep -R -E 'href="/(banco-vivo|acceso-premium)\.html"' "$OUT"; then
   echo "ERROR: enlace de producto no aprobado" >&2
   exit 1
 fi
