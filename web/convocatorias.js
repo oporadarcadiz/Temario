@@ -1,7 +1,7 @@
 'use strict';
 (()=>{
   const labels={all:'Todos',opposition:'Oposición',combined:'Concurso-oposición',merit:'Concurso de méritos',pool:'Bolsa de trabajo'};
-  const stateLabels={published:'Convocatoria publicada',open:'Plazo abierto según última revisión',closed:'Plazo finalizado · en seguimiento',lists:'Lista de admisión verificada',exam:'Fecha de examen verificada'};
+  const stateLabels={published:'Convocatoria publicada',open:'Plazo abierto según última revisión',closed:'Plazo finalizado · en seguimiento',cancelled:'Bases anuladas · sin plazo de solicitudes',lists:'Lista de admisión verificada',exam:'Fecha de examen verificada'};
   const results=document.getElementById('opportunity-results'),summary=document.getElementById('opportunity-summary');
   const revision=document.getElementById('opportunity-revision'),savedFilter=document.getElementById('saved-filter'),savedCount=document.getElementById('saved-count');
   const storageKey='oporadar:radar:saved:v1';
@@ -27,9 +27,35 @@
   const today=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Madrid',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
   // Una fecha de fin vencida nunca se muestra como plazo abierto. El proceso
   // permanece en seguimiento hasta que exista un cierre oficial verificable.
+  // Se muestra la anulación solo cuando el cierre coincide con un evento
+  // de incidencia aprobado y publicado para esta misma convocatoria.
+  function verifiedCancellation(record){
+    const c=record?.closure;
+    if(c?.reason!=='cancelled'||typeof c.text!=='string'||!c.text.trim()||!safeUrl(c.url)||
+       !/^\d{4}-\d{2}-\d{2}$/.test(c.publishedOn||'')||c.publishedOn>today()||
+       record.published!==true||
+       !['aprobado','approved','published','publicada','validada'].includes(String(record.publicationStatus||'').toLowerCase()))return null;
+    const officialEvent=(Array.isArray(record.events)?record.events:[]).some(e=>
+      e?.type==='incidencia'&&e.approved===true&&e.publicado===true&&
+      e.officialPublishedOn===c.publishedOn&&e.url===c.url&&
+      /anulad|sin efectos/i.test(String(e.title||'')));
+    return officialEvent?c:null;
+  }
   function effectiveState(record,date=today()){
-    if(record.state==='open'&&/^\d{4}-\d{2}-\d{2}$/.test(record.applicationsEndOn||'')&&record.applicationsEndOn<date)return 'closed';
-    return record.state==='open'&&record.reviewBefore&&date>=record.reviewBefore?'review':record.state;
+    if(verifiedCancellation(record))return 'cancelled';
+    const start=record.applicationsStartOn,end=record.applicationsEndOn;
+    const valid=value=>/^\d{4}-\d{2}-\d{2}$/.test(value||'');
+    // La situación del plazo nunca depende únicamente de un estado antiguo.
+    if(['open','published'].includes(record.state)&&valid(end)&&end<date)return 'closed';
+    if(record.state==='open'){
+      if(valid(start)&&start>date)return 'published';
+      // Sin fecha de cierre verificable no anunciar plazo abierto.
+      if(!valid(end))return 'review';
+      if(record.reviewBefore&&record.reviewBefore<=date&&record.reviewBefore<end)return 'review';
+      return 'open';
+    }
+    if(record.state==='published'&&valid(start)&&valid(end)&&start<=date&&date<=end)return 'open';
+    return record.state;
   }
   // Excluir ofertas privadas ordinarias. También se admiten programas públicos
   // remunerados aunque los gestione una entidad colaboradora.
@@ -43,7 +69,12 @@
   function addDays(date,days){const value=new Date(date+'T12:00:00Z');value.setUTCDate(value.getUTCDate()+days);return value.toISOString().slice(0,10);}
   function archiveInfo(record,date=today()){
     const c=record.closure;
-    if(c&&c.approved===true&&c.publicado===true&&['completed','cancelled','expired','replaced'].includes(c.reason)&&c.text?.trim()&&safeUrl(c.url)&&/^\d{4}-\d{2}-\d{2}$/.test(c.publishedOn)&&/^\d{4}-\d{2}-\d{2}$/.test(c.verifiedOn)&&c.publishedOn<=c.verifiedOn&&c.verifiedOn<=record.reviewedOn&&c.verifiedOn<=date)return c;
+    // La anulación es una noticia importante: mantenerla visible dos semanas
+    // antes de moverla a la pestaña Archivadas, sin eliminar el historial.
+    const cancellation=verifiedCancellation(record);
+    if(cancellation)return addDays(cancellation.publishedOn,14)<=date?cancellation:null;
+    if(c&&c.reason==='cancelled')return null;
+    if(c&&c.approved===true&&c.publicado===true&&['completed','expired','replaced'].includes(c.reason)&&c.text?.trim()&&safeUrl(c.url)&&/^\d{4}-\d{2}-\d{2}$/.test(c.publishedOn)&&/^\d{4}-\d{2}-\d{2}$/.test(c.verifiedOn)&&c.publishedOn<=c.verifiedOn&&c.verifiedOn<=record.reviewedOn&&c.verifiedOn<=date)return c;
     const final=(record.events||[]).filter(e=>e?.type==='resolucion_final'&&e.approved===true&&e.publicado===true&&!e.retirado_en&&/^\d{4}-\d{2}-\d{2}$/.test(e.officialPublishedOn||'')&&safeUrl(e.url)).sort((a,b)=>b.officialPublishedOn.localeCompare(a.officialPublishedOn))[0];
     return final&&addDays(final.officialPublishedOn,14)<=date?{publishedOn:final.officialPublishedOn,verifiedOn:final.officialPublishedOn,text:'Resultado definitivo publicado. Visible durante dos semanas antes de archivo.',url:final.url}:null;
   }
@@ -117,10 +148,18 @@
     const count=record.places==null?'Plazas sin determinar':record.places+' '+(Number(record.places)===1?'plaza':'plazas');
     const meta=addText('p','opportunity-card-reference','Ref. '+reference+' · '+count);
     const state=effectiveState(record);
-    const status=addText('p','opportunity-card-status',isArchived(record)?'Archivada':state==='review'?'Estado pendiente de verificar':stateLabels[state]||'Convocatoria publicada');
+    const cancellation=verifiedCancellation(record);
+    if(cancellation)card.classList.add('opportunity-row-cancelled');
+    const status=addText('p','opportunity-card-status',cancellation?stateLabels.cancelled:isArchived(record)?'Archivada':state==='review'?'Estado pendiente de verificar':stateLabels[state]||'Convocatoria publicada');
     link.append(head,meta,status);
     const heart=document.createElement('button');heart.type='button';heart.className='opportunity-card-heart';heart.style.setProperty('pointer-events','auto','important');heart.style.zIndex='3';const followed=saved.has(record.id);heart.textContent=followed?'♥':'♡';heart.classList.toggle('is-following',followed);heart.setAttribute('aria-pressed',String(followed));heart.setAttribute('aria-label','Seguir '+record.title);heart.title=followed?'Dejar de seguir esta convocatoria':'Seguir esta convocatoria';heart.addEventListener('click',async event=>{event.preventDefault();event.stopPropagation();await window.OpoAccountReady;const account=window.OpoAccount?.get?.();if(!account){followNotice(record);return;}const wasFollowing=saved.has(record.id);if(wasFollowing)saved.delete(record.id);else saved.add(record.id);const persisted=await save();heart.textContent=wasFollowing?'♡':'♥';heart.classList.toggle('is-following',!wasFollowing);heart.setAttribute('aria-pressed',String(!wasFollowing));heart.setAttribute('aria-label',(wasFollowing?'Seguir ':'Dejar de seguir ')+record.title);heart.title=wasFollowing?'Seguir esta convocatoria':'Dejar de seguir esta convocatoria';followNotice(record,persisted?(wasFollowing?'unfollow':'follow'):'local');});
     card.append(link,heart);
+    if(cancellation){
+      const warning=document.createElement('div');warning.className='opportunity-annulment';
+      warning.append(addText('p','','El anuncio de bases ha quedado sin efectos. Se esperan nuevas bases; las plazas no se declaran suprimidas.'));
+      warning.append(officialLink('Consultar anulación publicada en el BOP de Cádiz',cancellation.url));
+      card.append(warning);
+    }
     return card;
   }
   function newsletterCard(){

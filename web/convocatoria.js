@@ -3,7 +3,7 @@
  const mount=document.getElementById('detail-content'),message=document.getElementById('detail-message');
  const params=new URLSearchParams(location.search);const id=params.get('id');const slug=params.get('slug');
  const labels={opposition:'Oposición',combined:'Concurso-oposición',merit:'Concurso de méritos',pool:'Bolsa de trabajo'};
- const statuses={published:'Convocatoria publicada',open:'Plazo abierto según última revisión',lists:'Listas publicadas',exam:'Examen anunciado'};
+ const statuses={published:'Convocatoria publicada · plazo por confirmar',open:'Plazo abierto según la última revisión',closed:'Plazo de solicitudes finalizado',review:'Plazo sin fecha de cierre confirmada',lists:'Listas publicadas',exam:'Examen anunciado'};
  const savedKey='oporadar:radar:saved:v1';
  const validDate=v=>/^\d{4}-\d{2}-\d{2}$/.test(v||'')&&!Number.isNaN(Date.parse(v+'T12:00:00Z'));
  const saved=()=>{try{return new Set(JSON.parse(localStorage.getItem(savedKey)||'[]'))}catch{return new Set()}};
@@ -22,6 +22,31 @@
   if(r.closure?.url&&r.closure?.publishedOn)all.push({date:r.closure.publishedOn,title:r.closure.text||'Resolución de cierre',url:r.closure.url,type:'closure',approved:visibleEvent(r.closure)});
   const seen=new Set();return all.filter(e=>e.approved&&validDate(e.date)&&safeUrl(e.url)&&e.title).filter(e=>{const k=e.id||[e.type,e.date,e.url].join('|');if(seen.has(k))return false;seen.add(k);return true}).sort((a,b)=>b.date.localeCompare(a.date));
  }
+ function verifiedCancellation(record){
+  const c=record?.closure;
+  if(c?.reason!=='cancelled'||typeof c.text!=='string'||!c.text.trim()||!safeUrl(c.url)||
+     !validDate(c.publishedOn)||c.publishedOn>new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Madrid',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())||
+     record.published!==true||
+     !['aprobado','approved','published','publicada','validada'].includes(String(record.publicationStatus||'').toLowerCase()))return null;
+  const officialEvent=(Array.isArray(record.events)?record.events:[]).some(e=>
+   e?.type==='incidencia'&&e.approved===true&&e.publicado===true&&
+   e.officialPublishedOn===c.publishedOn&&e.url===c.url&&
+   /anulad|sin efectos/i.test(String(e.title||'')));
+  return officialEvent?c:null;
+ }
+ function effectiveState(record,date=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Madrid',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())){
+  if(verifiedCancellation(record))return 'cancelled';
+  const start=record.applicationsStartOn,end=record.applicationsEndOn;
+  if(['open','published'].includes(record.state)&&validDate(end)&&end<date)return 'closed';
+  if(record.state==='open'){
+   if(validDate(start)&&start>date)return 'published';
+   if(!validDate(end))return 'review';
+   if(record.reviewBefore&&record.reviewBefore<=date&&record.reviewBefore<end)return 'review';
+   return 'open';
+  }
+  if(record.state==='published'&&validDate(start)&&validDate(end)&&start<=date&&date<=end)return 'open';
+  return record.state;
+ }
  function isArchived(r){const c=r.closure;const today=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Madrid',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());return !!(c&&c.approved===true&&c.publicado===true&&['completed','cancelled','expired','replaced'].includes(c.reason)&&c.text?.trim()&&validDate(c.publishedOn)&&validDate(c.verifiedOn)&&safeUrl(c.url)&&c.publishedOn<=c.verifiedOn&&c.verifiedOn<=r.reviewedOn&&c.verifiedOn<=today)}
  function followBlock(r){
   const block=el('section','detail-block detail-follow');const list=saved();const button=document.createElement('button');button.type='button';
@@ -32,17 +57,41 @@
  }
  function show(r){
   message.hidden=true;mount.hidden=false;
-  const state=r.state==='open'&&r.reviewBefore&&r.reviewBefore<=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Madrid',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())?'review':r.state;
+  const cancellation=verifiedCancellation(r);
+  const state=effectiveState(r);
   const history=events(r);const head=el('section','detail-head');head.append(el('p','eyebrow',r.organism),el('h1','',r.title),el('p','detail-muted',r.location||'Ámbito no indicado'));
-  const meta=el('div','detail-meta');for(const value of [labels[r.processType]||'Tipo no indicado',isArchived(r)?'Archivada':state==='review'?'Plazo pendiente de revisión':statuses[state]||'En seguimiento',r.places!=null?r.places+' plazas':null])if(value)meta.append(el('span','detail-tag',value));head.append(meta);mount.append(head,followBlock(r));
+  const meta=el('div','detail-meta');for(const value of [labels[r.processType]||'Tipo no indicado',cancellation?'Bases anuladas · sin plazo de solicitudes':isArchived(r)?'Archivada':statuses[state]||'En seguimiento',r.places!=null?r.places+' plazas':null])if(value)meta.append(el('span','detail-tag',value));head.append(meta);mount.append(head);
+  if(cancellation){
+    const alert=el('section','detail-block detail-annulment');
+    alert.setAttribute('role','note');
+    alert.append(el('h2','','Aviso oficial: bases anuladas'),
+     el('p','','El anuncio de bases ha quedado sin efectos. No existe un plazo vigente para solicitar estas plazas al amparo de las bases anuladas.'),
+     el('p','',cancellation.text),
+     el('p','detail-muted','Anulación publicada el '+niceDate(cancellation.publishedOn)+'. La anulación no significa que las plazas hayan sido eliminadas.'));
+    alert.append(official('Consultar anulación en el BOP de Cádiz',cancellation.url));
+    mount.append(alert);
+  }
+  mount.append(followBlock(r));
   const news=el('section','detail-block');news.append(el('h2','','Última novedad confirmada'));if(history.length){const latest=history[0];news.append(el('p','',latest.title),el('p','detail-muted',niceDate(latest.date)),official('Ver anuncio oficial',latest.url))}else news.append(el('p','detail-muted','Aún no se ha registrado un anuncio verificable.'));mount.append(news);
   const essentials=el('section','detail-block');essentials.append(el('h2','','Datos del proceso'));
   const facts=[['Referencia',r.expediente_oficial||r.source_reference||r.reference||r.id],['Organismo',r.organism],['Municipio',r.municipio||r.location],['Provincia',r.provincia],['Ámbito',r.ambito],['Categoría',r.categoria],['Grupo profesional',r.grupo_profesional],['Sistema de acceso',r.selectionSystem||r.sistema_acceso],['Plazas',r.places!=null?String(r.places):null],['Retribución',r.retribucion]];
   const factList=el('dl','detail-facts');for(const [key,value] of facts)if(value!=null&&String(value).trim()){const term=el('dt','',key),definition=el('dd','',String(value));factList.append(term,definition)}essentials.append(factList);mount.append(essentials);
   const imageUrl=r.imageUrl||r.imagen_url; if(safeUrl(imageUrl)&&r.imageApproved===true){const figure=el('figure','detail-figure'),image=document.createElement('img');image.src=imageUrl;image.alt=r.imageAlt||'Imagen documental de la convocatoria';image.loading='lazy';image.decoding='async';figure.append(image);if(r.imageCredit)figure.append(el('figcaption','detail-muted',r.imageCredit));head.append(figure)}
   const requirements=el('section','detail-block');requirements.append(el('h2','','Requisitos de participación'),el('p','',r.requirements||r.requisitos||'Consulta los requisitos y la titulación exigida en las bases oficiales.'));mount.append(requirements);
-  const period=el('section','detail-block');period.append(el('h2','','Plazo de solicitudes'),el('p','',r.period||'Consultar las bases oficiales'));if(validDate(r.applicationsStartOn||r.fecha_inicio_plazo))period.append(el('p','detail-muted','Inicio del plazo: '+niceDate(r.fecha_inicio_plazo||r.applicationsStartOn)));if(validDate(r.applicationsEndOn))period.append(el('p','detail-muted','Fecha de fin publicada: '+niceDate(r.applicationsEndOn)));if(safeUrl(r.url))period.append(official('Consultar convocatoria y bases',r.url));mount.append(period);
-  const docs=el('section','detail-block');docs.append(el('h2','','Documentos y trámites oficiales'));const officialDocs=[['Bases y convocatoria',r.url_bases||r.url],['Boletín oficial',r.boeUrl],['Presentar solicitud',r.url_solicitud||r.applicationUrl]];const unique=new Set();for(const [text,url] of officialDocs)if(safeUrl(url)&&!unique.has(url)){unique.add(url);docs.append(el('p','',null));docs.lastChild.append(official(text,url))}if(unique.size===0)docs.append(el('p','detail-muted','No hay enlaces oficiales comprobados.'));mount.append(docs);
+  const period=el('section','detail-block');
+  const currentNotice=cancellation?'Bases anuladas: no existe un plazo vigente derivado del anuncio original.':
+   state==='closed'?'Plazo de solicitudes finalizado; el proceso puede continuar con listas, pruebas y resoluciones.':
+   state==='review'?'El plazo no tiene una fecha final verificada en este registro. No debe considerarse abierto hasta consultar al organismo.':
+   state==='open'?'Plazo de solicitudes abierto según las fechas de la fuente oficial:':
+   'Convocatoria publicada. Comprueba en la fuente oficial cuándo se abre el plazo.';
+  period.append(el('h2','','Plazo de solicitudes'),el('p','detail-period-state',currentNotice),el('p','',r.period||'Consultar las bases oficiales'));if(validDate(r.applicationsStartOn||r.fecha_inicio_plazo))period.append(el('p','detail-muted','Inicio del plazo: '+niceDate(r.fecha_inicio_plazo||r.applicationsStartOn)));if(validDate(r.applicationsEndOn))period.append(el('p','detail-muted','Fecha de fin publicada: '+niceDate(r.applicationsEndOn)));if(safeUrl(r.url))period.append(official('Consultar convocatoria y bases',r.url));mount.append(period);
+  const docs=el('section','detail-block');docs.append(el('h2','','Documentos y trámites oficiales'));const officialDocs=[
+   [cancellation?'Bases originales (sin efectos)':'Bases y convocatoria',r.url_bases||r.url],
+   ['Boletín oficial de referencia',r.boeUrl],
+   ...(cancellation?[['Anulación oficial de las bases',cancellation.url]]:
+       state==='open'?[['Presentar solicitud en la sede oficial',r.url_solicitud||r.applicationUrl]]:
+       state==='review'?[['Consultar sede y plazo oficial',r.url_solicitud||r.applicationUrl]]:[])
+  ];const unique=new Set();for(const [text,url] of officialDocs)if(safeUrl(url)&&!unique.has(url)){unique.add(url);docs.append(el('p','',null));docs.lastChild.append(official(text,url))}if(unique.size===0)docs.append(el('p','detail-muted','No hay enlaces oficiales comprobados.'));mount.append(docs);
   const detail=el('section','detail-block');detail.append(el('h2','','Historial de anuncios oficiales'));if(!history.length)detail.append(el('p','detail-empty','Todavía no hay novedades confirmadas.'));
   else{const list=el('ol','detail-events');for(const event of history){const row=el('li','');const date=el('time','',niceDate(event.date));date.dateTime=event.date;row.append(date,el('p','detail-event-title',event.title),official('Consultar publicación',event.url));list.append(row)}detail.append(list)}mount.append(detail);
   const stages=r.selectionSystem==='merit'?[['lists','Listas de admisión'],['results','Resultados']]:[['lists','Listas de admisión'],['exam','Examen'],['key','Plantilla'],['results','Resultados']];
