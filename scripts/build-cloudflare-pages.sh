@@ -12,6 +12,9 @@ for name in index.html convocatorias.html convocatoria.html estudiar.html ruta.h
   cp "web/$name" "$OUT/$name"
 done
 
+# La campaña T-Acompañamos ya ha terminado y no forma parte del radar público.
+perl -0pi -e 's#<aside class="wrap employment-alert"[^>]*>.*?</aside>##s' "$OUT/convocatorias.html"
+
 # Solo scripts utilizados por la web pública; se excluye Banco Vivo y checkout.
 for name in account-events.js account-login.js account-page.js account-sync.js app.js backup.js calendar.js convocatoria.js convocatorias.js practice-flow.js practice-viewport.js study-library-cleanup.js study-routes.js study-tools.js supabase-account.js supabase-config.js supabase-data-next.js supabase-data.js ruta.js; do
   test -f "web/$name"
@@ -51,6 +54,10 @@ if find "$OUT" -type f | grep -Ei '/(banco-vivo|acceso-premium|seguridad|tests|m
 fi
 if grep -R -E 'href="/(banco-vivo|acceso-premium)\.html"' "$OUT"; then
   echo "ERROR: enlace de producto no aprobado" >&2
+  exit 1
+fi
+if grep -qi 'T.?Acompañamos' "$OUT/convocatorias.html"; then
+  echo "ERROR: se ha publicado una campaña no aprobada" >&2
   exit 1
 fi
 echo "OpoRadarCádiz: compilación pública segura preparada para Cloudflare Pages."
