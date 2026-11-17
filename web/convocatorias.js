@@ -69,7 +69,12 @@
   function addDays(date,days){const value=new Date(date+'T12:00:00Z');value.setUTCDate(value.getUTCDate()+days);return value.toISOString().slice(0,10);}
   function archiveInfo(record,date=today()){
     const c=record.closure;
-    if(c&&c.approved===true&&c.publicado===true&&['completed','cancelled','expired','replaced'].includes(c.reason)&&c.text?.trim()&&safeUrl(c.url)&&/^\d{4}-\d{2}-\d{2}$/.test(c.publishedOn)&&/^\d{4}-\d{2}-\d{2}$/.test(c.verifiedOn)&&c.publishedOn<=c.verifiedOn&&c.verifiedOn<=record.reviewedOn&&c.verifiedOn<=date)return c;
+    // La anulación es una noticia importante: mantenerla visible dos semanas
+    // antes de moverla a la pestaña Archivadas, sin eliminar el historial.
+    const cancellation=verifiedCancellation(record);
+    if(cancellation)return addDays(cancellation.publishedOn,14)<=date?cancellation:null;
+    if(c&&c.reason==='cancelled')return null;
+    if(c&&c.approved===true&&c.publicado===true&&['completed','expired','replaced'].includes(c.reason)&&c.text?.trim()&&safeUrl(c.url)&&/^\d{4}-\d{2}-\d{2}$/.test(c.publishedOn)&&/^\d{4}-\d{2}-\d{2}$/.test(c.verifiedOn)&&c.publishedOn<=c.verifiedOn&&c.verifiedOn<=record.reviewedOn&&c.verifiedOn<=date)return c;
     const final=(record.events||[]).filter(e=>e?.type==='resolucion_final'&&e.approved===true&&e.publicado===true&&!e.retirado_en&&/^\d{4}-\d{2}-\d{2}$/.test(e.officialPublishedOn||'')&&safeUrl(e.url)).sort((a,b)=>b.officialPublishedOn.localeCompare(a.officialPublishedOn))[0];
     return final&&addDays(final.officialPublishedOn,14)<=date?{publishedOn:final.officialPublishedOn,verifiedOn:final.officialPublishedOn,text:'Resultado definitivo publicado. Visible durante dos semanas antes de archivo.',url:final.url}:null;
   }
