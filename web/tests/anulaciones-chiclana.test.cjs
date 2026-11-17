@@ -77,5 +77,5 @@ test('la ficha no ofrece presentar solicitud con bases anuladas',()=>{
  const s=fs.readFileSync(path.join(root,'convocatoria.js'),'utf8');
  assert.match(s,/Aviso oficial: bases anuladas/);
  assert.match(s,/cancellation\?\[\['Anulación oficial de las bases'/);
- assert.match(s,/\['Presentar solicitud'/);
+ assert.match(s,/state==='open'\?\[\['Presentar solicitud en la sede oficial'/);
 });
