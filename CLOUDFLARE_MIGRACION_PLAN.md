@@ -33,3 +33,7 @@ Los QR impresos con un dominio Netlify **no sobrevivirán si se da de baja ese d
 6. Para notificaciones: email independiente desde Supabase Edge Function + proveedor de correo (requiere cuenta/API secret y remitente autorizado), Telegram separado mediante n8n. Nunca aprobar pedidos desde un aviso.
 
 **Ninguna configuración de Cloudflare se ha aplicado ni se han desplegado cambios de credenciales.**
+
+## Activación de compilación segura
+
+Cloudflare Pages debe compilar con `bash scripts/build-cloudflare-pages.sh` y publicar únicamente `.cloudflare-dist`. Este cambio documental reactiva la compilación al estar conectado a GitHub, pero **no habilita permisos de compra ni publica contenido prémium**. Verificar la URL pública antes de retirar Netlify.
