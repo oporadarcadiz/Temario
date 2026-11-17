@@ -44,8 +44,15 @@ cat > "$OUT/_redirects" <<'REDIRECTS'
 /convocatorias/:slug /convocatoria.html?slug=:slug 200
 REDIRECTS
 
+# Respuesta 404 real para rutas ausentes, sin recurrir a la portada.
+# Los enlaces QR /tema-1/* y los slugs de convocatorias se resuelven por _redirects.
+cat > "$OUT/404.html" <<'HTML404'
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Página no encontrada · OpoRadarCádiz</title></head><body style="font:16px/1.5 system-ui,sans-serif;max-width:40rem;margin:4rem auto;padding:0 1rem"><h1>Página no encontrada</h1><p>La dirección solicitada no existe o no está disponible.</p><p><a href="/">Volver a OpoRadarCádiz</a></p></body></html>
+HTML404
+
 # Fallar cerrando el build ante archivos reservados o ausencias inesperadas.
-for required in index.html estudiar.html convocatorias.html assets/preguntas.json assets/subalterno.json _redirects; do
+for required in index.html estudiar.html convocatorias.html assets/preguntas.json assets/subalterno.json _redirects 404.html; do
   test -f "$OUT/$required"
 done
 if find "$OUT" -type f \( -iname '*.pdf' -o -iname '*.sql' -o -iname '*.md' -o -iname '*.ts' -o -iname '*.cjs' -o -iname '*.zip' -o -iname '*.env' \) | grep -q .; then
