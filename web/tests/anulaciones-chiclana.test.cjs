@@ -33,7 +33,7 @@ function predicateFrom(file,next){
 }
 const predicates=[
  ['convocatorias.js',predicateFrom('convocatorias.js','function effectiveState')],
- ['convocatoria.js',predicateFrom('convocatoria.js','function isArchived')]
+ ['convocatoria.js',predicateFrom('convocatoria.js','function effectiveState')]
 ];
 for(const [page,check] of predicates){
  test(page+': cuatro anulaciones confirmadas',()=>{
