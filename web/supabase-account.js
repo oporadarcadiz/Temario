@@ -45,11 +45,22 @@
 
 document.addEventListener('DOMContentLoaded',()=>{
   const nav=document.querySelector('.masthead nav');
-  if(!nav||nav.querySelector('[data-tema-1-nav]'))return;
-  const link=document.createElement('a');
-  link.href='/tema-1/';
-  link.dataset.tema1Nav='';
-  link.textContent='Tema 1';
-  if(location.pathname.startsWith('/tema-1/'))link.setAttribute('aria-current','page');
-  nav.append(link);
+  if(!nav||nav.dataset.oporadarMenu)return;
+  const items=[
+    ['/convocatorias.html','Convocatorias'],
+    ['/tema1-venta.html','Temarios'],
+    ['/ruta.html','Planificador'],
+    ['/cuenta.html','Mi cuenta']
+  ];
+  const current=location.pathname.replace(/\/$/,'') || '/';
+  nav.replaceChildren(...items.map(([href,label])=>{
+    const link=document.createElement('a');
+    link.href=href;
+    link.textContent=label;
+    if(label==='Mi cuenta')link.className='nav-account';
+    if(current===href.replace(/\.html$/,'') || current===href)link.setAttribute('aria-current','page');
+    return link;
+  }));
+  nav.dataset.oporadarMenu='ready';
+  document.querySelector('.masthead .nav-action')?.remove();
 });
