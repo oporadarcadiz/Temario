@@ -30,7 +30,7 @@ const values=[
 for(const file of files){
  const status=extract(file);
  for(const [record,expected,caseName] of values){
-   test(file+' / '+caseName,()=>assert.equal(status(record),expected));
+   test(file+' / '+caseName,()=>assert.equal(status(record,'2026-11-17'),expected));
  }
 }
 test('las fichas no invitan a presentar solicitudes sin plazo verificado',()=>{
