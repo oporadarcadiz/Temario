@@ -7,6 +7,11 @@ const vm=require('node:vm');
 
 const root=path.resolve(__dirname,'..');
 const today=()=>'2026-11-17';
+class FixedDate extends Date {
+ constructor(...args){super(...(args.length?args:['2026-11-17T12:00:00Z']));}
+ static now(){return Date.parse('2026-11-17T12:00:00Z');}
+}
+
 const safeUrl=s=>{try{return new URL(s).protocol==='https:'}catch{return false}};
 const validDate=s=>/^\d{4}-\d{2}-\d{2}$/.test(s||'');
 const source='https://www.bopcadiz.es/.boletines_pdf/2026/11_noviembre/BOP220_16-11-26.pdf';
@@ -29,7 +34,7 @@ function predicateFrom(file,next){
  const end=code.indexOf(next,start);
  assert.ok(end>start,'La función de anulación debe terminar antes de '+next);
  const fn=code.slice(start,end).trim();
- return vm.runInNewContext('('+fn+')',{today,safeUrl,validDate,Intl,Date,URL});
+ return vm.runInNewContext('('+fn+')',{today,safeUrl,validDate,Intl,Date:FixedDate,URL});
 }
 const predicates=[
  ['convocatorias.js',predicateFrom('convocatorias.js','function effectiveState')],
