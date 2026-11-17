@@ -43,8 +43,19 @@
   }
   function effectiveState(record,date=today()){
     if(verifiedCancellation(record))return 'cancelled';
-    if(record.state==='open'&&/^\d{4}-\d{2}-\d{2}$/.test(record.applicationsEndOn||'')&&record.applicationsEndOn<date)return 'closed';
-    return record.state==='open'&&record.reviewBefore&&date>=record.reviewBefore?'review':record.state;
+    const start=record.applicationsStartOn,end=record.applicationsEndOn;
+    const valid=value=>/^\d{4}-\d{2}-\d{2}$/.test(value||'');
+    // La situación del plazo nunca depende únicamente de un estado antiguo.
+    if(['open','published'].includes(record.state)&&valid(end)&&end<date)return 'closed';
+    if(record.state==='open'){
+      if(valid(start)&&start>date)return 'published';
+      // Sin fecha de cierre verificable no anunciar plazo abierto.
+      if(!valid(end))return 'review';
+      if(record.reviewBefore&&record.reviewBefore<=date&&record.reviewBefore<end)return 'review';
+      return 'open';
+    }
+    if(record.state==='published'&&valid(start)&&valid(end)&&start<=date&&date<=end)return 'open';
+    return record.state;
   }
   // Excluir ofertas privadas ordinarias. También se admiten programas públicos
   // remunerados aunque los gestione una entidad colaboradora.
