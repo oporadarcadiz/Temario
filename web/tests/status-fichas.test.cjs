@@ -12,7 +12,7 @@ function extract(file){
   const source=fs.readFileSync(path.join(root,file),'utf8');
   const a=source.indexOf('function effectiveState('),b=source.indexOf(file==='convocatorias.js'?'function isEligibleOpportunity':'function isArchived',a);
   assert.ok(a>=0&&b>a,'Debe existir cálculo de estado para '+file);
-  const fn=source.slice(a,b).trim();
+  const fn=source.slice(a,b).replace(/(?:\n\s*\/\/[^\n]*)+$/,'').trim();
   return vm.runInNewContext('('+fn+')',{today,validDate,verifiedCancellation:record=>record.testCancellation?{reason:'cancelled'}:null,Intl,Date});
 }
 const values=[
