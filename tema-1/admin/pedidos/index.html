@@ -48,13 +48,14 @@ async function load(){
       td(row,claim.status);
       const actionCell=td(row,"");actionCell.className="review";
       if(claim.status==="pending"){
-        const label=document.createElement("label");label.textContent="Nota de verificación";
-        const note=document.createElement("textarea");note.placeholder="Qué prueba de compra has revisado (mínimo 8 caracteres)";
+        const label=document.createElement("label");label.textContent="Nota de verificación obligatoria (mínimo 8 caracteres)";
+        const note=document.createElement("textarea");note.placeholder="Qué prueba de compra has revisado";
         const actions=document.createElement("div");actions.className="actions";
         for(const [key,caption,bad] of [["approve","Aprobar",false],["reject","Rechazar",true]]){
-          const btn=document.createElement("button");btn.textContent=caption;if(bad)btn.className="bad";
+          const btn=document.createElement("button");btn.textContent=caption;btn.disabled=true;if(bad)btn.className="bad";
           btn.onclick=()=>review(claim.id,key,note.value,btn);actions.append(btn)
         }
+        note.addEventListener("input",()=>{const ready=note.value.trim().length>=8;actions.querySelectorAll("button").forEach(button=>button.disabled=!ready)});
         actionCell.replaceChildren(label,note,actions);
       }else{
         actionCell.textContent=claim.reviewer_note||"Revisada";

@@ -1,7 +1,7 @@
 'use strict';
 (()=>{
   const labels={all:'Todos',opposition:'Oposición',combined:'Concurso-oposición',merit:'Concurso de méritos',pool:'Bolsa de trabajo'};
-  const stateLabels={published:'Convocatoria publicada',open:'Plazo abierto según última revisión',closed:'Plazo finalizado · en seguimiento',cancelled:'Bases anuladas · sin plazo de solicitudes',lists:'Lista de admisión verificada',exam:'Fecha de examen verificada'};
+  const stateLabels={published:'Próximamente · convocatoria publicada',open:'Plazo abierto según última revisión',closed:'Plazo finalizado · en seguimiento',cancelled:'Bases anuladas · sin plazo de solicitudes',lists:'Lista de admisión verificada',exam:'Fecha de examen verificada'};
   const results=document.getElementById('opportunity-results'),summary=document.getElementById('opportunity-summary');
   const revision=document.getElementById('opportunity-revision'),savedFilter=document.getElementById('saved-filter'),savedCount=document.getElementById('saved-count');
   const storageKey='oporadar:radar:saved:v1';
@@ -174,10 +174,10 @@
     document.querySelectorAll('[data-count]').forEach(el=>el.textContent=countFor(el.dataset.count));
     savedFilter.setAttribute('aria-pressed',String(onlySaved));savedCount.textContent=selectedRecords().filter(o=>saved.has(o.id)).length;
     const visible=selectedRecords().filter(o=>(phase==='all'||o.processType===phase)&&(!onlySaved||saved.has(o.id))&&matches(o)).sort(sorting);
-    summary.textContent=`${visible.length} ${visible.length===1?'convocatoria revisada':'convocatorias revisadas'}`;
+    summary.textContent=archiveView?(visible.length?`${visible.length} ${visible.length===1?'convocatoria archivada':'convocatorias archivadas'}`:'No hay convocatorias archivadas todavía'):`${visible.length} ${visible.length===1?'convocatoria revisada':'convocatorias revisadas'}`;
     results.replaceChildren();
     const more=document.getElementById('opportunity-more');if(more)more.hidden=true;
-    if(!visible.length){const empty=document.createElement('div');empty.className='opportunity-empty';const heading=onlySaved?'Aún no sigues procesos en esta selección':archiveView?'Sin convocatorias archivadas en esta selección':`Sin procesos verificados en «${labels[phase]}»`;const copy=onlySaved?'Pulsa «Seguir» en una convocatoria. Inicia sesión para conservarla en tu cuenta.':archiveView?'Se archivan cuando se verifica el cierre, la cancelación o el fin de vigencia. El cierre de solicitudes no termina el seguimiento.':'Consulta «Todos» para ver los procesos registrados. Se incorporarán nuevos procesos tras verificar sus documentos oficiales.';empty.append(addText('h3','',heading),addText('p','',copy));results.append(empty);return;}
+    if(!visible.length){const empty=document.createElement('div');empty.className='opportunity-empty';const heading=onlySaved?'Aún no sigues procesos en esta selección':archiveView?'Aún no hay convocatorias archivadas':`Sin procesos verificados en «${labels[phase]}»`;const copy=onlySaved?'Pulsa «Seguir» en una convocatoria. Inicia sesión para conservarla en tu cuenta.':archiveView?'Aquí aparecerán dos semanas después de que se publique un resultado definitivo o cuando verifiquemos el cierre oficial. El fin del plazo de solicitudes no archiva una convocatoria.':'Consulta «Todos» para ver los procesos registrados. Se incorporarán nuevos procesos tras verificar sus documentos oficiales.';empty.append(addText('h3','',heading),addText('p','',copy));results.append(empty);return;}
     if(!archiveView&&!onlySaved&&phase==='all'&&!fields.search?.value&&!fields.place?.value&&!fields.level?.value&&!fields.deadline?.value&&!fields.municipality?.value&&!fields.category?.value&&!fields.status?.value){results.append(newsletterCard());}
     visible.slice(0,pageSize).forEach(record=>results.append(renderRow(record)));if(more){more.hidden=visible.length<=pageSize;more.textContent='Cargar más convocatorias ('+Math.max(0,visible.length-pageSize)+' restantes)';}
   }
