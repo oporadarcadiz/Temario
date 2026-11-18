@@ -25,7 +25,7 @@ main{background:var(--paper);border-radius:22px 22px 0 0;min-height:68vh;padding
 <section id="play" class="panel hide" aria-live="polite"><div class="meta"><span id="progress"></span><span id="block" class="pill"></span></div><h2 id="question" tabindex="-1"></h2><div class="choices" id="choices" role="group" aria-label="Alternativas de respuesta"></div>
 <div class="actions"><button class="action primary" id="check" type="button" disabled>Comprobar</button><button class="action" id="next" type="button">Dejar en blanco</button></div>
 <div id="feedback" class="hide" role="status"></div><p class="note" id="legal"></p></section>
-<section id="result" class="panel hide" aria-live="polite"><h2>Resultado del test</h2><p id="score"></p><p class="note">Las respuestas en blanco no restan puntos. El resultado es orientativo, no una calificación oficial de oposición.</p><div class="actions"><button class="action primary" type="button" id="again">Nueva práctica</button><a href="../centro/">Centro de Juegos</a></div></section>
+<section id="result" class="panel hide" aria-live="polite"><h2>Resultado del test</h2><p id="score"></p><p class="note">Las respuestas en blanco no restan puntos. Puedes repetir solo los errores y las preguntas en blanco de esta sesión, sin descargar ni duplicar el banco. El resultado es orientativo, no una calificación oficial de oposición.</p><div class="actions"><button class="action primary hide" type="button" id="review">Repasar mis fallos</button><button class="action" type="button" id="again">Nueva práctica</button><a href="../centro/">Centro de Juegos</a></div></section>
 </div></main><footer>OpoRadarCádiz · Constitución Española · Fuente jurídica: BOE-A-1978-31229</footer>
 <script>
 (function(){
@@ -33,12 +33,13 @@ main{background:var(--paper);border-radius:22px 22px 0 0;min-height:68vh;padding
 const $=id=>document.getElementById(id);
 const show=(id,yes)=>$(id).classList.toggle('hide',!yes);
 const state=(message,bad=false)=>{ $('state').textContent=message; $('state').classList.toggle('error',bad); };
-const bank=[];let questions=[],current=0,answered=false,choice=null,correct=0,wrong=0,blank=0,selectedMode=60;
+const bank=[];let questions=[],missed=[],current=0,answered=false,choice=null,correct=0,wrong=0,blank=0,selectedMode=60;
 const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const pathPrefix='/';
 async function init(){
  $('account-link').href=pathPrefix+'tema-1/acceso/';
  if(location.hostname==='oporadarcadiz.github.io'){
+  $('account-link').href='/Temario/tema-1/acceso/';
   state('Abre este test en la web principal de OpoRadarCádiz para utilizar el acceso seguro.');
   const l=document.createElement('a');l.href='https://web-oporadarcadiz.netlify.app/tema-1/juegos/test-60.html';l.textContent='Abrir el test en la web principal';$('access').append(l);return;
  }
@@ -63,10 +64,13 @@ async function init(){
   bank.push(...data.questions);state('Acceso verificado. Tienes 60 preguntas disponibles.');show('setup',true);
  }catch(e){state(e.message||'No se pudo conectar al servicio de preguntas.',true);}
 }
-function start(n){
- selectedMode=n;questions=shuffle(bank.slice()).slice(0,n);current=0;correct=0;wrong=0;blank=0;
+function beginRound(list){
+ if(!list.length)return;
+ questions=list;missed=[];current=0;correct=0;wrong=0;blank=0;
  show('setup',false);show('result',false);show('play',true);render();
 }
+function start(n){selectedMode=n;beginRound(shuffle(bank.slice()).slice(0,n))}
+function reviewMissed(){if(missed.length)beginRound(shuffle(missed.slice()))}
 function render(){
  answered=false;choice=null;const q=questions[current];
  $('progress').textContent='Pregunta '+(current+1)+' de '+questions.length;
@@ -80,7 +84,7 @@ function render(){
 }
 function check(answer){
  if(answered)return;answered=true;const q=questions[current];
- if(answer===null)blank++;else if(answer===q.correct_index)correct++;else wrong++;
+ if(answer===null){blank++;missed.push(q)}else if(answer===q.correct_index)correct++;else{wrong++;missed.push(q)}
  const buttons=[...$('choices').children];buttons.forEach((b,i)=>{b.disabled=true;if(i===q.correct_index)b.classList.add('correct');else if(i===answer)b.classList.add('wrong');});
  $('feedback').textContent=(answer===null?'Sin responder. ':answer===q.correct_index?'¡Correcta! ':'Respuesta incorrecta. ')+
  'Solución: '+ 'ABCD'[q.correct_index]+'. '+q.alternatives[q.correct_index]+'. '+q.explanation;
@@ -89,10 +93,13 @@ function check(answer){
 function next(){if(!answered){check(null);return}current++;if(current>=questions.length){finish();return}render()}
 function finish(){
  show('play',false);show('result',true);$('score').textContent='Aciertos: '+correct+' · Fallos: '+wrong+' · En blanco: '+blank+' · Nota orientativa: '+(10*correct/questions.length).toFixed(2).replace('.',',')+'/10.';
+ show('review',missed.length>0);
+ $('review').textContent='Repasar '+missed.length+' preguntas falladas o en blanco';
 }
 $('all').addEventListener('click',()=>start(60));
 $('quick').addEventListener('click',()=>start(20));
 $('again').addEventListener('click',()=>{show('result',false);show('setup',true)});
+$('review').addEventListener('click',reviewMissed);
 $('check').addEventListener('click',()=>check(choice));
 $('next').addEventListener('click',next);
 window.addEventListener('DOMContentLoaded',()=>{init().catch(()=>state('No se pudo completar la comprobación de acceso.',true))});
