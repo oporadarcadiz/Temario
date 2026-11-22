@@ -141,7 +141,7 @@
     return y.date.localeCompare(x.date)||a.id.localeCompare(b.id);
   }
   function renderRow(record){
-    const detail=record.slug?'/convocatorias/'+encodeURIComponent(record.slug):'/convocatoria.html?id='+encodeURIComponent(record.id);
+    const detail='/convocatoria.html?id='+encodeURIComponent(record.id);
     const card=document.createElement('article');card.className='opportunity-row';card.id=record.id;
     const link=document.createElement('a');link.className='opportunity-card-link';link.href=detail;link.setAttribute('aria-label','Ver convocatoria '+record.title+' de '+record.organism);
     const head=addText('div','opportunity-card-head','');
