@@ -41,7 +41,7 @@ cat > "$OUT/_redirects" <<'REDIRECTS'
 /saber-mas https://oporadarcadiz.github.io/Temario/tema-1/saber-mas/ 302
 /tema-1/* https://oporadarcadiz.github.io/Temario/tema-1/:splat 302
 /tema-2/* https://oporadarcadiz.github.io/Temario/tema-2/:splat 302
-/convocatorias/:slug /convocatoria.html?slug=:slug 200
+/convocatorias/:slug /convocatoria?slug=:slug 302
 REDIRECTS
 
 # Respuesta 404 real para rutas ausentes, sin recurrir a la portada.
