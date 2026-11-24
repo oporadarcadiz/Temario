@@ -1,0 +1,279 @@
+/* Radar Atlántico · capa visual de prueba.
+   Se aplica solo con body.radar-atlantico para no alterar otras páginas. */
+body.radar-atlantico{
+  --night:#0B2942;
+  --deep:#EAF4F7;
+  --ink:#1C3548;
+  --muted:#466176;
+  --gold:#F2B544;
+  --gold-soft:#0B8094;
+  --line:rgba(11,41,66,.14);
+  --teal:#0B8094;
+  --teal-dark:#075F6E;
+  --paper:#F5FAFC;
+  --surface:#FFFFFF;
+  background:var(--paper);
+  color:var(--ink);
+}
+body.radar-atlantico ::selection{background:var(--gold);color:var(--night)}
+body.radar-atlantico :focus-visible{outline-color:var(--teal)}
+body.radar-atlantico em,body.radar-atlantico .eyebrow{color:var(--teal-dark)}
+body.radar-atlantico h1,body.radar-atlantico h2,body.radar-atlantico h3,body.radar-atlantico h4{color:var(--night)}
+body.radar-atlantico .skip{background:var(--gold);color:var(--night)}
+body.radar-atlantico .noscript{background:#FDECEA;color:#7A2E27}
+
+/* Masthead y wordmark */
+body.radar-atlantico .masthead{border-bottom-color:var(--line)}
+body.radar-atlantico .masthead nav a{color:var(--muted)}
+body.radar-atlantico .masthead nav a[aria-current=page]{color:var(--teal-dark)}
+body.radar-atlantico .masthead nav a:after{background:var(--teal)}
+body.radar-atlantico .masthead nav .nav-account{background:var(--teal);color:#fff;box-shadow:0 3px 0 var(--teal-dark)}
+body.radar-atlantico .masthead nav .nav-account:hover{background:var(--teal-dark);color:#fff}
+body.radar-atlantico .nav-action,body.radar-atlantico .nav-action>span{color:var(--teal-dark)}
+body.radar-atlantico .wordmark{color:var(--night)}
+body.radar-atlantico .wordmark small,body.radar-atlantico .wordmark small:before{color:var(--teal-dark)}
+
+/* Botones */
+body.radar-atlantico .button.gold,body.radar-atlantico .detail-actions button,
+body.radar-atlantico .load-more-wrap button,body.radar-atlantico .study-tools button{
+  background:var(--gold);color:var(--night);border-color:var(--gold);box-shadow:0 3px 0 #C58A26
+}
+body.radar-atlantico .button.gold:hover:not(:disabled){background:#FFD36B;box-shadow:0 3px 0 #C58A26}
+body.radar-atlantico .button.gold:disabled{background:#DCE9EE;color:#6E8494;box-shadow:none}
+body.radar-atlantico .home-outline{border-color:var(--teal);color:var(--teal-dark)}
+body.radar-atlantico .home-outline:hover{background:#E3F3F6}
+body.radar-atlantico .quiet{color:var(--teal-dark);border-color:var(--teal)}
+
+/* Portada */
+body.radar-atlantico .bridge-copy{color:var(--ink)}
+body.radar-atlantico .intro,body.radar-atlantico .home-micro{color:var(--muted)}
+body.radar-atlantico .eyebrow-line:before{background:var(--teal)}
+body.radar-atlantico .radar-field{background:radial-gradient(circle,#0B80940A 0%,#0B294210 50%,transparent 70%)}
+body.radar-atlantico .radar-ring{border-color:rgba(11,128,148,.38)}
+body.radar-atlantico .radar-axis{background:rgba(11,41,66,.10)}
+body.radar-atlantico .radar-sweep{background:conic-gradient(from 0deg,transparent 0deg,transparent 267deg,#0B809400 268deg,#0B809415 320deg,#0B80944A 359deg,transparent 360deg)}
+body.radar-atlantico .radar-point{background:var(--teal);box-shadow:0 0 13px #0B809470}
+body.radar-atlantico .radar-logo{background:#E4F0F4;box-shadow:0 0 60px #0B809414,0 20px 45px #0B29421F,0 0 0 1px #0B809436}
+body.radar-atlantico .convocation-timeline{border-top-color:var(--line)}
+body.radar-atlantico .stage-point{background:#fff;border-color:var(--teal);box-shadow:0 0 12px #0B809418}
+body.radar-atlantico .stage-point:after{background:var(--teal)}
+body.radar-atlantico .stage-title,body.radar-atlantico .stage-select .stage-title{color:var(--ink)}
+body.radar-atlantico .stage-select:hover .stage-title,body.radar-atlantico .stage-select[aria-pressed=true] .stage-title{color:var(--teal-dark)}
+body.radar-atlantico .stage-select[aria-pressed=true] .stage-point{background:var(--teal);box-shadow:0 0 20px #0B809433}
+body.radar-atlantico .stage-select[aria-pressed=true] .stage-point:after{background:#fff}
+body.radar-atlantico .phase-count{color:var(--teal-dark)}
+body.radar-atlantico .horizon{background:#E7F1F5;border-color:var(--line)}
+body.radar-atlantico .horizon>.wrap{color:var(--night)}
+body.radar-atlantico .horizon i{color:var(--teal-dark)}
+body.radar-atlantico .home-path-grid a{background:var(--surface);border-color:var(--line)}
+body.radar-atlantico .home-path-grid a:hover{background:#E9F6F8}
+body.radar-atlantico .home-path-grid span{color:var(--teal-dark)}
+body.radar-atlantico .home-path-grid small{color:var(--muted)}
+
+/* Convocatorias: cabecera, avisos y filtros */
+body.radar-atlantico .page-intro>p:last-child,
+body.radar-atlantico .opportunity-local-note,
+body.radar-atlantico .opportunity-revision{color:var(--muted)}
+body.radar-atlantico .employment-alert{background:var(--surface);border-color:var(--teal);box-shadow:0 17px 35px #0B294212}
+body.radar-atlantico .employment-alert>p{color:var(--muted)}
+body.radar-atlantico .employment-alert strong{color:var(--night)}
+body.radar-atlantico .employment-alert>a{color:var(--teal-dark)}
+body.radar-atlantico .opportunities{border-bottom-color:var(--line)}
+body.radar-atlantico .section-heading>p{color:var(--muted)}
+body.radar-atlantico .radar-fields label{color:var(--muted)}
+body.radar-atlantico .radar-fields input,body.radar-atlantico .radar-fields select,
+body.radar-atlantico .account-box input,body.radar-atlantico .account-box select,
+body.radar-atlantico .study-tools select{background:var(--surface);color:var(--ink);border-color:var(--line)}
+body.radar-atlantico .radar-fields input:focus,body.radar-atlantico .radar-fields select:focus{border-color:var(--teal)}
+body.radar-atlantico .phase-filter{background:var(--surface);color:var(--muted);border-color:var(--line)}
+body.radar-atlantico .phase-filter>span{color:var(--teal-dark)}
+body.radar-atlantico .phase-filter:hover{color:var(--ink);border-color:var(--teal)}
+body.radar-atlantico .phase-filter[aria-pressed=true]{background:#E3F3F6;color:var(--teal-dark);border-color:var(--teal)}
+body.radar-atlantico .saved-filter{background:var(--surface);color:var(--teal-dark);border-color:var(--teal)}
+body.radar-atlantico .saved-filter:hover,body.radar-atlantico .saved-filter[aria-pressed=true]{background:#E3F3F6;border-color:var(--teal)}
+body.radar-atlantico .saved-filter:disabled{color:#7A8E9D;border-color:var(--line)}
+body.radar-atlantico .opportunity-toolbar>p{color:var(--muted)}
+body.radar-atlantico .compact-list-legend{background:#E7F1F5;color:var(--night);border-bottom-color:var(--line)}
+body.radar-atlantico .radar-disclosure-button{background:var(--surface);border-color:var(--teal);color:var(--teal-dark)}
+body.radar-atlantico .radar-disclosure-button:hover{background:#E3F3F6;border-color:var(--teal)}
+body.radar-atlantico .follow-notice{background:var(--surface);border-color:var(--teal);color:var(--ink);box-shadow:0 22px 65px #0B294226}
+body.radar-atlantico .follow-notice p{color:var(--muted)}
+body.radar-atlantico .follow-notice h2{color:var(--night)}
+body.radar-atlantico .follow-notice-actions button{color:var(--teal-dark);border-color:var(--line)}
+body.radar-atlantico .follow-notice-actions .button{background:var(--gold);color:var(--night);border-color:var(--gold)}
+
+/* Convocatorias: tarjetas y seguimiento */
+body.radar-atlantico #opportunity-results .opportunity-row{background:var(--surface);border-color:var(--line);box-shadow:0 2px 10px #0B294212}
+body.radar-atlantico #opportunity-results .opportunity-card-link:hover,
+body.radar-atlantico #opportunity-results .opportunity-card-link:focus-visible{background:#F0F9FB}
+body.radar-atlantico #opportunity-results .opportunity-card-head h3{color:var(--night)}
+body.radar-atlantico #opportunity-results .opportunity-card-organism,
+body.radar-atlantico #opportunity-results .opportunity-card-reference{color:var(--muted)}
+body.radar-atlantico #opportunity-results .opportunity-card-status{color:var(--teal-dark)}
+body.radar-atlantico #opportunity-results .opportunity-card-heart{color:#9AB1BD}
+body.radar-atlantico #opportunity-results .opportunity-row-cancelled{background:#FFF4EC;border-color:#D98A4A}
+body.radar-atlantico #opportunity-results .opportunity-row-cancelled .opportunity-card-status{color:#A4521F}
+body.radar-atlantico #opportunity-results .opportunity-annulment{color:#6B3410}
+body.radar-atlantico #opportunity-results .opportunity-annulment a{color:var(--teal-dark)}
+body.radar-atlantico .opportunity-empty{background:var(--surface);border-color:var(--line);color:var(--muted)}
+body.radar-atlantico .state-open{color:var(--teal-dark);border-color:#0B809455;background:#0B80940C}
+body.radar-atlantico .opportunity-places strong{color:var(--teal-dark)}
+body.radar-atlantico .opportunity-links,body.radar-atlantico .opportunity-links a,body.radar-atlantico .opportunity-links button{color:var(--teal-dark)}
+body.radar-atlantico .opportunity-bases,body.radar-atlantico .municipal-sources a,
+body.radar-atlantico .municipal-sources summary{color:var(--teal-dark)}
+body.radar-atlantico .opportunity-requirements{border-left-color:var(--teal);background:#E3F3F6;color:var(--ink)}
+body.radar-atlantico .tracking-panel{background:var(--surface);border-color:var(--line);box-shadow:0 17px 35px #0B294212}
+body.radar-atlantico .tracking-mark{border-color:#B9CDD6;color:var(--muted)}
+body.radar-atlantico .tracking-done .tracking-mark,body.radar-atlantico .tracking-now .tracking-mark{background:var(--teal);border-color:var(--teal);color:#fff}
+body.radar-atlantico .tracking-review .tracking-mark{border-color:var(--teal);color:var(--teal-dark)}
+body.radar-atlantico .tracking-step a{color:var(--teal-dark)}
+body.radar-atlantico .tracking-note{color:var(--muted);border-top-color:var(--line)}
+body.radar-atlantico .municipal-sources{background:var(--surface);border-color:var(--line);color:var(--muted)}
+body.radar-atlantico .municipal-sources .source-note{color:var(--muted)}
+body.radar-atlantico .study-tools{background:var(--surface);border-color:var(--line)}
+body.radar-atlantico .study-tools p{color:var(--muted)}
+body.radar-atlantico .calendar-item{border-color:var(--line)}
+body.radar-atlantico .calendar-item a{color:var(--teal-dark)}
+
+/* Ficha de convocatoria */
+body.radar-atlantico .detail-back,body.radar-atlantico .detail-head a,
+body.radar-atlantico .detail-block a{color:var(--teal-dark)}
+body.radar-atlantico .detail-head,body.radar-atlantico .detail-block{background:var(--surface);border-color:var(--line);box-shadow:0 14px 32px #0B294210}
+body.radar-atlantico .detail-head h1{color:var(--night)}
+body.radar-atlantico .detail-muted,body.radar-atlantico .detail-notice{color:var(--muted)}
+body.radar-atlantico .detail-tag{border-color:#0B809455;color:var(--teal-dark)}
+body.radar-atlantico .detail-events li{border-left-color:var(--teal)}
+body.radar-atlantico .detail-events time{color:var(--muted)}
+body.radar-atlantico .detail-empty{background:#EAF4F7;color:var(--ink)}
+body.radar-atlantico .detail-phase{background:var(--surface);border-color:var(--line);color:var(--muted)}
+body.radar-atlantico .detail-phase strong{color:var(--night)}
+body.radar-atlantico .detail-facts dt{color:var(--teal-dark)}
+body.radar-atlantico .detail-facts dd{color:var(--ink)}
+body.radar-atlantico .detail-annulment{background:#FFF4EC;border-color:#D98A4A;color:#6B3410}
+body.radar-atlantico .detail-annulment h2,body.radar-atlantico .detail-annulment a{color:#8A3B12}
+body.radar-atlantico .detail-period-rectification{border-left-color:var(--teal);color:var(--ink)}
+body.radar-atlantico .site-footer{border-top:1px solid var(--line);color:var(--muted);font-size:.85rem}
+
+/* Estudiar: rutas, biblioteca y consola */
+body.radar-atlantico .route{background:var(--surface);border-color:var(--line);color:var(--ink)}
+body.radar-atlantico .route-number,body.radar-atlantico .library-index{color:#B8CDD6}
+body.radar-atlantico .route h3{color:var(--night)}
+body.radar-atlantico .route-access{color:var(--teal-dark)}
+body.radar-atlantico .route-count strong{color:var(--teal-dark)}
+body.radar-atlantico .route-count span,body.radar-atlantico .sample-source>p:last-child{color:var(--muted)}
+body.radar-atlantico .active-route,body.radar-atlantico .route-choice.active-route{background:#E9F6F8;border-color:var(--teal)}
+body.radar-atlantico .route-choice:not(.active-route):hover,body.radar-atlantico .prepared-route:hover{background:#F0F9FB}
+body.radar-atlantico .muted-route{color:var(--muted)}
+body.radar-atlantico .pending{color:var(--muted);border-color:var(--line)}
+body.radar-atlantico .source-context{color:var(--muted)}
+body.radar-atlantico .exam-library{border-top-color:var(--line)}
+body.radar-atlantico .library-summary,body.radar-atlantico .library-detail .eyebrow,
+body.radar-atlantico .library-links,body.radar-atlantico .library-actions p{color:var(--muted)}
+body.radar-atlantico .library-group h3{color:var(--teal-dark)}
+body.radar-atlantico .library-row{border-top-color:var(--line)}
+body.radar-atlantico .library-row:last-child{border-bottom-color:var(--line)}
+body.radar-atlantico .library-detail h4{color:var(--ink)}
+body.radar-atlantico .library-links a:hover{color:var(--teal-dark)}
+body.radar-atlantico .library-actions strong{color:var(--night)}
+body.radar-atlantico .library-actions button:disabled{color:#7A8E9D;border-color:var(--line)}
+body.radar-atlantico .practice{background:var(--deep);border-color:var(--line)}
+body.radar-atlantico .console{background:var(--surface);border-color:var(--line);box-shadow:0 25px 60px #0B294212}
+body.radar-atlantico .console-top>span:last-child,body.radar-atlantico .console-seal>span{color:var(--teal-dark)}
+body.radar-atlantico .console h3{color:var(--night)}
+body.radar-atlantico .console-divider{background:var(--line)}
+body.radar-atlantico .console form>label{color:var(--ink)}
+body.radar-atlantico select option{background:var(--surface);color:var(--ink)}
+body.radar-atlantico .mode-note,body.radar-atlantico .console-note,
+body.radar-atlantico .replace-note,body.radar-atlantico .reading-control p,
+body.radar-atlantico .console-seal{color:var(--muted)}
+body.radar-atlantico .reading-control{border-top-color:var(--line)}
+body.radar-atlantico .reading-control input{accent-color:var(--teal)}
+body.radar-atlantico .light-panel:before{background:radial-gradient(360px circle at var(--pointer-x) var(--pointer-y),#0B809411,transparent 65%)}
+
+/* Estudiar: sala de preguntas y resultados */
+body.radar-atlantico .signal-room{background:var(--surface);border-color:var(--teal);box-shadow:0 24px 65px #0B294212}
+body.radar-atlantico .room-toolbar{border-bottom-color:var(--line)}
+body.radar-atlantico #room-status{color:var(--muted)}
+body.radar-atlantico .empty-session{background:var(--surface)}
+body.radar-atlantico .empty-index{color:#E3EFF3}
+body.radar-atlantico .empty-session h3,body.radar-atlantico .result-content h3{color:var(--night)}
+body.radar-atlantico .empty-session>p:not(.eyebrow){color:var(--muted)}
+body.radar-atlantico .empty-rule{background:var(--teal)}
+body.radar-atlantico .question-meta{color:var(--muted)}
+body.radar-atlantico #question-position{color:var(--teal-dark)}
+body.radar-atlantico #question-text{color:var(--ink);background:var(--surface)}
+body.radar-atlantico #question-text.fragment-reading span{border-left-color:var(--teal)}
+body.radar-atlantico .option{background:var(--surface);border-color:var(--line);color:var(--ink)}
+body.radar-atlantico .option:hover:not(.locked){border-color:var(--teal);background:#F0F9FB}
+body.radar-atlantico .option:focus-within{outline-color:var(--teal)}
+body.radar-atlantico .option-letter{border-color:#0B809455;color:var(--teal-dark)}
+body.radar-atlantico .option.selected{border-color:var(--teal);background:#E3F3F6}
+body.radar-atlantico .option.correct{border-color:#2F8F6B;background:#E6F5EF;color:#14513D}
+body.radar-atlantico .option.wrong{border-color:#C4564B;background:#FDECEA;color:#7A2E27}
+body.radar-atlantico .option-mark{color:var(--teal-dark)}
+body.radar-atlantico .feedback{border-color:#2F8F6B;background:#E6F5EF;color:#14513D}
+body.radar-atlantico .feedback.is-wrong{border-color:#C4564B;background:#FDECEA;color:#7A2E27}
+body.radar-atlantico .feedback.is-blank{border-color:#C58A26;background:#FFF6E3;color:#6B4A10}
+body.radar-atlantico .official-source{border-top-color:var(--line)}
+body.radar-atlantico .official-source p{color:var(--muted)}
+body.radar-atlantico .source-links{color:var(--teal-dark)}
+body.radar-atlantico .result-score strong{color:var(--teal-dark)}
+body.radar-atlantico .result-score span,body.radar-atlantico #result-message{color:var(--muted)}
+body.radar-atlantico .result-stats{border-color:var(--line)}
+body.radar-atlantico .result-stats strong{color:var(--night)}
+body.radar-atlantico .result-stats span{color:var(--muted)}
+body.radar-atlantico .journey-map{border-top-color:var(--line)}
+body.radar-atlantico .map-heading>p,body.radar-atlantico .map-note{color:var(--muted)}
+body.radar-atlantico .session-map{background:#EAF4F7;border-color:var(--line)}
+body.radar-atlantico .signal-stop{background:var(--surface);border-color:var(--line);color:var(--muted)}
+body.radar-atlantico .signal-stop:hover{border-color:var(--teal)}
+body.radar-atlantico .signal-stop.current{outline-color:var(--teal);outline-offset:3px}
+body.radar-atlantico .signal-stop.answered-correct{border-color:#2F8F6B;background:#E6F5EF;color:#14513D}
+body.radar-atlantico .signal-stop.answered-wrong{border-color:#C4564B;background:#FDECEA;color:#7A2E27}
+body.radar-atlantico .signal-stop.answered-blank{border-color:#79A9D8;background:#E8F2FB;color:#2A587F}
+body.radar-atlantico .signal-stop.answered-marked{border-color:var(--teal);background:#E3F3F6;color:var(--teal-dark)}
+body.radar-atlantico .map-placeholder{border-color:var(--line);color:var(--muted)}
+body.radar-atlantico .map-placeholder span{border-color:var(--line);color:var(--teal-dark)}
+body.radar-atlantico .map-placeholder i{border-color:var(--line)}
+body.radar-atlantico .correct-key{background:#2F8F6B}
+body.radar-atlantico .wrong-key{background:#C4564B}
+body.radar-atlantico .blank-key{background:#79A9D8}
+body.radar-atlantico .pending-key{border-color:#9BB2BE}
+body.radar-atlantico .route-chart-track{background:#DCE9EE;border-color:var(--line)}
+body.radar-atlantico .route-chart-correct{background:var(--teal);box-shadow:0 0 13px #0B809440}
+body.radar-atlantico .route-chart-review{background:var(--gold)}
+body.radar-atlantico .route-chart-stats p{border-left-color:var(--line)}
+body.radar-atlantico .route-chart-stats strong{color:var(--teal-dark)}
+body.radar-atlantico .route-chart-stats span,body.radar-atlantico .route-chart-note{color:var(--muted)}
+body.radar-atlantico .session-log{border-top-color:var(--line)}
+body.radar-atlantico .session-log-heading>p{color:var(--muted)}
+body.radar-atlantico .session-log-item{background:var(--surface);border-color:var(--line);box-shadow:0 13px 25px #0B294210}
+body.radar-atlantico .session-log-date{color:var(--teal-dark)}
+body.radar-atlantico .session-log-item strong{color:var(--night)}
+body.radar-atlantico .session-log-item p{color:var(--muted)}
+body.radar-atlantico .session-log-bar{background:#DCE9EE}
+body.radar-atlantico .session-log-bar span{background:var(--teal)}
+body.radar-atlantico .sources{border-color:var(--line)}
+body.radar-atlantico .source-editorial>p:not(.eyebrow),body.radar-atlantico .source-criteria p{color:var(--muted)}
+body.radar-atlantico .editorial-rule{background:var(--teal)}
+body.radar-atlantico .source-criteria article{border-bottom-color:var(--line)}
+body.radar-atlantico .source-criteria article>span{color:#B8CDD6}
+body.radar-atlantico .source-criteria h3{color:var(--ink)}
+
+/* Estudiar: copia, repaso y pie */
+body.radar-atlantico .portable-map{background:var(--surface);border-color:var(--teal);box-shadow:0 28px 62px #0B29421F,0 3px 15px #0B294210}
+body.radar-atlantico .portable-map:before{border-color:#0B80941E;box-shadow:0 0 0 70px #0B809408,0 0 0 140px #0B809406}
+body.radar-atlantico .portable-kicker{border-bottom-color:var(--line);color:var(--teal-dark)}
+body.radar-atlantico .portable-body h2{color:var(--night)}
+body.radar-atlantico .portable-body p,body.radar-atlantico .portable-note{color:var(--muted)}
+body.radar-atlantico .portable-import{border-color:var(--teal);color:var(--teal-dark)}
+body.radar-atlantico .portable-import:hover,body.radar-atlantico .portable-import:focus-within{background:#E3F3F6;border-color:var(--teal)}
+body.radar-atlantico .portable-note{border-top-color:var(--line)}
+body.radar-atlantico .tool-question{color:var(--ink)}
+body.radar-atlantico .tool-choices button{background:var(--surface);border-color:var(--line);color:var(--ink)}
+body.radar-atlantico .sample-next a{color:var(--teal-dark)}
+body.radar-atlantico .route-detail-card{background:var(--surface);border-color:var(--line)}
+body.radar-atlantico .route-detail-card>p:not(.eyebrow),body.radar-atlantico .route-status{color:var(--muted)}
+body.radar-atlantico footer{border-top-color:var(--line)}
+body.radar-atlantico footer p{color:var(--teal-dark)}
+body.radar-atlantico footer>span{color:var(--muted)}
