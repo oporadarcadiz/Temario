@@ -47,6 +47,7 @@ Deno.serve(async (req) => {
   const from = Deno.env.get("OPORADAR_ALERT_EMAIL_FROM");
   const to = Deno.env.get("OPORADAR_ALERT_EMAIL_TO") || "oporadarcadiz@gmail.com";
   const telegramWebhook = Deno.env.get("OPORADAR_ALERT_N8N_WEBHOOK_URL");
+  const telegramSecret = Deno.env.get("OPORADAR_ALERT_N8N_SECRET");
   const result: Record<string,string> = { email: "pendiente", telegram: "pendiente" };
 
   // Correo directo a Resend: no depende del resultado de Telegram ni de n8n.
@@ -81,12 +82,12 @@ Deno.serve(async (req) => {
   } else if (outbox.email_sent_at) result.email = "ya enviado";
 
   // Telegram es opcional e independiente: n8n recibe solo metadatos no sensibles.
-  if (!outbox.telegram_sent_at && telegramWebhook && outbox.telegram_attempts < 10) {
+  if (!outbox.telegram_sent_at && telegramWebhook && telegramSecret && telegramSecret.length >= 32 && outbox.telegram_attempts < 10) {
     try {
       const url = new URL(telegramWebhook);
       if (url.protocol !== "https:") throw new Error("El webhook de Telegram debe usar HTTPS");
       const response = await fetch(url.toString(), {
-        method: "POST", headers: { "content-type": "application/json" },
+        method: "POST", headers: { "content-type": "application/json", "x-oporadar-n8n-secret": telegramSecret },
         body: JSON.stringify({ event_id: "tema1-" + id, tipo: "solicitud_tema1", fecha: date, estado: "pending", admin_url: adminPanel }),
       });
       if (!response.ok) throw new Error("n8n HTTP " + response.status);
