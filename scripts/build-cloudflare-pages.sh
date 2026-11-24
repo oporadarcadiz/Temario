@@ -25,6 +25,8 @@ for name in account-events.js account-login.js account-page.js account-sync.js a
 done
 test -f web/styles.css
 cp web/styles.css "$OUT/styles.css"
+test -f web/radar-atlantico.css
+cp web/radar-atlantico.css "$OUT/radar-atlantico.css"
 cp web/convocatorias-compact.css "$OUT/convocatorias-compact.css"
 
 # Recursos públicos mínimos; las preguntas prémium se entregan exclusivamente desde Supabase.

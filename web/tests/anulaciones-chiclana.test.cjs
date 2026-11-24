@@ -6,76 +6,67 @@ const path=require('node:path');
 const vm=require('node:vm');
 
 const root=path.resolve(__dirname,'..');
-const today=()=>'2026-11-17';
-class FixedDate extends Date {
- constructor(...args){super(...(args.length?args:['2026-11-17T12:00:00Z']));}
- static now(){return Date.parse('2026-11-17T12:00:00Z');}
+const today='2026-11-17';
+const source=file=>fs.readFileSync(path.join(root,file),'utf8');
+// El cálculo de anulaciones vive en el motor compartido; listado y ficha delegan en él.
+function loadEngine(){
+  const sandbox={window:{},console,URL,Intl,Date,Number,String,Object,Array,Set,Map,RegExp,Error,
+    AbortSignal:{timeout:()=>{}},fetch:async()=>{throw Error('fetch no disponible en pruebas');}};
+  vm.runInNewContext(source('supabase-data.js'),sandbox);
+  return sandbox.window.OpoData;
 }
-
-const safeUrl=s=>{try{return new URL(s).protocol==='https:'}catch{return false}};
-const validDate=s=>/^\d{4}-\d{2}-\d{2}$/.test(s||'');
-const source='https://www.bopcadiz.es/.boletines_pdf/2026/11_noviembre/BOP220_16-11-26.pdf';
-const close={reason:'cancelled',text:'Anulado y dejado sin efectos el anuncio 366.841 del BOP 217. Se aprobarán nuevas bases.',publishedOn:'2026-11-16',verifiedOn:'2026-11-17',url:source};
+const Opo=loadEngine();
+const check=record=>Opo.verifiedCancellation(record,today);
+const origin='https://www.bopcadiz.es/.boletines_pdf/2026/11_noviembre/BOP220_16-11-26.pdf';
+const close={reason:'cancelled',text:'Anulado y dejado sin efectos el anuncio 366.841 del BOP 217. Se aprobarán nuevas bases.',publishedOn:'2026-11-16',verifiedOn:'2026-11-17',url:origin};
 const variants=[
- ['OPO-2026-9db0eed3','9 plazas de Trabajo Social A2'],
- ['OPO-2026-036c5483','2 plazas de Arquitectura A1'],
- ['OPO-2026-217b5225','1 plaza de Psicología A1'],
- ['OPO-2026-91716214','1 plaza de Veterinaria A1'],
+  ['OPO-2026-9db0eed3','9 plazas de Trabajo Social A2'],
+  ['OPO-2026-036c5483','2 plazas de Arquitectura A1'],
+  ['OPO-2026-217b5225','1 plaza de Psicología A1'],
+  ['OPO-2026-91716214','1 plaza de Veterinaria A1'],
 ];
 const record=(id,title,override={})=>({
- id,title,published:true,publicationStatus:'aprobado',
- closure:{...close},events:[{id:'EVT-'+id+'-INC',type:'incidencia',title:'Anulado el anuncio de bases · '+title,officialPublishedOn:'2026-11-16',url:source,approved:true,publicado:true,publicationStatus:'approved'}],
- ...override
+  id,title,published:true,publicationStatus:'aprobado',
+  closure:{...close},events:[{id:'EVT-'+id+'-INC',type:'incidencia',title:'Anulado el anuncio de bases · '+title,officialPublishedOn:'2026-11-16',url:origin,approved:true,publicado:true,publicationStatus:'approved'}],
+  ...override
 });
-function predicateFrom(file,next){
- const code=fs.readFileSync(path.join(root,file),'utf8');
- const start=code.indexOf('function verifiedCancellation(record){');
- assert.notEqual(start,-1,'El archivo debe contener la comprobación de anulación');
- const end=code.indexOf(next,start);
- assert.ok(end>start,'La función de anulación debe terminar antes de '+next);
- const fn=code.slice(start,end).trim();
- return vm.runInNewContext('('+fn+')',{today,safeUrl,validDate,Intl,Date:FixedDate,URL});
-}
-const predicates=[
- ['convocatorias.js',predicateFrom('convocatorias.js','function effectiveState')],
- ['convocatoria.js',predicateFrom('convocatoria.js','function effectiveState')]
-];
-for(const [page,check] of predicates){
- test(page+': cuatro anulaciones confirmadas',()=>{
+test('cuatro anulaciones confirmadas',()=>{
   for(const [id,title] of variants)assert.equal(check(record(id,title))?.reason,'cancelled');
- });
- test(page+': no basta con tener un campo closure',()=>{
+});
+test('no basta con tener un campo closure',()=>{
   const [id,title]=variants[0];
   assert.equal(check(record(id,title,{events:[]})),null);
   assert.equal(check(record(id,title,{publicationStatus:'pendiente'})),null);
   assert.equal(check(record(id,title,{published:false})),null);
- });
- test(page+': evento no aprobado / no publicado / URL diferente',()=>{
+});
+test('evento no aprobado / no publicado / retirado / URL o fecha diferentes',()=>{
   const [id,title]=variants[0],r=record(id,title);
   const base=r.events[0];
-  for(const e of [{...base,approved:false},{...base,publicado:false},{...base,url:'https://otro-ejemplo.org/'},{...base,officialPublishedOn:'2026-11-15'}]){
-   assert.equal(check({...r,events:[e]}),null);
+  for(const e of [{...base,approved:false},{...base,publicado:false},{...base,retirado_en:today},
+    {...base,url:'https://otro-ejemplo.org/'},{...base,officialPublishedOn:'2026-11-15'}]) {
+    assert.equal(check({...r,events:[e]}),null);
   }
- });
- test(page+': no confundir plazas con bases anuladas',()=>{
+});
+test('no confundir plazas con bases anuladas',()=>{
   const [id,title]=variants[0];
   assert.equal(check(record(id,title,{closure:{...close,reason:'completed'}})),null);
- });
- test(page+': anulación futura no se anuncia prematuramente',()=>{
+});
+test('anulación futura no se anuncia prematuramente',()=>{
   const [id,title]=variants[0];
   assert.equal(check(record(id,title,{closure:{...close,publishedOn:'2026-12-01'}})),null);
- });
-}
+});
 test('el listado muestra la advertencia y la fuente oficial',()=>{
- const s=fs.readFileSync(path.join(root,'convocatorias.js'),'utf8');
- assert.match(s,/Bases anuladas · sin plazo de solicitudes/);
- assert.match(s,/Consultar anulación publicada en el BOP de Cádiz/);
- const html=fs.readFileSync(path.join(root,'convocatorias.html'),'utf8');
- assert.match(html,/<option value="cancelled">Bases anuladas<\/option>/);
+  const list=source('convocatorias.js');
+  assert.match(list,/Consultar anulación publicada en el BOP de Cádiz/);
+  assert.match(list,/window\.OpoData\.verifiedCancellation\(/);
+  const html=source('convocatorias.html');
+  assert.match(html,/<option value="cancelled">Suspendida o bases anuladas<\/option>/);
+  assert.match(source('supabase-data.js'),/Inscripción: sin plazo vigente derivado de unas bases anuladas o suspendidas/);
 });
 test('la ficha no ofrece presentar solicitud con bases anuladas',()=>{
- const s=fs.readFileSync(path.join(root,'convocatoria.js'),'utf8');
- assert.match(s,/Aviso oficial: bases anuladas/);
- assert.match(s,/cancellation\?\[\['Anulación oficial de las bases'/);
- assert.match(s,/state==='open'\?\[\['Presentar solicitud en la sede oficial'/);
+  const detail=source('convocatoria.js');
+  assert.match(detail,/Aviso oficial: bases anuladas/);
+  assert.match(detail,/cancellation\?\[\['Anulación oficial de las bases'/);
+  assert.match(detail,/state==='open'\?\[\['Presentar solicitud en la sede oficial'/);
+  assert.match(detail,/window\.OpoData\.verifiedCancellation\(/);
 });
