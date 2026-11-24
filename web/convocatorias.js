@@ -1,7 +1,8 @@
 'use strict';
 (()=>{
   const labels={all:'Todos',opposition:'Oposición',combined:'Concurso-oposición',merit:'Concurso de méritos',pool:'Bolsa de trabajo'};
-  const stateLabels={published:'Próximamente · convocatoria publicada',open:'Plazo abierto según última revisión',closed:'Plazo finalizado · en seguimiento',cancelled:'Bases anuladas · sin plazo de solicitudes',lists:'Lista de admisión verificada',exam:'Fecha de examen verificada'};
+  const stateLabels=window.OpoData.STATE_LABELS;
+  const stateLabel=state=>window.OpoData.stateLabel(state);
   const results=document.getElementById('opportunity-results'),summary=document.getElementById('opportunity-summary');
   const revision=document.getElementById('opportunity-revision'),savedFilter=document.getElementById('saved-filter'),savedCount=document.getElementById('saved-count');
   const storageKey='oporadar:radar:saved:v1';
@@ -30,33 +31,11 @@
   // permanece en seguimiento hasta que exista un cierre oficial verificable.
   // Se muestra la anulación solo cuando el cierre coincide con un evento
   // de incidencia aprobado y publicado para esta misma convocatoria.
-  function verifiedCancellation(record){
-    const c=record?.closure;
-    if(c?.reason!=='cancelled'||typeof c.text!=='string'||!c.text.trim()||!safeUrl(c.url)||
-       !/^\d{4}-\d{2}-\d{2}$/.test(c.publishedOn||'')||c.publishedOn>today()||
-       record.published!==true||
-       !['aprobado','approved','published','publicada','validada'].includes(String(record.publicationStatus||'').toLowerCase()))return null;
-    const officialEvent=(Array.isArray(record.events)?record.events:[]).some(e=>
-      e?.type==='incidencia'&&e.approved===true&&e.publicado===true&&
-      e.officialPublishedOn===c.publishedOn&&e.url===c.url&&
-      /anulad|sin efectos/i.test(String(e.title||'')));
-    return officialEvent?c:null;
-  }
+  const verifiedCancellation=record=>window.OpoData.verifiedCancellation(record);
   function effectiveState(record,date=today()){
-    if(verifiedCancellation(record))return 'cancelled';
-    const start=record.applicationsStartOn,end=record.applicationsEndOn;
-    const valid=value=>/^\d{4}-\d{2}-\d{2}$/.test(value||'');
-    // La situación del plazo nunca depende únicamente de un estado antiguo.
-    if(['open','published'].includes(record.state)&&valid(end)&&end<date)return 'closed';
-    if(record.state==='open'){
-      if(valid(start)&&start>date)return 'published';
-      // Sin fecha de cierre verificable no anunciar plazo abierto.
-      if(!valid(end))return 'review';
-      if(record.reviewBefore&&record.reviewBefore<=date&&record.reviewBefore<end)return 'review';
-      return 'open';
-    }
-    if(record.state==='published'&&valid(start)&&valid(end)&&start<=date&&date<=end)return 'open';
-    return record.state;
+    // Un único motor de estados para listado y ficha: prevalece la novedad
+    // oficial más avanzada, sin crear una ficha nueva ni duplicar el ID.
+    return window.OpoData.deriveState(record,date);
   }
   // Excluir ofertas privadas ordinarias. También se admiten programas públicos
   // remunerados aunque los gestione una entidad colaboradora.
@@ -101,13 +80,17 @@
   async function save(){try{localStorage.setItem(storageKey,JSON.stringify([...saved]));await window.OpoAccount?.save?.();return true;}catch{return false;}}
   function trackStep(label,detail,status,url){const item=document.createElement('li');item.className='tracking-step tracking-'+status;item.append(addText('span','tracking-mark',status==='done'?'✓':'·'));const body=document.createElement('div');body.append(addText('strong','',label),addText('p','',detail));if(safeUrl(url))body.append(officialLink('Ver documento',url));item.append(body);return item;}
   function officialHistory(record){
-    const events=[{date:record.publishedOn,title:'Convocatoria en el organismo',url:record.url},{date:record.boePublishedOn,title:'Publicación en el '+(record.officialBulletin||'BOE'),url:record.boeUrl},...(record.announcements||[])];
-    const names={lists:'Lista de admisión',exam:'Fecha del examen',key:'Plantilla de respuestas',results:'Resultados'};
-    for(const [stage,item] of Object.entries(record.milestones||{}))if(item.publishedOn&&safeUrl(item.url))events.push({date:item.publishedOn,title:names[stage],url:item.url});
-    const archived=archiveInfo(record);if(archived)events.push({date:archived.publishedOn,title:'Cierre verificado: '+archived.text,url:archived.url});
+    const events=[{date:record.publishedOn,title:'Convocatoria en el organismo',url:record.url,type:'published'},
+      {date:record.boePublishedOn,title:'Publicación en el '+(record.officialBulletin||'BOE'),url:record.boeUrl,type:'bulletin'},
+      ...(record.announcements||[])];
+    for(const item of Array.isArray(record.events)?record.events:[])if(item?.approved===true&&item.publicado===true&&item.officialPublishedOn&&item.title&&safeUrl(item.url))events.push({date:item.officialPublishedOn,title:item.title,url:item.url,id:item.id,type:item.type});
+    const names={lists:'Lista provisional de admitidos y excluidos',lists_final:'Lista definitiva de admitidos y excluidos',exam:'Fecha del examen',key:'Plantilla de respuestas',results:'Resultados'};
+    for(const [stage,item] of Object.entries(record.milestones||{}))if(item?.publishedOn&&safeUrl(item.url))events.push({date:item.publishedOn,title:names[stage]||item.text||stage,url:item.url,type:stage,text:item.text});
+    const archived=archiveInfo(record);if(archived)events.push({date:archived.publishedOn,title:'Cierre verificado: '+archived.text,url:archived.url,type:'closure'});
+    const unique=window.OpoData.dedupeHistory(events);
     const box=document.createElement('div');box.className='announcement-history';box.append(addText('h4','','Historial de anuncios oficiales'));
     const list=document.createElement('ol');list.className='announcement-list';
-    events.filter(item=>item.date&&item.title&&safeUrl(item.url)).sort((a,b)=>b.date.localeCompare(a.date)).forEach(item=>{const row=document.createElement('li');row.append(addText('time','',dateLabel(item.date)),addText('span','',item.title),officialLink('Documento',item.url));row.children[0].dateTime=item.date;list.append(row);});
+    unique.filter(item=>item.date&&item.title&&safeUrl(item.url)).sort((a,b)=>b.date.localeCompare(a.date)).forEach(item=>{const row=document.createElement('li');row.append(addText('time','',dateLabel(item.date)),addText('span','',item.title),officialLink('Documento',item.url));row.children[0].dateTime=item.date;list.append(row);});
     box.append(list);return box;
   }
   function trackingPanel(record,state){
@@ -125,11 +108,13 @@
     return panel;
   }
   function verifiedEvents(record){
-    const events=[{date:record.publishedOn,title:'Convocatoria publicada'},{date:record.boePublishedOn,title:'Publicación oficial'},...(Array.isArray(record.announcements)?record.announcements:[]).filter(x=>x.date&&x.title&&safeUrl(x.url)&&x.approved===true&&x.publicado===true&&(!x.publicationStatus||['approved','published','publicada','validada'].includes(String(x.publicationStatus).toLowerCase())))];
-    for(const [key,item] of Object.entries(record.milestones||{}))if(item?.publishedOn&&safeUrl(item.url)&&item.approved===true&&item.publicado===true&&(!item.publicationStatus||['approved','published','publicada','validada'].includes(String(item.publicationStatus).toLowerCase())))events.push({date:item.publishedOn,title:{lists:'Listas',exam:'Fecha de examen',key:'Plantilla',results:'Resultados'}[key]||key});
-    for(const item of Array.isArray(record.events)?record.events:[])if(item?.approved===true&&item.publicado===true&&!item.retirado_en&&['approved','published'].includes(String(item.publicationStatus||item.estado_validacion||'').toLowerCase())&&item.officialPublishedOn&&item.title&&safeUrl(item.url))events.push({date:item.officialPublishedOn,title:item.title,url:item.url});
-    const archived=archiveInfo(record);if(archived)events.push({date:archived.publishedOn,title:'Cierre documentado'});
-    return events.filter(e=>/^\d{4}-\d{2}-\d{2}$/.test(e.date)).sort((a,b)=>b.date.localeCompare(a.date));
+    const events=[{date:record.publishedOn,title:'Convocatoria publicada',url:record.url,type:'published'},
+      {date:record.boePublishedOn,title:'Publicación oficial',url:record.boeUrl,type:'bulletin'},
+      ...(Array.isArray(record.announcements)?record.announcements:[]).filter(x=>x.date&&x.title&&safeUrl(x.url)&&x.approved===true&&x.publicado===true&&(!x.publicationStatus||['approved','published','publicada','validada'].includes(String(x.publicationStatus).toLowerCase())))];
+    for(const [key,item] of Object.entries(record.milestones||{}))if(item?.publishedOn&&safeUrl(item.url)&&item.approved===true&&item.publicado===true&&(!item.publicationStatus||['approved','published','publicada','validada'].includes(String(item.publicationStatus).toLowerCase())))events.push({date:item.publishedOn,title:{lists:'Listas',lists_final:'Listas definitivas',exam:'Fecha de examen',key:'Plantilla',results:'Resultados'}[key]||item.text||key,url:item.url,type:key});
+    for(const item of Array.isArray(record.events)?record.events:[])if(item?.approved===true&&item.publicado===true&&!item.retirado_en&&['approved','published'].includes(String(item.publicationStatus||item.estado_validacion||'').toLowerCase())&&item.officialPublishedOn&&item.title&&safeUrl(item.url))events.push({date:item.officialPublishedOn,title:item.title,url:item.url,id:item.id,type:item.type});
+    const archived=archiveInfo(record);if(archived)events.push({date:archived.publishedOn,title:'Cierre documentado',url:archived.url,type:'closure'});
+    return window.OpoData.dedupeHistory(events).filter(e=>/^\d{4}-\d{2}-\d{2}$/.test(e.date)).sort((a,b)=>b.date.localeCompare(a.date));
   }
   function lastChange(record){return verifiedEvents(record)[0]||{date:record.publishedOn,title:'Convocatoria publicada'};}
   function sorting(a,b){
@@ -152,7 +137,7 @@
     const state=effectiveState(record);
     const cancellation=verifiedCancellation(record);
     if(cancellation)card.classList.add('opportunity-row-cancelled');
-    const status=addText('p','opportunity-card-status',cancellation?stateLabels.cancelled:isArchived(record)?'Archivada':state==='review'?'Estado pendiente de verificar':stateLabels[state]||'Convocatoria publicada');
+    const status=addText('p','opportunity-card-status',cancellation?stateLabel('cancelled'):isArchived(record)?'Archivada':stateLabel(state));
     link.append(head,meta,status);
     const heart=document.createElement('button');heart.type='button';heart.className='opportunity-card-heart';heart.style.setProperty('pointer-events','auto','important');heart.style.zIndex='3';const followed=saved.has(record.id);heart.textContent=followed?'♥':'♡';heart.classList.toggle('is-following',followed);heart.setAttribute('aria-pressed',String(followed));heart.setAttribute('aria-label','Seguir '+record.title);heart.title=followed?'Dejar de seguir esta convocatoria':'Seguir esta convocatoria';heart.addEventListener('click',async event=>{event.preventDefault();event.stopPropagation();await window.OpoAccountReady;const account=window.OpoAccount?.get?.();if(!account){followNotice(record);return;}const wasFollowing=saved.has(record.id);if(wasFollowing)saved.delete(record.id);else saved.add(record.id);const persisted=await save();heart.textContent=wasFollowing?'♡':'♥';heart.classList.toggle('is-following',!wasFollowing);heart.setAttribute('aria-pressed',String(!wasFollowing));heart.setAttribute('aria-label',(wasFollowing?'Seguir ':'Dejar de seguir ')+record.title);heart.title=wasFollowing?'Seguir esta convocatoria':'Dejar de seguir esta convocatoria';followNotice(record,persisted?(wasFollowing?'unfollow':'follow'):'local');});
     card.append(link,heart);
@@ -187,7 +172,7 @@
   savedFilter.addEventListener('click',async()=>{await window.OpoAccountReady;if(!window.OpoAccount?.get?.()){location.href='/cuenta.html';return;}onlySaved=!onlySaved;render();});
   archiveControls.forEach(button=>button.addEventListener('click',()=>{archiveView=button.dataset.archive==='archived';render();}));
   Object.values(fields).filter(Boolean).forEach(el=>el.addEventListener('input',()=>{pageSize=pageStep;render();}));document.getElementById('opportunity-more')?.addEventListener('click',()=>{pageSize+=pageStep;render();});
-  async function load(){try{await window.OpoAccountReady;try{saved=new Set(JSON.parse(localStorage.getItem(storageKey)||'[]'));}catch{saved=new Set();}const data=await window.OpoData.loadOpportunities();const seen=new Set();opportunities=data.opportunities.filter(o=>{if(!o.id||seen.has(o.id)||o.published!==true||(o.publicationStatus!=null&&!['published','approved','publicada','validada','aprobado'].includes(String(o.publicationStatus).toLowerCase()))||o.approved===false||!isEligibleOpportunity(o)||!o.title||!(o.opportunityType==='temporary_roster'?isTemporaryRoster(o):(Number.isInteger(o.places)&&o.places>=1||o.processType==='pool'&&o.places==null))||!stateLabels[o.state]||!labels[o.processType]||o.processType==='all'||!/^\d{4}-\d{2}-\d{2}$/.test(o.publishedOn)||!/^\d{4}-\d{2}-\d{2}$/.test(o.boePublishedOn)||!/^\d{4}-\d{2}-\d{2}$/.test(o.reviewedOn))return false;try{if(new URL(o.url).protocol!=='https:'||new URL(o.boeUrl).protocol!=='https:')return false;}catch{return false;}seen.add(o.id);return true;});if(opportunities.some(o=>o.id===requestedPhase)){onlySaved=false;archiveView=isArchived(opportunities.find(o=>o.id===requestedPhase));}ready=true;
+  async function load(){try{await window.OpoAccountReady;try{saved=new Set(JSON.parse(localStorage.getItem(storageKey)||'[]'));}catch{saved=new Set();}const data=await window.OpoData.loadOpportunities();const seen=new Set();opportunities=data.opportunities.filter(o=>{if(!o.id||seen.has(o.id)||o.published!==true||(o.publicationStatus!=null&&!['published','approved','publicada','validada','aprobado'].includes(String(o.publicationStatus).toLowerCase()))||o.approved===false||!isEligibleOpportunity(o)||!o.title||!(o.opportunityType==='temporary_roster'?isTemporaryRoster(o):(Number.isInteger(o.places)&&o.places>=1||o.processType==='pool'&&o.places==null))||!/^\d{4}-\d{2}-\d{2}$/.test(o.publishedOn)||!/^\d{4}-\d{2}-\d{2}$/.test(o.boePublishedOn)||!/^\d{4}-\d{2}-\d{2}$/.test(o.reviewedOn))return false;try{if(new URL(o.url).protocol!=='https:'||new URL(o.boeUrl).protocol!=='https:')return false;}catch{return false;}seen.add(o.id);return true;});if(opportunities.some(o=>o.id===requestedPhase)){onlySaved=false;archiveView=isArchived(opportunities.find(o=>o.id===requestedPhase));}ready=true;
     const towns=[...new Set(opportunities.map(o=>o.location).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));const municipal=fields.municipality;if(municipal)for(const town of towns){const option=document.createElement('option');option.value=town;option.textContent=town;municipal.append(option);}
     revision.textContent=`Selección publicada (última revisión de la base: ${dateLabel(data.reviewedOn)}). Las fechas de consulta no se consideran novedades.${data.notice?' '+data.notice:''}`;render();if(opportunities.some(o=>o.id===requestedPhase))document.getElementById(requestedPhase)?.scrollIntoView({block:'start'});}catch{summary.textContent='No se han podido cargar las convocatorias.';results.replaceChildren(addText('p','opportunity-empty','Recarga la página para volver a intentarlo.'));}}
   load();
