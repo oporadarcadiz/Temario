@@ -14,7 +14,7 @@
  const el=(tag,cls,value)=>{const x=document.createElement(tag);if(cls)x.className=cls;if(value!=null)x.textContent=value;return x};
  const official=(title,url)=>{const a=el('a','',title+' ↗');a.href=url;a.target='_blank';a.rel='noopener noreferrer';return a};
  function events(r){
-  const all=[{date:r.publishedOn,title:'Convocatoria publicada',url:r.url,type:'published',approved:true},{date:r.boePublishedOn,title:'Publicación en '+(r.officialBulletin||'BOE'),url:r.boeUrl,type:'bulletin',approved:true}];
+  const all=[{date:r.publishedOn,title:'Convocatoria publicada',url:r.url,type:'published',approved:true},{date:r.boePublishedOn,title:'Publicación en '+(/^https:\/\/(?:www\.)?boe\.es\//i.test(r.boeUrl||'')?'BOE':r.officialBulletin||'boletín oficial'),url:r.boeUrl,type:'bulletin',approved:true}];
   for(const a of Array.isArray(r.announcements)?r.announcements:[])all.push({date:a.date,title:a.title,url:a.url,id:a.id,type:a.type||'announcement',approved:visibleEvent(a)});
   for(const a of Array.isArray(r.events)?r.events:[])if(a.approved===true&&a.publicado===true&&!a.retirado_en&&['approved','published'].includes(String(a.publicationStatus||a.estado_validacion||'').toLowerCase()))all.push({date:a.officialPublishedOn||a.date,title:a.title,url:a.url,id:a.id,type:a.type||'other',approved:true});
   const names={lists:'Lista de admisión',exam:'Fecha de examen',key:'Plantilla de respuestas',results:'Resultados'};
