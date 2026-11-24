@@ -48,6 +48,26 @@ body.radar-atlantico .quiet{color:var(--teal-dark);border-color:var(--teal)}
 body.radar-atlantico .bridge-copy{color:var(--ink)}
 body.radar-atlantico .intro,body.radar-atlantico .home-micro{color:var(--muted)}
 body.radar-atlantico .eyebrow-line:before{background:var(--teal)}
+
+/* La frase y el radar comparten fila: el radar queda a la derecha y a su altura. */
+body.radar-atlantico .bridge{
+  grid-template-columns:minmax(0,1fr) minmax(340px,1.05fr);
+  column-gap:clamp(24px,5vw,72px);
+  align-items:start;
+}
+body.radar-atlantico .bridge-copy,
+body.radar-atlantico .brand-status{display:contents}
+body.radar-atlantico .bridge .bridge-copy>.eyebrow{grid-column:1;grid-row:1}
+body.radar-atlantico .bridge .bridge-copy>h1{grid-column:1;grid-row:2;align-self:center}
+body.radar-atlantico .bridge .bridge-copy>.intro{grid-column:1;grid-row:3}
+body.radar-atlantico .bridge .bridge-copy>.home-actions{grid-column:1;grid-row:4}
+body.radar-atlantico .bridge .bridge-copy>.home-micro{grid-column:1;grid-row:5}
+body.radar-atlantico .bridge .brand-status>.radar-brand{
+  grid-column:2;grid-row:2;align-self:center;
+  min-height:clamp(300px,31vw,420px);width:100%;
+}
+body.radar-atlantico .bridge .brand-status>.convocation-timeline{grid-column:2;grid-row:3/span 3;align-self:start;margin-top:4px}
+
 body.radar-atlantico .radar-field{background:radial-gradient(circle,#0B80940A 0%,#0B294210 50%,transparent 70%)}
 body.radar-atlantico .radar-ring{border-color:rgba(11,128,148,.38)}
 body.radar-atlantico .radar-axis{background:rgba(11,41,66,.10)}
@@ -277,3 +297,18 @@ body.radar-atlantico .route-detail-card>p:not(.eyebrow),body.radar-atlantico .ro
 body.radar-atlantico footer{border-top-color:var(--line)}
 body.radar-atlantico footer p{color:var(--teal-dark)}
 body.radar-atlantico footer>span{color:var(--muted)}
+
+/* En pantallas estrechas la frase va primero y el radar se coloca debajo, centrado. */
+@media(max-width:850px){
+  body.radar-atlantico .bridge{grid-template-columns:1fr;column-gap:0;row-gap:0;align-items:start}
+  body.radar-atlantico .bridge .bridge-copy>.eyebrow{grid-row:1}
+  body.radar-atlantico .bridge .bridge-copy>h1{grid-row:2}
+  body.radar-atlantico .bridge .brand-status>.radar-brand{grid-column:1;grid-row:3;justify-self:center;width:min(560px,100%);min-height:360px}
+  body.radar-atlantico .bridge .bridge-copy>.intro{grid-column:1;grid-row:4}
+  body.radar-atlantico .bridge .bridge-copy>.home-actions{grid-column:1;grid-row:5}
+  body.radar-atlantico .bridge .bridge-copy>.home-micro{grid-column:1;grid-row:6}
+  body.radar-atlantico .bridge .brand-status>.convocation-timeline{grid-column:1;grid-row:7;width:min(560px,100%);justify-self:center;margin-top:18px}
+}
+@media(max-width:600px){
+  body.radar-atlantico .bridge .brand-status>.radar-brand{min-height:300px}
+}
