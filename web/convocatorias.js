@@ -81,7 +81,7 @@
   function trackStep(label,detail,status,url){const item=document.createElement('li');item.className='tracking-step tracking-'+status;item.append(addText('span','tracking-mark',status==='done'?'✓':'·'));const body=document.createElement('div');body.append(addText('strong','',label),addText('p','',detail));if(safeUrl(url))body.append(officialLink('Ver documento',url));item.append(body);return item;}
   function officialHistory(record){
     const events=[{date:record.publishedOn,title:'Convocatoria en el organismo',url:record.url,type:'published'},
-      {date:record.boePublishedOn,title:'Publicación en el '+(record.officialBulletin||'BOE'),url:record.boeUrl,type:'bulletin'},
+      {date:record.boePublishedOn,title:'Publicación en '+(/^https:\/\/(?:www\.)?boe\.es\//i.test(record.boeUrl||'')?'BOE':record.officialBulletin||'boletín oficial'),url:record.boeUrl,type:'bulletin'},
       ...(record.announcements||[])];
     for(const item of Array.isArray(record.events)?record.events:[])if(item?.approved===true&&item.publicado===true&&item.officialPublishedOn&&item.title&&safeUrl(item.url))events.push({date:item.officialPublishedOn,title:item.title,url:item.url,id:item.id,type:item.type});
     const names={lists:'Lista provisional de admitidos y excluidos',lists_final:'Lista definitiva de admitidos y excluidos',exam:'Fecha del examen',key:'Plantilla de respuestas',results:'Resultados'};
