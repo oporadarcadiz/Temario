@@ -98,3 +98,16 @@ test('verificación con correo vacío: no llama al servicio y pide el mismo emai
   assert.equal(getVerifications(),0);
   assert.match(elements['login-code-status'].textContent,/mismo correo electrónico/);
 });
+
+test('acceso compacto: correo, código y Google en un mismo bloque sin textos extensos',()=>{
+  assert.match(page,/<body class="account-compact">/);
+  assert.match(page,/<h1>Mi cuenta<\/h1>/);
+  assert.match(page,/class="login-steps"/);
+  for(const id of ['login-email','login-code','login-email-submit','login-code-submit','login-google']){
+    assert.match(page,new RegExp('id="'+id+'"'));
+  }
+  assert.match(page,/\.login-steps\{display:grid;grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
+  assert.match(page,/@media\(max-width:650px\)/);
+  assert.match(page,/\.login-steps\{grid-template-columns:1fr;gap:9px\}/);
+  assert.doesNotMatch(page,/overflow:hidden|height:100vh/);
+});
