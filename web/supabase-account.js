@@ -35,8 +35,8 @@
   Storage.prototype.removeItem=function(k){nativeRemove.call(this,k);if(this===localStorage&&keys.includes(k))schedule();};
   window.OpoAccount={
     get:()=>user?{id:user.id,email:user.email}:null,isConfigured:configured,save,importLocal:save,
-    signInGoogle:async()=>{if(!client)return status('Supabase todavía no está conectado.');const {error}=await client.auth.signInWithOAuth({provider:'google',options:{redirectTo:`${location.origin}/cuenta.html`}});if(error)throw error;},
-    signInEmail:async email=>{if(!client)return status('Supabase todavía no está conectado.');const {error}=await client.auth.signInWithOtp({email,options:{emailRedirectTo:`${location.origin}/cuenta.html`}});if(error)throw error;status('Revisa tu correo: te hemos enviado un enlace de acceso.');},
+    signInGoogle:async()=>{if(!client)throw Error('auth_unavailable');const {error}=await client.auth.signInWithOAuth({provider:'google',options:{redirectTo:`${location.origin}/cuenta.html`}});if(error)throw error;},
+    signInEmail:async email=>{if(!client)throw Error('auth_unavailable');const {error}=await client.auth.signInWithOtp({email,options:{emailRedirectTo:`${location.origin}/cuenta.html`}});if(error)throw error;status('Revisa tu correo: te hemos enviado un enlace de acceso.');},
     signOut:async()=>{if(client){const {error}=await client.auth.signOut();if(error)throw error;}user=null;clearTimeout(timer);keys.forEach(k=>nativeRemove.call(localStorage,k));nativeRemove.call(localStorage,ownerKey);},
     deleteAccountData:async()=>{if(!client||!user)throw Error('Inicia sesión para borrar los datos sincronizados.');const {error}=await client.from('user_state').delete().eq('user_id',user.id);if(error)throw error;keys.forEach(k=>nativeRemove.call(localStorage,k));status('Datos de OpoRadarCádiz borrados.');},
     deleteLocal:()=>keys.forEach(k=>nativeRemove.call(localStorage,k))
