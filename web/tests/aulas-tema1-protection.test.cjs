@@ -34,8 +34,21 @@ test('QR aprobados y mensaje del libro permanecen intactos',()=>{
   assert.match(juegos,/oporadarcadiz\.github\.io\/Tarjetas-repaso\/juegos\/centro-radar\/tema-1\/\?modo=mixto&(?:amp;)?radar=4/);
   const venta=read('web/tema1-venta.html');
   assert.match(venta,/No vayas al examen/);
-  assert.match(venta,/tres niveles en el libro/i);
-  assert.match(venta,/PRÁCTICA ONLINE · CUARTA VUELTA/);
+  const published=[
+    'Descubre el método progresivo de OpoRadarCádiz para estudiar la Constitución Española: comprender, localizar, memorizar y practicar. Tema 1 Visual en preparación.',
+    'Mi método de estudio · 4 niveles, 4 vueltas a cada tema',
+    'Estudia cada tema en cuatro niveles. Empiezas con una idea general y vuelves sobre él para comprenderlo, relacionarlo, memorizarlo y practicar.',
+    'NIVEL 01 · PRIMERA VUELTA',
+    'NIVEL 02 · SEGUNDA VUELTA',
+    'NIVEL 03 · TERCERA VUELTA',
+    'NIVEL 04 · CUARTA VUELTA',
+    'Pon a prueba lo aprendido con preguntas tipo test. Los recursos online se abren según su modalidad de acceso.',
+    'Un libro físico para seguir el método en orden, sin saltar directamente a memorizar. La edición está prevista en papel mediante Amazon KDP.'
+  ];
+  for(const text of published){assert.ok(venta.includes(text),'texto publicado ausente: '+text)}
+  assert.ok(venta.includes('<strong>Aclaración:</strong> el libro físico tiene tres niveles; la cuarta vuelta es práctica online.'),'aclaración de la cuarta vuelta ausente');
+  assert.match(venta,/<link rel="canonical" href="https:\/\/temario-dvd\.pages\.dev\/tema1-venta\.html">/);
+  assert.doesNotMatch(venta,/<meta name="robots" content="noindex,nofollow">/i);
 });
 
 test('Saber Más no expone PDF ni Storage publico y exige server ready',()=>{
