@@ -37,6 +37,7 @@
     get:()=>user?{id:user.id,email:user.email}:null,isConfigured:configured,save,importLocal:save,
     signInGoogle:async()=>{if(!client)throw Error('auth_unavailable');const {error}=await client.auth.signInWithOAuth({provider:'google',options:{redirectTo:`${location.origin}/cuenta.html`}});if(error)throw error;},
     signInEmail:async email=>{if(!client)throw Error('auth_unavailable');const {error}=await client.auth.signInWithOtp({email,options:{emailRedirectTo:`${location.origin}/cuenta.html`}});if(error)throw error;status('Revisa tu correo: te hemos enviado un enlace de acceso.');},
+    verifyEmailCode:async(email,token)=>{if(!client)throw Error('auth_unavailable');const {data,error}=await client.auth.verifyOtp({email,token,type:'email'});if(error)throw error;if(!data?.session)throw Error('otp_no_session');return data.session;},
     signOut:async()=>{if(client){const {error}=await client.auth.signOut();if(error)throw error;}user=null;clearTimeout(timer);keys.forEach(k=>nativeRemove.call(localStorage,k));nativeRemove.call(localStorage,ownerKey);},
     deleteAccountData:async()=>{if(!client||!user)throw Error('Inicia sesión para borrar los datos sincronizados.');const {error}=await client.from('user_state').delete().eq('user_id',user.id);if(error)throw error;keys.forEach(k=>nativeRemove.call(localStorage,k));status('Datos de OpoRadarCádiz borrados.');},
     deleteLocal:()=>keys.forEach(k=>nativeRemove.call(localStorage,k))
