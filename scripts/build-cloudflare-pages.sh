@@ -36,6 +36,8 @@ for name in content-sources.json convocatorias.json favicon.svg identidad-oporad
 done
 cp web/aulas/index.html "$OUT/aulas/index.html"
 cp web/aulas/tema-1/index.html "$OUT/aulas/tema-1/index.html"
+cp web/robots.txt "$OUT/robots.txt"
+cp web/sitemap.xml "$OUT/sitemap.xml"
 
 # Compatibilidad: Aula OpoRadar sigue en GitHub Pages y los recursos privados en Supabase.
 cat > "$OUT/_redirects" <<'REDIRECTS'
@@ -54,7 +56,7 @@ cat > "$OUT/404.html" <<'HTML404'
 HTML404
 
 # Fallar cerrando el build ante archivos reservados o ausencias inesperadas.
-for required in index.html estudiar.html convocatorias.html assets/preguntas.json assets/subalterno.json _redirects 404.html; do
+for required in index.html estudiar.html convocatorias.html assets/preguntas.json assets/subalterno.json robots.txt sitemap.xml _redirects 404.html; do
   test -f "$OUT/$required"
 done
 if find "$OUT" -type f \( -iname '*.pdf' -o -iname '*.sql' -o -iname '*.md' -o -iname '*.ts' -o -iname '*.cjs' -o -iname '*.zip' -o -iname '*.env' \) | grep -q .; then

@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /tema-1/
+Disallow: /tema-2/
+Disallow: /aulas/
+Disallow: /banco-vivo
+Disallow: /acceso-premium
+Disallow: /seguridad/
+Disallow: /migrations/
+Disallow: /tests/
+Disallow: /admin/
+
+Sitemap: https://temario-dvd.pages.dev/sitemap.xml
