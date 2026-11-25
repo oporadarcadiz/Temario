@@ -128,7 +128,7 @@
   function renderRow(record){
     const detail='/convocatoria.html?id='+encodeURIComponent(record.id);
     const card=document.createElement('article');card.className='opportunity-row';card.id=record.id;
-    const link=document.createElement('a');link.className='opportunity-card-link';link.href=detail;link.setAttribute('aria-label','Ver convocatoria '+record.title+' de '+record.organism);
+    const link=document.createElement('a');link.className='opportunity-card-link';link.href=detail;
     const head=addText('div','opportunity-card-head','');
     head.append(addText('h3','',record.title||'Puesto sin especificar'),addText('p','opportunity-card-organism',record.organism||'Organismo no indicado'));
     const reference=record.expediente_oficial||record.source_reference||record.reference||record.convocationNumber||record.id;
