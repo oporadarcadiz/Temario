@@ -2,7 +2,7 @@
 (() => {
   const config=window.OPO_SUPABASE||{},keys=['oporadar:radar:saved:v1','oporadar:study-tools:v1','oporadar:profile:v1',...['aux','sub','auxiliar','subalterno'].flatMap(r=>['progress','history','session'].map(k=>`oporadar:${r}:${k}:v1`))];
   const nativeSet=Storage.prototype.setItem,nativeRemove=Storage.prototype.removeItem,ownerKey='oporadar:account-owner:v1';
-  let client=null,user=null,loading=true,applyingRemote=false,timer;
+  let client=null,user=null,loading=true,applyingRemote=false,timer,savePending=false;
   const status=t=>document.querySelectorAll('[data-cloud-status],#account-status').forEach(e=>e.textContent=t);
   const state=()=>Object.fromEntries(keys.map(k=>[k,localStorage.getItem(k)]).filter(([,v])=>v!==null));
   const configured=()=>Boolean(config.url&&config.anonKey&&window.supabase);
@@ -28,8 +28,9 @@
     if(!response.data&&previousOwner!==user.id)await save();
     status('Tu cuenta está sincronizada.');window.dispatchEvent(new Event('oporadar:account-ready'));
   }
-  async function save(){if(loading)return;if(!client||!user){status('Guardado en este navegador.');return;}const {error}=await client.from('user_state').upsert({user_id:user.id,state:state(),updated_at:new Date().toISOString()});if(error)throw error;status('Guardado en tu cuenta.');}
-  function schedule(){if(applyingRemote)return;clearTimeout(timer);timer=setTimeout(()=>save().catch(()=>status('Guardado localmente; sincronización pendiente.')),700);}
+  async function save(){if(loading)return;if(!client||!user){status('Guardado en este navegador.');return;}if(navigator.onLine===false){savePending=true;status('Sin conexión. Tus cambios se guardarán al volver la conexión.');return;}const {error}=await client.from('user_state').upsert({user_id:user.id,state:state(),updated_at:new Date().toISOString()});if(error)throw error;savePending=false;status('Guardado en tu cuenta.');}
+  function schedule(){if(applyingRemote)return;clearTimeout(timer);timer=setTimeout(()=>save().catch(()=>{savePending=true;status('Guardado localmente; sincronización pendiente.');}),700);}
+  window.addEventListener('online',()=>{if(savePending)save().catch(()=>status('Tus cambios siguen en este navegador; se intentará de nuevo.'));});
   Storage.prototype.setItem=function(k,v){nativeSet.call(this,k,v);if(this===localStorage&&keys.includes(k))schedule();};
   Storage.prototype.removeItem=function(k){nativeRemove.call(this,k);if(this===localStorage&&keys.includes(k))schedule();};
   window.OpoAccount={
