@@ -15,7 +15,7 @@ function setup({configured=true,authError=null}={}){
     'login-email','login-email-submit','login-code-form','login-code','login-code-submit',
     'login-code-status','login-google','account-email','logout']){
     elements[id]={textContent:'',dataset:{},hidden:false,disabled:false,value:'',onclick:null,onsubmit:null,
-      checkValidity:()=>true,reportValidity:()=>true};
+      checkValidity:()=>true,reportValidity:()=>true,focus:()=>{}};
   }
   elements['login-email'].value='test@example.invalid';
   elements['login-code'].value='123456';
