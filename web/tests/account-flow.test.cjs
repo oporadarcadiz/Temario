@@ -24,6 +24,7 @@ function environment({session=null,remoteState=null,online=true,initial={}}={}){
       getSession:async()=>({data:{session:session?{user:session}:null},error:null}),
       signInWithOAuth:async options=>{calls.oauth=options;return {error:null};},
       signInWithOtp:async credentials=>{calls.otp=credentials;return {error:null};},
+      verifyOtp:async credentials=>{calls.otpVerify=credentials;return {data:{session:{user:{id:'user-otp',email:credentials.email}}},error:null};},
       signOut:async()=>{calls.signOut=true;return {error:null};}
     },
     from:()=>({
@@ -77,6 +78,16 @@ test('acceso por correo: OTP con redirect seguro a cuenta.html',async()=>{
   assert.equal(env.calls.otp.email,'opositor@example.test');
   assert.equal(env.calls.otp.options.emailRedirectTo,'https://example.test/cuenta.html');
   assert.match(env.status.textContent,/Revisa tu correo/);
+});
+
+test('código recibido por correo: verifica OTP de email y obtiene sesión',async()=>{
+  const env=environment();
+  await env.window.OpoAccountReady;
+  const session=await env.window.OpoAccount.verifyEmailCode('opositor@example.test','123456');
+  assert.equal(env.calls.otpVerify.email,'opositor@example.test');
+  assert.equal(env.calls.otpVerify.token,'123456');
+  assert.equal(env.calls.otpVerify.type,'email');
+  assert.equal(session.user.email,'opositor@example.test');
 });
 
 test('acceso con Google: redirect seguro y cierre de sesión local',async()=>{
