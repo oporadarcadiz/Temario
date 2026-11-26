@@ -12,7 +12,7 @@
   const fold=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
   const p=profile();$('profile-level').value=p.level||'';$('profile-town').value=p.town||'';$('profile-short').checked=!!p.short;
   const newsletter=document.createElement('section');newsletter.id='avisos';newsletter.className='account-box';newsletter.innerHTML='<h2>Avisos por correo</h2><p>Elige qué novedades quieres recibir cuando activemos el envío de correo de OpoRadar.</p><label><input id="follow-alerts-opt-in" type="checkbox"> Avisarme de cambios oficiales en mis convocatorias seguidas</label><label><input id="newsletter-opt-in" type="checkbox"> Recibir el boletín semanal de novedades</label><p id="newsletter-status" role="status"></p>';
-  $('account-private').insertBefore(newsletter,$('account-private').lastElementChild);
+  const extra=$('account-extra-content');extra.insertBefore(newsletter,extra.lastElementChild);
   const newsletterInput=$('newsletter-opt-in'),followAlertsInput=$('follow-alerts-opt-in'),newsletterStatus=$('newsletter-status');newsletterInput.checked=!!p.newsletter;followAlertsInput.checked=!!p.followAlerts;
   const updateNotice=()=>{const selected=[followAlertsInput.checked&&'cambios de tus convocatorias',newsletterInput.checked&&'el boletín semanal'].filter(Boolean);newsletterStatus.textContent=selected.length?`Preferencias guardadas: ${selected.join(' y ')}. Los envíos empezarán cuando conectemos el correo de OpoRadar.`:'No tienes avisos por correo activados.';};
   updateNotice();
@@ -25,9 +25,10 @@
   let records=[];
   function render(){
     const ids=saved(),followed=records.filter(o=>ids.includes(o.id)),query=fold($('account-search').value),visible=followed.filter(o=>fold(o.title+' '+o.organism).includes(query));
+    const searchWrap=$('account-search-wrap');if(searchWrap)searchWrap.hidden=followed.length<8;
     $('account-saved').replaceChildren();$('account-saved-count').textContent=`${visible.length} de ${followed.length} convocatorias seguidas`;
-    for(const o of visible){const card=text('article','','account-process');card.append(text('p',o.organism,'eyebrow'),text('h3',o.title),text('p',`${o.places} plazas · Última revisión: ${o.reviewedOn}`),link('Abrir ficha y seguimiento','/convocatorias.html#'+encodeURIComponent(o.id)),button('Dejar de seguir',async()=>{localStorage.setItem(savedKey,JSON.stringify(saved().filter(id=>id!==o.id)));render();try{await window.OpoAccount.save();}catch{/* se sincronizará al usar Mi cuenta */}}));$('account-saved').append(card);}
-    if(!visible.length)$('account-saved').append(text('p',followed.length?'No hay coincidencias. Prueba otro puesto u organismo.':'Todavía no sigues ninguna convocatoria. Puedes elegirlas en Convocatorias.'));
+    for(const o of visible){const card=text('article','','account-process');const number=Number.isInteger(o.places)&&o.places>0?`${o.places} ${o.places===1?'plaza':'plazas'}`:'Plazas sin determinar';const reviewed=/^\d{4}-\d{2}-\d{2}$/.test(o.reviewedOn||'')?' · Revisión: '+o.reviewedOn:'';card.append(text('p',o.organism,'eyebrow'),text('h3',o.title),text('p',number+reviewed),link('Ver convocatoria','/convocatoria.html?id='+encodeURIComponent(o.id)),button('♡ Dejar de seguir',async()=>{localStorage.setItem(savedKey,JSON.stringify(saved().filter(id=>id!==o.id)));render();try{await window.OpoAccount.save();}catch{/* se sincronizará al usar Mi cuenta */}}));$('account-saved').append(card);}
+    if(!visible.length)$('account-saved').append(text('p',followed.length?'No hay coincidencias. Prueba otro puesto u organismo.':'Aún no has marcado ninguna convocatoria con el corazón. Explora las convocatorias y pulsa ♥ en las que quieras seguir.'));
     const readIds=new Set(profile().newsRead||[]),events=followed.flatMap(o=>window.OpoRadarEvents.collect(o)).sort((a,b)=>b.date.localeCompare(a.date)),unread=events.filter(e=>!readIds.has(e.id)),shown=$('account-unread').checked?unread:events;
     $('account-news-count').textContent=`${unread.length} documentos sin leer · ${events.length} documentos disponibles`;$('account-news').replaceChildren();
     const mark=ids=>{localStorage.setItem(profileKey,JSON.stringify({...profile(),newsRead:[...new Set([...readIds,...ids])].slice(-1000)}));render();};
