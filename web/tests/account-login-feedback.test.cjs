@@ -98,3 +98,24 @@ test('verificación con correo vacío: no llama al servicio y pide el mismo emai
   assert.equal(getVerifications(),0);
   assert.match(elements['login-code-status'].textContent,/mismo correo electrónico/);
 });
+
+test('acceso compacto: una sola columna, colores Radar Atlántico y Google multicolor',()=>{
+  assert.match(page,/<body class="account-compact radar-atlantico">/);
+  assert.match(page,/href="\/radar-atlantico\.css"/);
+  assert.match(page,/<h1>Mi cuenta<\/h1>/);
+  assert.match(page,/class="login-steps"/);
+  for(const id of ['login-email','login-code','login-email-submit','login-code-submit','login-google']){
+    assert.match(page,new RegExp('id="'+id+'"'));
+  }
+  assert.match(page,/\.login-steps\{display:grid;grid-template-columns:minmax\(0,1fr\)/);
+  assert.doesNotMatch(page,/grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
+  assert.match(page,/#account-login\{background:#0B2942/);
+  assert.match(page,/#login-email-submit\{background:#F2B544/);
+  assert.match(page,/#login-code-submit\{background:#0B8094/);
+  assert.match(page,/#account-login #login-google\{background:#FFF/);
+  assert.match(page,/<span class="google-mark" aria-hidden="true"><svg/);
+  for(const color of ['#EA4335','#4285F4','#FBBC05','#34A853']){
+    assert.ok(page.includes(color),'Color Google '+color);
+  }
+  assert.doesNotMatch(page,/overflow:hidden|height:100vh/);
+});
