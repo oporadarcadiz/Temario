@@ -126,6 +126,12 @@
     if(validDate(start)&&validDate(end)&&start<=date&&date<=end)return 'open';
     return 'published';
   }
+  // Solo solicitudes con fechas oficiales de inicio y fin vigentes hoy.
+  // El estado compartido evita contar listas, exámenes o procesos anulados.
+  function applicationsOpenNow(record,date=todayISO()){
+    const start=record?.applicationsStartOn,end=record?.applicationsEndOn;
+    return validDate(start)&&validDate(end)&&start<=date&&date<=end&&deriveState(record,date)==='open';
+  }
   const ADVANCED_STATES=new Set(['lists','lists_final','exam','key','results','finished']);
   function periodInfo(record,state=deriveState(record),date=todayISO()){
     const end=record?.applicationsEndOn;
@@ -153,7 +159,7 @@
   }
 
   window.OpoData={
-    STATE_LABELS,stateLabel,deriveState,dedupeHistory,verifiedCancellation,periodInfo,
+    STATE_LABELS,stateLabel,deriveState,applicationsOpenNow,dedupeHistory,verifiedCancellation,periodInfo,
     normalize(record,dbEvents=[]){
       const d=record?.data&&typeof record.data==='object'?record.data:(record||{});
       const id=record?.id||d.id;
